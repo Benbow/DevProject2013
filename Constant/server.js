@@ -3,11 +3,13 @@ var fs = require('fs'); // creation d'un serveur http.
 
 map = require('./js/Map');
 
-var test = new Object();
-test.terrain = new map.Start();
+var terrain = new map.Start();
+
+var test = terrain.largeur;
 
 var server = http.createServer(function (request, response) {
-	console.log("test3");
+	console.log(test);
+	response.end();
 });
 
 server.listen(1337);
