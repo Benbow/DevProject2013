@@ -6,7 +6,7 @@ var Map = new function() {
 	};
 }
 
-function Start() {
+exports.Start = function(){
 	this.largeur = 200;
 }
 
