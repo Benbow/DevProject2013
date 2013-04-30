@@ -1,9 +1,19 @@
 <html>
 	<head>
 		<title>Farm Warfare</title>
-		<link href="css/pp3diso.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="css/global.css">
 	</head>
 	<body>
-		<img src="./images/Accueil.png" />
+		<form action="" id="loginform">
+			<input type="text" value="" id="username" name="username" placeholders="User">
+			<input type="password" value="" id="password" name="password">
+			<input type="submit" value="Submit" id="submitlogin">
+		</form>
+		<div id="overlay"></div>
+		<div id="liste">
+		</div>
 	</body>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="http://localhost:1337/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="js/client.js"></script>
 </html>
