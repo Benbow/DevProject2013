@@ -6,6 +6,10 @@ var connection = mysql.createConnection({
     database : 'farmDB',
 });
 
+var DB = require('./DB').DB();
+
+console.log(DB);
+
 var User = (function() {
     var _id;
 

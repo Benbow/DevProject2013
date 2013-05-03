@@ -2,6 +2,7 @@
 
 	var socket = io.connect('http://localhost:1337');
 	var ppmap;
+	var map = false;
 
 	// Lorsque l'on submit notre formulaire de connection
 	$('#loginform').submit(function(event)
@@ -40,6 +41,7 @@
 		$("#div_login").slideUp('fast');
 		$("#div_play").fadeIn('slow');
 		$("#div_menu").fadeIn('slow');
+		$("#div_begin").fadeIn('slow');
 		$("#overlay").fadeIn('slow');
 	});
 
@@ -51,7 +53,7 @@
 
 	//Lorsque l'on cree une nouvelle partie
 	$("#submit_newgame").click(function(){
-		$("#div_menu").fadeOut('slow');
+		$("#div_begin").fadeOut('slow');
 		$("#overlay").fadeOut('slow');
 		socket.emit('newgame', {
 			username : $("#menu_username").html(),
@@ -60,13 +62,29 @@
 	});
 
 	socket.on('loadmap', function(map){
+		loadmap(map);
+	});
+
+	var loadmap = function(map) {
 		ppmap = $('#ppISO').pp3Diso({
 	        map: map,          // la map
 	        mapId:1,                // id de la map
 	        tx:64,                  // dimension x des tuiles
 	        ty:32,                  // dimension y des tuiles
-	        auto_size:false
+	        auto_size:false,
+	        mousewheel:true,
+	        pathfinding:true,
+	        onmoveavatar:function(x, y, id) {
+	            mouseClick(x, y, id);
+	        }
 	    });
-	});
+		ppmap.avatar(2, 2, 'images/avatar.png', 15, -30);
+		ppmap.cursor('images/curseur_on.png', 'images/curseur_off.png', 0, 0);
+
+	};
+
+var mouseClick = function(x, y, id) {
+	console.log('test');
+};
 
 })(jQuery);

@@ -10,7 +10,7 @@ var DB = (function() {
 
     function DB(){ };
 
-    DB.prototype.insert = function(table,data,colum = "") {
+    DB.prototype.insert = function(table,data,colum) {
         connection.query('INSERT INTO ' + table + '(' + colum + ') VALUES (' + data + ');', function(err, rows, fields) {
             if (err) throw err;
             console.log('insert into' + table + ' done');
