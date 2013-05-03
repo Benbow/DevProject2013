@@ -1,0 +1,115 @@
+/* Gestion error et valid */
+
+#error {
+	background-color: #FFA3A3;
+	border: 2px solid #FF7070;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	position: absolute;
+	top: 9px;
+	left: 300px;
+	display: none;
+	padding: 5px;
+	z-index: 200;
+}
+
+#valid {
+	background-color: #B0FFA6;
+	border: 2px solid #61C454;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	position: absolute;
+	top: 9px;
+	left: 300px;
+	display: none;
+	padding: 5px;
+	z-index: 200;
+}
+
+/* div general */
+
+#container {
+	height: 600px;
+	width: 800px;
+}
+
+#div_play {
+	height: 600px;
+	width: 800px;
+	border: 1px solid black;
+	display: none;
+}
+
+#div_menu {
+	position: absolute;
+	background-color: #F0FFFF;
+	border: 5px solid #348385;
+	border-radius: 15px;
+	top: 125px;
+	left: 160px;
+	height: 400px;
+	width: 400px;
+	display: none;
+	z-index: 11000;
+	padding: 10px;
+}
+
+#overlay {
+	position: absolute;
+	background-color: black;
+	top: 9px;
+	left: 9px;
+	height: 600px;
+	width: 800px;
+	opacity: 0.8;
+	display: none;
+	z-index: 100;
+}
+
+#ppISO {
+	height: 600px;
+	width: 800px;
+}
+
+/* Formulaire de connection */
+
+#username {
+	position: absolute;
+	top: 41.5%;
+	left: 28%;
+	width: 184px;
+	height: 38px;
+}
+
+#password {
+	position: absolute;
+	top: 51%;
+	left: 31%;
+	width: 145px;
+	height: 37px;
+}
+
+#submitlogin {
+	position: absolute;
+	top: 59%;
+	left: 29%;
+}
+
+#loginform {
+	background-repeat: no-repeat;
+	background-image: url("../images/Accueil.png");
+	height: 100%;
+	width: 100%;
+	float: left;
+}
+
+/* Creation d'une partie */
+
+#menu_partie {
+
+}
+
+#liste_difficult {
+	display:none;
+	margin-left: 10px;
+}
