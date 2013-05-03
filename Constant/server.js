@@ -18,6 +18,12 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
+var ClassMap = require("./js/Map");
+var map = ClassMap.Map();
+
+map.setL("150");
+console.log(map.getL());
+
 //Creation du serveur http.
 var server = http.createServer(function (req, res) { }).listen(1337);
 
@@ -29,7 +35,7 @@ io.sockets.on('connection', function(socket){
 	// Action quand un utilisateur essaie de se connecter.
 	socket.on('login', function(datalogin){
 		//On va chercher en bdd si le username existe.
-		connection.query('SELECT * FROM users WHERE username = "' + datalogin.username + '"', function(err, rows, fields) {
+		connection.query('SELECT * FROM Users WHERE pseudo = "' + datalogin.username + '"', function(err, rows, fields) {
 			if (err) throw err;
 			if(rows.length > 0) // true si le username existe
 			{

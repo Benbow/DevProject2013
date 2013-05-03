@@ -63,8 +63,8 @@
 		ppmap = $('#ppISO').pp3Diso({
 	        map: map,          // la map
 	        mapId:1,                // id de la map
-	        tx:88,                  // dimension x des tuiles
-	        ty:63,                  // dimension y des tuiles
+	        tx:64,                  // dimension x des tuiles
+	        ty:32,                  // dimension y des tuiles
 	        auto_size:false
 	    });
 	});

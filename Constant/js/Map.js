@@ -1,13 +1,23 @@
-var Map = new function() {
-	this.largeur = 150;
+var Map = (function() {
+    // "private" variables 
+    var _longeur;
 
-	this.getLargeur = function(){
-		console.log('la largeur est de ' + this.largeur);
-	};
+    // constructor
+    function Map(){};
+
+    // add the methods to the prototype so that all of the 
+    // Map instances can access the private static
+    Map.prototype.getL = function() {
+        return _longeur;
+    };
+    Map.prototype.setL = function(L) {
+        _longeur = L;
+    };
+
+    return Map;
+})();
+
+exports.Map = function(){
+	var a = new Map();
+	return a;
 }
-
-exports.Start = function(){
-	this.largeur = 200;
-}
-
-exports.Map = Map;
