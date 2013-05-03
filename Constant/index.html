@@ -2,18 +2,44 @@
 	<head>
 		<title>Farm Warfare</title>
 		<link rel="stylesheet" type="text/css" href="css/global.css">
+		<link rel="stylesheet" type="text/css" href="css/pp3diso.css">
 	</head>
 	<body>
-		<form action="" id="loginform">
-			<input type="text" value="" id="username" name="username" placeholders="User">
-			<input type="password" value="" id="password" name="password">
-			<input type="submit" value="Submit" id="submitlogin">
-		</form>
-		<div id="overlay"></div>
-		<div id="liste">
+		<div id="container">
+			<div id="div_login">
+				<form action="" id="loginform">
+					<input type="text" value="" id="username" name="username" placeholders="User">
+					<input type="password" value="" id="password" name="password">
+					<input type="submit" value="Submit" id="submitlogin">
+				</form>			
+			</div>
+			<div id="div_play">
+				<div id="ppISO"></div>
+			</div>
+			<div id="div_menu">
+				<div>Bienvenue, <span id="menu_username"></span>.</div>
+				<div id="menu_partie"><br>
+					<div>Continuer votre partie ? <input type="button" value="Jouer" id="continue_game" /></div><br>
+					<div>Creer une nouvelle partie ? <input type="button" value="Creer" id="new_game"/></div>			
+				</div>
+				<div id="liste_difficult">
+					<p>Niveau de difficulte :</p>
+					<input type="radio" value="1" id="newgame_difficult1" name="newgame_difficult">
+					<label for="newgame_difficult1">Facile</label><br>
+					<input type="radio" value="2" id="newgame_difficult2" name="newgame_difficult">
+					<label for="newgame_difficult2">Normal</label><br>
+					<input type="radio" value="3" id="newgame_difficult3" name="newgame_difficult">
+					<label for="newgame_difficult3">Difficile</label><br>
+					<input type="button" id="submit_newgame" value="Jouer">
+				</div>
+			</div>
+			<div id="overlay"></div>
+			<div id="error"></div>
+			<div id="valid"></div>
 		</div>
 	</body>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript" src="http://localhost:1337/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="js/include/pp3diso.js"></script>
 	<script type="text/javascript" src="js/client.js"></script>
 </html>
