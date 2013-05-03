@@ -34,6 +34,7 @@ CREATE  TABLE IF NOT EXISTS `farmDB`.`Users` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `pseudo` VARCHAR(45) NULL ,
   `mail` VARCHAR(45) NULL ,
+  `password` VARCHAR(100) NULL,
   `status` TINYINT NULL ,
   `ip` VARCHAR(45) NULL ,
   `nb_fertilisants` INT NULL ,
