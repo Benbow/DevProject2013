@@ -18,11 +18,12 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
-var ClassMap = require("./js/Map");
-var map = ClassMap.Map();
+var ClassMap  = require("./js/Map");
+var ClassUser = require("./js/class/User");
 
-map.setL("150");
-console.log(map.getL());
+var map = ClassMap.Map();
+var user = ClassUser.User(1);
+
 
 //Creation du serveur http.
 var server = http.createServer(function (req, res) { }).listen(1337);
