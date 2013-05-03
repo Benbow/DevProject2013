@@ -19,15 +19,11 @@ var connection = mysql.createConnection({
 connection.connect();
 
 var ClassMap  = require("./js/Map");
-var ClassUser = require("./js/class/User");
-var ClassGrainesSpec = require("./js/class/Graines_spec");
-var ClassStockagesSpec = require("./js/class/Stockages_spec");
-var ClassStockages = require("./js/class/Stockages");
+var User = require("./js/class/User");
+//var ClassGrainesSpec = require("./js/class/Graines_spec");
 
 var map = ClassMap.Map();
-var user = ClassUser.User(1);
-var graines = ClassGrainesSpec.Graines_spec();
-var stockages = ClassStockages.Stockages();
+//var graines = ClassGrainesSpec.Graines_spec();
 
 
 //Creation du serveur http.
@@ -48,7 +44,8 @@ io.sockets.on('connection', function(socket){
 				if(rows[0].password == datalogin.password) // On check le password
 				{
 					socket.emit('valid', 'Connected !');
-					socket.emit('connected', datalogin.username);
+					var test = new User(rows[0].id);
+					socket.emit('connected', test.getPseudo);
 				}
 				else
 					socket.emit('error', 'Wrong password !');

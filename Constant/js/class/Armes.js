@@ -1,12 +1,3 @@
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'toor',
-    database : 'farmDB',
-});
-
-
 //Classe qui enregistre les Armes de chaque user
 
 var Armes = (function() {
@@ -16,23 +7,6 @@ var Armes = (function() {
 
     function Armes(){
         
-    };
-
-    //Methodes
-    Armes.prototype.Add_Armes = function(user_id, armes_spec_id){
-        var query = 'INSERT INTO Armes (user_id, _armes_spec_id) VALUES ('+user_id+', '+armes_spec_id+');';
-        connection.query(query,function(err, rows, fields) {
-            if (err) throw err;
-            console.log("Armes created");
-        });
-    };
-
-    Armes.prototype.Delete_Armes = function(id){
-        var query = 'DELETE FROM Armes WHERE id='+id;
-        connection.query(query,function(err, rows, fields) {
-            if (err) throw err;
-            console.log("Armes deleted");
-        });
     };
 
     //Getters

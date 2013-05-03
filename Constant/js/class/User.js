@@ -1,47 +1,29 @@
-
-DB  = require('./DB.js');
-
-
-
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'toor',
+    database : 'farmDB',
+});
 
 var User = (function() {
     var _id;
+    var _pseudo;
 
-   /* function User(id){
+    function User(id){
         connection.query('SELECT * FROM Users WHERE id = ' + id, function(err, rows, fields) {
             if (err) throw err;
 
-            console.log(rows[0].pseudo);
+            this._id = id;
+            this._pseudo = rows[0].pseudo;
         });
-    };*/
-
-
-   function User(){ };
-
-   User.prototype.getUser =  function (id)
-   {
-
-        var  db = new DB();
-
-        db.selectRequest("*","Users","WHERE id = " + id);
-        
-
-            console.log(rows[0].pseudo);
-       
     };
 
-
-    User.prototype.getL = function() {
-        return _longeur;
-    };
-    User.prototype.setL = function(L) {
-        _longeur = L;
+    User.prototype.getPseudo = function(){
+        return this._pseudo;
     };
 
     return User;
 })();
 
-exports.User = function(id){
-	var a = new User(id);
-	return a;
-}
+module.exports = User;

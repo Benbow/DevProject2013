@@ -1,12 +1,3 @@
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'toor',
-    database : 'farmDB',
-});
-
-
 //Classe qui enregistre les graines de chaque user
 
 var Graines = (function() {
@@ -17,23 +8,6 @@ var Graines = (function() {
 
     function Graines(){
         
-    };
-
-    //Methodes
-    Graines.prototype.Add_Graines = function(nb, user_id, _graines_spec_id){
-        var query = 'INSERT INTO Graines (nb, user_id, _graines_spec_id) VALUES ('+nb+', '+user_id+', '+_graines_spec_id+');';
-        connection.query(query,function(err, rows, fields) {
-            if (err) throw err;
-            console.log("Graines created");
-        });
-    };
-
-    Graines.prototype.Delete_Graines = function(id){
-        var query = 'DELETE FROM Graines WHERE id='+id;
-        connection.query(query,function(err, rows, fields) {
-            if (err) throw err;
-            console.log("Graines deleted");
-        });
     };
 
     //Getters

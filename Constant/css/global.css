@@ -125,3 +125,10 @@
 	display:none;
 	margin-left: 10px;
 }
+
+/* Menu a droite de notre partie */
+
+.button_menu {
+	width: 150px;
+	margin-bottom: 3px;
+}
