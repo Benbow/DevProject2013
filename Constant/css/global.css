@@ -87,24 +87,28 @@
 
 #username {
 	position: absolute;
-	top: 41.5%;
-	left: 28%;
-	width: 184px;
+	top: 256px;
+	left: 500px;
+	width: 193px;
 	height: 38px;
 }
 
 #password {
 	position: absolute;
-	top: 51%;
-	left: 31%;
-	width: 145px;
-	height: 37px;
+	top: 318px;
+	left: 537px;
+	width: 156px;
+	height: 38px;
 }
 
 #submitlogin {
 	position: absolute;
-	top: 59%;
-	left: 29%;
+	top: 405px;
+	left: 475px;
+	height: 50px;
+	width: 175px;
+	cursor: pointer;
+	opacity: 0;
 }
 
 #loginform {

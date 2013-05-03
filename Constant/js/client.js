@@ -9,7 +9,21 @@
 	};
 	var Batiment = {
 		name : '',
-		sprite : 0
+		sprite : {
+			silo : {
+				decX : 0,
+				decY : -150
+			},
+			grange : {
+				decX : -128,
+				decY : -378
+			},
+			chambre : {
+				decX : -128,
+				decY : -292
+			}
+		}
+
 	}
 
 	// Lorsque l'on submit notre formulaire de connection
@@ -75,19 +89,21 @@
 
 	var loadmap = function(map) {
 		ppmap = $('#ppISO').pp3Diso({
-	        map: map,          		// la map
-	        mapId:1,                // id de la map
-	        tx:64,                  // dimension x des tuiles
-	        ty:32,                  // dimension y des tuiles
-	        auto_size:false,		// aggrandissement auto de la fenetre
-	        mousewheel:true,		// zoom avec la molette
-	        pathfinding:true,		// chemin auto pour le deplacement de l'avatar
+	        map: 		 map,       // la map
+	        mapId: 		 1,         // id de la map
+	        tx: 		 256,       // dimension x des tuiles
+	        ty: 		 128,       // dimension y des tuiles
+	        prefix: 	 '',		// prefix avant les nom d'images
+	        auto_size:   false,		// aggrandissement auto de la fenetre
+	        mousewheel:  true,		// zoom avec la molette
+	        zoom: 		 0.5,		// zoom par default
+	        pathfinding: true,		// chemin auto pour le deplacement de l'avatar
 	        onmoveavatar:function(x, y, mapid) {
 	            mouseClick(x, y);// Fonction que l'on fait quand on clique pour bouger le perso
 	        }
 	    });
-		ppmap.avatar(2, 2, 'images/avatar.png', 15, -30); //notre avatar
-		ppmap.cursor('images/curseur_on.png', 'images/curseur_off.png', 0, 0); //notre curseur
+		ppmap.avatar(2, 2, 'images/sprite.png', 15, -30, true, 4); //notre avatar
+		ppmap.cursor('images/cursor-on.png', 'images/cursor-off.png', 0, 0); //notre curseur
 
 	};
 
@@ -95,13 +111,11 @@
 		console.log(x + " / " + y);
 		if(User.isPlanting == true)
 		{
-			console.log("addPlante");
-			ppmap.changeOneMap(x,y,3);
+			ppmap.changeOneMap(x,y,2);
 		}
 		else if(User.isBuilding == true)
 		{
-			console.log("addBuilding");
-			ppmap.addBuilding(x, y, 'images/'+Batiment.sprite, 0, 0);
+			ppmap.addBuilding(x, y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
 		}
 	};
 
@@ -112,22 +126,23 @@
 
 	$(".button_menu_plantes").click(function(){
 		User.isPlanting = true;
+		User.isBuilding = false;
 		var type = $(this).attr('id').substr(20,$(this).attr('id').length);
-		ppmap.changeCursor('images/map-3.png','images/curseur_off.png',0,0);
+		ppmap.changeCursor('images/2.png','images/cursor-off.png',0,0);
 	});
 
 	$(".button_menu_batiments").click(function(){
 		User.isBuilding = true;
+		User.isPlanting = false;
 		var type = $(this).attr('id').substr(22,$(this).attr('id').length);
 		Batiment.name = type;
-		Batiment.sprite = type+".png";
-		ppmap.changeCursor('images/'+type+'.png','images/curseur_off.png',0,0);
+		ppmap.changeCursor('images/'+type+'.png','images/cursor-off.png',Batiment.sprite[Batiment.name].decX,Batiment.sprite[Batiment.name].decY);
 	});
 
 	$(".end_menu_build").click(function(){
 		User.isBuilding = false;
 		User.isPlanting = false;
-		ppmap.changeCursor('images/curseur_on.png','images/curseur_off.png',0,0);
+		ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 	});
 
 })(jQuery);
