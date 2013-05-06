@@ -1,6 +1,16 @@
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'toor',
+    database : 'farmDB',
+});
+
 //Classe indexant les différents types de graines du jeu
 
 var Graines_spec = (function() {
+
+    //attributs
     var _id;            //id unique d'une graine INT
     var _name;          //nom de la graine Varchar 45
     var _maturation;    //temps de maturation d'une graine, avant d'atteindre sa maturité INT
@@ -13,10 +23,28 @@ var Graines_spec = (function() {
     var _sante_min;     //santé minimum requise par la graine pour continuer sa croissance INT
     var _niveau_requis; //niveau que le joueur doit avoir pour acheter/utiliser la graine INT
 
-
+    //Constructeurs
     function Graines_spec(){
         
     };
+
+    //Methodes
+    Graines_spec.prototype.Add_Graines = function(name, maturation, pourrissement, production, stockage, croissance, poids, prix, sante_min, niveau_requis){
+        var query = 'INSERT INTO Graines_spec (name, maturation, pourrissement, production, stockage, croissance, poids, prix, sante_min, niveau_requis) VALUES ("'+name+'", '+maturation+', '+pourrissement+', '+production+', '+stockage+', '+croissance+', '+poids+', '+prix+', '+sante_min+', '+niveau_requis+');'
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            console.log("Graines_spec created");
+        });
+    };
+    /*Graines_spec.prototype.Add_Graines = function(names){
+        var query = 'INSERT INTO Graines_spec (name) VALUES ("'+names+'");'
+        console.log(query);
+        connection.query(query),function(err, rows, fields) {
+            if (err) throw err;
+
+            console.log("Graines_spec created");
+        };
+    };*/
     
     //Getters
     Graines_spec.prototype.getId = function() {
@@ -84,7 +112,7 @@ var Graines_spec = (function() {
     Graines_spec.prototype.setSanteMin = function(sante_min) {
         _sante_min = sante_min;
     };
-    Graines_spec.prototype.setNiveauRequis = function(niveau_requis*) {
+    Graines_spec.prototype.setNiveauRequis = function(niveau_requis) {
         _niveau_requis = niveau_requis;
     };
     
@@ -94,5 +122,7 @@ var Graines_spec = (function() {
 
 exports.Graines_spec = function(){
 	var a = new Graines_spec();
+    a.Add_Graines("test",1,1,1,1,1,1,1,1,1);
+    //a.Add_Graines("test");
 	return a;
 }
