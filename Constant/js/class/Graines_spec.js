@@ -6,17 +6,18 @@ var Graines_spec = (function() {
     var _maturation;    //temps de maturation d'une graine, avant d'atteindre sa maturité INT
     var _pourrissement; //temps de pourrissement, avant que la graine ne pourrisse (après maturité) INT
     var _production;    //ratio maximale de fruit récoltable INT
-    var _stockage;      //temps durant lequel la graine peut être stocké sans pourrir
-    var _croissance;    //temps qu'il faudra pour passer au stade suivant
-    var _poids;         //nombre d'unités de stockages que la graines va prendre
-    var _prix;          //prix de la graine
-    var _sante_min;     //santé minimum requise par la graine pour continuer sa croissance
-    var _niveau_requis; //niveau que le joueur doit avoir pour acheter/utiliser la graine
+    var _stockage;      //temps durant lequel la graine peut être stocké sans pourrir INT
+    var _croissance;    //temps qu'il faudra pour passer au stade suivant INT
+    var _poids;         //nombre d'unités de stockages que la graines va prendre INT
+    var _prix;          //prix de la graine INT
+    var _sante_min;     //santé minimum requise par la graine pour continuer sa croissance INT
+    var _niveau_requis; //niveau que le joueur doit avoir pour acheter/utiliser la graine INT
 
 
     function Graines_spec(){
         
     };
+    
     //Getters
     Graines_spec.prototype.getId = function() {
         return _id;
