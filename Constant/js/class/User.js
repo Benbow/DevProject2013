@@ -1,10 +1,8 @@
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'toor',
-    database : 'farmDB',
-});
+
+DB  = require('./DB.js');
+
+
+
 
 var User = (function() {
     var _id;
@@ -17,6 +15,21 @@ var User = (function() {
             this._id = id;
             this._pseudo = rows[0].pseudo;
         });
+    };*/
+
+
+   function User(){ };
+
+   User.prototype.getUser =  function (id)
+   {
+
+        var  db = new DB();
+
+        db.selectRequest("*","Users","WHERE id = " + id);
+        
+
+            console.log(rows[0].pseudo);
+       
     };
 
     User.prototype.getPseudo = function(){
