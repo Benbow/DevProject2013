@@ -1,3 +1,12 @@
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'toor',
+    database : 'farmDB',
+});
+
+
 //Classe indexant les différents types d'armes du jeu
 
 var Armes_spec = (function() {
@@ -11,6 +20,25 @@ var Armes_spec = (function() {
     function Armes_spec(){
         
     };
+
+    //Methodes
+    Armes_spec.prototype.Add_Armes_spec = function(name, puissance, precision, vitesse, prix){
+        var query = 'INSERT INTO Armes_spec (name, puissance, precision, vitesse, prix) VALUES ("'+name+'", '+puissance+', '+precision+', '+vitesse+', '+prix+');';
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            console.log("Armes_spec created");
+        });
+    };
+
+    Armes_spec.prototype.Delete_Armes_spec = function(id){
+        var query = 'DELETE FROM Armes_spec WHERE id='+id;
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            console.log("Armes_spec deleted");
+        });
+    };
+
+
 
     //Getters
     Armes_spec.prototype.getId = function() {

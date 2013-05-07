@@ -21,10 +21,13 @@ connection.connect();
 var ClassMap  = require("./js/Map");
 var ClassUser = require("./js/class/User");
 var ClassGrainesSpec = require("./js/class/Graines_spec");
+var ClassStockagesSpec = require("./js/class/Stockages_spec");
+var ClassStockages = require("./js/class/Stockages");
 
 var map = ClassMap.Map();
 var user = ClassUser.User(1);
 var graines = ClassGrainesSpec.Graines_spec();
+var stockages = ClassStockages.Stockages();
 
 
 //Creation du serveur http.
