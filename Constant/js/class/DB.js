@@ -10,11 +10,18 @@ var DB = (function() {
 
     function DB(){ };
 
-    DB.prototype.insert = function(table,data,colum) {
+/*DB.prototype.insert = function(table,data,colum = "") {
         connection.query('INSERT INTO ' + table + '(' + colum + ') VALUES (' + data + ');', function(err, rows, fields) {
             if (err) throw err;
             console.log('insert into' + table + ' done');
         });
+    };*/
+
+
+    DB.prototype.selectRequest = function(champs,table,where){
+        connection.query('SELECT' + champs + 'FROM' + table +  where) ;
+            if (err) throw err;
+            console.log('SELECT' + table + ' done');
     };
 
     DB.prototype.setL = function(L) {
@@ -22,9 +29,10 @@ var DB = (function() {
     };
 
     return DB;
-})();
+});
+
 
 exports.DB = function(){
-	var a = new DB();
-	return a;
+    var a = new DB();
+    return a;
 }
