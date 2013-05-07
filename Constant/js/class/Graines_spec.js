@@ -29,22 +29,22 @@ var Graines_spec = (function() {
     };
 
     //Methodes
-    Graines_spec.prototype.Add_Graines = function(name, maturation, pourrissement, production, stockage, croissance, poids, prix, sante_min, niveau_requis){
-        var query = 'INSERT INTO Graines_spec (name, maturation, pourrissement, production, stockage, croissance, poids, prix, sante_min, niveau_requis) VALUES ("'+name+'", '+maturation+', '+pourrissement+', '+production+', '+stockage+', '+croissance+', '+poids+', '+prix+', '+sante_min+', '+niveau_requis+');'
+    Graines_spec.prototype.Add_Graines_spec = function(name, maturation, pourrissement, production, stockage, croissance, poids, prix, sante_min, niveau_requis){
+        var query = 'INSERT INTO Graines_spec (name, maturation, pourrissement, production, stockage, croissance, poids, prix, sante_min, niveau_requis) VALUES ("'+name+'", '+maturation+', '+pourrissement+', '+production+', '+stockage+', '+croissance+', '+poids+', '+prix+', '+sante_min+', '+niveau_requis+');';
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
             console.log("Graines_spec created");
         });
     };
-    /*Graines_spec.prototype.Add_Graines = function(names){
-        var query = 'INSERT INTO Graines_spec (name) VALUES ("'+names+'");'
-        console.log(query);
-        connection.query(query),function(err, rows, fields) {
-            if (err) throw err;
 
-            console.log("Graines_spec created");
-        };
-    };*/
+    Graines_spec.prototype.Delete_Graines_spec = function(id){
+        var query = 'DELETE FROM Graines_spec WHERE id='+id;
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            console.log("Graines_spec deleted");
+        });
+    };
+
     
     //Getters
     Graines_spec.prototype.getId = function() {
@@ -121,8 +121,9 @@ var Graines_spec = (function() {
 })();
 
 exports.Graines_spec = function(){
-	var a = new Graines_spec();
-    a.Add_Graines("test",1,1,1,1,1,1,1,1,1);
+	//var a = new Graines_spec();
+    //a.Add_Graines_spec("test",1,1,1,1,1,1,1,1,1);
+    //a.Delete_Graines_spec(1);
     //a.Add_Graines("test");
-	return a;
+	//return a;
 }
