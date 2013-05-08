@@ -1,5 +1,7 @@
 (function($){
 
+	var socket = io.connect('http://localhost:1337');
+
 	// incoming
 	$("#button_admin").click(function(){
 		$("#div_play").fadeOut('fast');
@@ -21,7 +23,15 @@
 		$(".display_admin .general div").css('display', 'none');
 		$(".display_admin .general .Userlist").slideDown('slow');
 
+		$(".pre_menu div").removeClass('pre_menu_current');
 		$(".bouton_general").addClass("pre_menu_current");
+		$(".menu_general div").removeClass('sub_menu_current');
+		$(".menu_general .Userlist").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Users'
+		});
+		//console.log(users);
 	});
 
 	//go out
@@ -53,6 +63,10 @@
 		$(".bouton_user").removeClass('pre_menu_current');
 		$(".bouton_content").removeClass('pre_menu_current');
 		$(".bouton_general").addClass("pre_menu_current");
+		$(".menu_general div").removeClass('sub_menu_current');
+		$(".menu_general .Userlist").addClass('sub_menu_current');
+
+
 	});
 
 	$(".bouton_user").click(function(){
@@ -73,6 +87,8 @@
 		$(".bouton_user").addClass('pre_menu_current');
 		$(".bouton_content").removeClass('pre_menu_current');
 		$(".bouton_general").removeClass("pre_menu_current");
+		$(".menu_user div").removeClass('sub_menu_current');
+		$(".menu_user .Alliances").addClass('sub_menu_current');
 	});
 
 	$(".bouton_content").click(function(){
@@ -93,6 +109,8 @@
 		$(".bouton_user").removeClass('pre_menu_current');
 		$(".bouton_content").addClass('pre_menu_current');
 		$(".bouton_general").removeClass("pre_menu_current");
+		$(".menu_content div").removeClass('sub_menu_current');
+		$(".menu_content .ArmesSpec").addClass('sub_menu_current');
 	});
 
 	//General menu action
@@ -231,6 +249,36 @@
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .StockagesSpec").slideDown('slow');
 		$(".menu_content .StockagesSpec").addClass('sub_menu_current');
+	});
+
+
+	//réception des bonnes tables
+	socket.on('returnDB', function(data){
+		var str = '';
+		if(data[0] == "Users"){
+			str = '<tr><th>Id</th><th>Pseudo</th><th>email</th><th>Password</th><th>Status</th><th>Ip</th><th>Nb Fertilisants</th><th>Energies</th><th>Energies Max</th><th>Niveau</th><th>Alliance Id</th><th>Argent</th><th>Experience</th></tr>';
+			$('#Users').text('');
+			for(var i = 0; i < data[1].length; i++){
+				str = str+'<tr>';
+				str = str+'<td>'+data[1][i]['id']+'</td>';
+				str = str+'<td>'+data[1][i]['pseudo']+'</td>';
+				str = str+'<td>'+data[1][i]['mail']+'</td>';
+				str = str+'<td>'+data[1][i]['password']+'</td>';
+				str = str+'<td>'+data[1][i]['status']+'</td>';
+				str = str+'<td>'+data[1][i]['ip']+'</td>';
+				str = str+'<td>'+data[1][i]['nb_fertilisants']+'</td>';
+				str = str+'<td>'+data[1][i]['energies']+'</td>';
+				str = str+'<td>'+data[1][i]['energies_max']+'</td>';
+				str = str+'<td>'+data[1][i]['niveau']+'</td>';
+				str = str+'<td>'+data[1][i]['alliance_id']+'</td>';
+				str = str+'<td>'+data[1][i]['argent']+'</td>';
+				str = str+'<td>'+data[1][i]['experience']+'</td>';
+				str = str+'</tr>';
+				console.log(str);
+			}
+			$('#Users').append(str);
+		}
+		
 	});
 
 

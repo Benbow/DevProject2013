@@ -62,4 +62,27 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+
+	//*********************************//
+	//************ For Admin **********//
+	//*********************************//
+
+	socket.on('isAdmin', function(data){
+		
+	});
+
+	socket.on('selectDB', function(data){
+		connection.query('SELECT * FROM '+data.table, function(err, rows, fields) {
+			if (err) throw err;
+			if(rows.length > 0){
+				var retour = new Array(data.table, rows);
+				socket.emit('returnDB', retour);
+				
+			}else{
+				console.log("ERROR selectDB");
+			}
+		});
+	});
+
+
 });
