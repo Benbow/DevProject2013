@@ -84,6 +84,7 @@
 	});
 12
 	socket.on('loadmap', function(map){
+		console.log(map.split(":"));
 		loadmap(map);
 	});
 
@@ -108,7 +109,6 @@
 	};
 
 	var mouseClick = function(x, y) {
-		console.log(x + " / " + y);
 		if(User.isPlanting == true)
 		{
 			ppmap.changeOneMap(x,y,2);
@@ -143,6 +143,7 @@
 		User.isBuilding = false;
 		User.isPlanting = false;
 		ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
+		$(this).parent().toggle('fast');
 	});
 
 })(jQuery);

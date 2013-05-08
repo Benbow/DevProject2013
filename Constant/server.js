@@ -18,11 +18,11 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
-var ClassMap  = require("./js/Map");
+var Map  = require("./js/class/Map");
 var User = require("./js/class/User");
 //var ClassGrainesSpec = require("./js/class/Graines_spec");
 
-var map = ClassMap.Map();
+var map = new Map();
 //var graines = ClassGrainesSpec.Graines_spec();
 
 
@@ -57,7 +57,9 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('newgame', function(data){
-		socket.emit('loadmap', '1,1,1,1,1,1,1,1,1,1:1,1,1,1,1,1,1,1,1,1:1,1,1,1,1,1,1,1,1,1:1,1,1,1,1,1,1,1,1,1:1,1,1,1,1,1,1,1,1,1:1,1,1,1,1,1,1,1,1,1:1,1,1,1,1,1,1,1,1,1:1,1,1,1,1,1,1,1,1,1:1,1,1,1,1,1,1,1,1,1:1,1,1,1,1,1,1,1,1,1');
+		map.getMap(function(socket_map){
+			socket.emit('loadmap', socket_map);
+		});
 	});
 
 });

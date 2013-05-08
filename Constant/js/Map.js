@@ -1,6 +1,10 @@
+var DB = require('./DB');
+
 var Map = (function() {
     // "private" variables 
     var _longeur;
+    var _DB;
+    var _table = "Tiles";
 
     // constructor
     function Map(){};
@@ -14,10 +18,30 @@ var Map = (function() {
         _longeur = L;
     };
 
+    Map.prototype.initialiseMap = function() { 
+        var i = 0,j = 0;
+        setInterval(function(){
+
+            connection.query('INSERT INTO Tiles (id,x,y) VALUES("","' + i + '","' + j + '");');
+            if(j == 50)
+            {
+                if(i == 50)
+                {
+                    return false;
+                    console.log('done');
+                }
+                i++;
+                j=0;
+            }
+            j++;
+        },20);
+    };
+
+    Map.prototype.getMap = function() { 
+
+    };
+
     return Map;
 })();
 
-exports.Map = function(){
-	var a = new Map();
-	return a;
-}
+module.exports = Map;

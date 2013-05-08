@@ -7,24 +7,38 @@ var connection = mysql.createConnection({
 });
 
 var DB = (function() {
+    var connect;
 
-    function DB(){ };
+    function DB(){
+        connect = connection;
+    };
 
-    DB.prototype.insert = function(table,data,colum) {
-        connection.query('INSERT INTO ' + table + '(' + colum + ') VALUES (' + data + ');', function(err, rows, fields) {
+    DB.prototype.connection = function(){
+        return connect;
+    };
+
+    DB.prototype.insert = function(table,colum,data) {
+        connection.query('INSERT INTO ' + table + ' ' + colum + ' VALUES ' + data + ';', function(err, rows, fields) {
             if (err) throw err;
             console.log('insert into' + table + ' done');
         });
     };
 
-    DB.prototype.setL = function(L) {
-        _longeur = L;
+    DB.prototype.selectRequest = function(champs,table,where){
+        if(where == '')
+            where = '1=1';
+        connection.query('SELECT ' + champs + ' FROM ' + table  + ' WHERE ' +  where, function(err, rows, fields) {
+            if (err) throw err;
+           
+            console.log('SELECT in ' + table + ' ok');
+            console.log(rows.length);
+
+            return rows;
+        });
+
     };
 
     return DB;
 })();
 
-exports.DB = function(){
-	var a = new DB();
-	return a;
-}
+module.exports = DB;
