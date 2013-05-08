@@ -82,9 +82,9 @@
 			difficulty : $('input[name=newgame_difficult]:checked').val()
 		});
 	});
-12
+
 	socket.on('loadmap', function(map){
-		console.log(map.split(":"));
+		console.log(map.split(':'));
 		loadmap(map);
 	});
 
