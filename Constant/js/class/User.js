@@ -15,7 +15,7 @@ var User = (function() {
             this._id = id;
             this._pseudo = rows[0].pseudo;
         });
-    };*/
+    };
 
 
    function User(){ };

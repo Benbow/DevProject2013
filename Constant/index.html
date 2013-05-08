@@ -13,11 +13,102 @@
 					<input type="submit" value="" id="submitlogin">
 				</form>			
 			</div>
+			<div id="div_admin">
+				<div id="admin_back">Back</div>
+				<div class="menu_admin">
+					<div class="pre_menu">
+						<div class="bouton_general">General</div>
+						<div class="bouton_user">Gestion Utilisateurs</div>
+						<div class="bouton_content">Gestion Contenu</div>
+					</div>
+					<div class="menu_general">
+						<div class="Userlist">Utilsateurs</div>
+						<div class="UserSpec">Paramètres Utilsateurs</div>
+						<div class="Tiles">Gestion des Tiles</div>
+						<div class="Pluie">Pluie</div>
+						<div class="Tornade">Tornade</div>
+						<div class="Sauterelle">Sauterelle</div>
+						<div class="Meteor">Météorite</div>
+					</div>
+					<div class="menu_user">
+						<div class="Alliances">Alliances</div>
+						<div class="ArmesUser">Armes</div>
+						<div class="ArrosoirsUser">Arrosoirs</div>
+						<div class="EnergiesUser">Bâtiments Energies</div>
+						<div class="FruitsUser">Fruits</div>
+						<div class="GrainesUser">Graines</div>
+						<div class="MaisonsUser">Maisons</div>
+						<div class="PlantesUser">Plantes</div>
+						<div class="StockagesUser">Bâtiments Stockages</div>
+					</div>
+					<div class="menu_content">
+						<div class="ArmesSpec">Armes</div>
+						<div class="ArrosoirsSpec">Arrosoirs</div>
+						<div class="EnergiesSpec">Bâtiments Energies</div>
+						<div class="FruitSpec">Fruits</div>
+						<div class="GrainesSpec">Graines</div>
+						<div class="StockagesSpec">Bâtiments Stockages</div>
+					</div>
+				</div>
+				<div class="display_admin">
+					<div class="general">
+						<div class="Userlist">
+						</div>
+						<div class="UserSpec">
+						</div>
+						<div class="Tiles">
+						</div>
+						<div class="Pluie">
+						</div>
+						<div class="Tornade">
+						</div>
+						<div class="Sauterelle">
+						</div>
+						<div class="Meteor">
+						</div>
+					</div>
+					<div class="user">
+						<div class="Alliances">
+						</div>
+						<div class="ArmesUser">
+						</div>
+						<div class="ArrosoirsUser">
+						</div>
+						<div class="EnergiesUser">
+						</div>
+						<div class="FruitsUser">
+						</div>
+						<div class="GrainesUser">
+						</div>
+						<div class="MaisonsUser">
+						</div>
+						<div class="PlantesUser">
+						</div>
+						<div class="StockagesUser">
+						</div>
+					</div>
+					<div class="contenu">
+						<div class="ArmesSpec">
+						</div>
+						<div class="ArrosoirsSpec">
+						</div>
+						<div class="EnergiesSpec">
+						</div>
+						<div class="FruitSpec">
+						</div>
+						<div class="GrainesSpec">
+						</div>
+						<div class="StockagesSpec">
+						</div>
+					</div>
+				</div>
+			</div>
 			<div id="div_play">
 				<div id="ppISO"></div>
 			</div>
 			<div id="div_begin">
 				<div>Bienvenue, <span id="menu_username"></span>.</div>
+				<div id="button_admin">Panel Administrateur</div>
 				<div id="menu_partie"><br>
 					<div>Continuer votre partie ? <input type="button" value="Jouer" id="continue_game" /></div><br>
 					<div>Creer une nouvelle partie ? <input type="button" value="Creer" id="new_game"/></div>			
@@ -70,4 +161,5 @@
 	<script type="text/javascript" src="http://localhost:1337/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="js/include/pp3diso.js"></script>
 	<script type="text/javascript" src="js/client.js"></script>
+	<script type="text/javascript" src="js/admin.js"></script>
 </html>

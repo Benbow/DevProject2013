@@ -136,3 +136,38 @@
 	width: 150px;
 	margin-bottom: 3px;
 }
+
+
+
+/**********************************/
+/************* For Admin **********/
+/**********************************/
+
+#div_admin{
+	display: none;
+}
+
+#button_admin{
+	cursor: default;
+	background-color: green;
+	color: red;
+}
+
+#button_admin:hover{
+	cursor: pointer;
+	background-color: red;
+	color: green;
+}
+
+#admin_back{
+	cursor: default;
+	background-color: green;
+	color: red;
+}
+
+#admin_back:hover{
+	cursor: pointer;
+	background-color: red;
+	color: green;
+}
+
