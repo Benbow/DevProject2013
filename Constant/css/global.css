@@ -151,6 +151,8 @@
 	cursor: default;
 	background-color: green;
 	color: red;
+	width : 200px;
+	text-align: center;
 }
 
 #button_admin:hover{
@@ -163,6 +165,8 @@
 	cursor: default;
 	background-color: green;
 	color: red;
+	width: 100px;
+	text-align: center;
 }
 
 #admin_back:hover{
@@ -171,3 +175,42 @@
 	color: green;
 }
 
+.pre_menu div{
+	cursor: default;
+	background-color: gray;
+	color: white;
+	margin: 5px;
+}
+
+.pre_menu div:hover{
+	cursor: pointer;
+	background-color: black;
+	color: white;
+}
+
+.menu_general div, .menu_user div, .menu_content div{
+	cursor: default;
+	background-color: blue;
+	color: white;
+	margin: 5px;
+}
+
+.menu_general div:hover, .menu_user div:hover, .menu_content div:hover{
+	cursor: pointer;
+	background-color: green;
+	color: white;
+}
+
+.pre_menu div, .menu_general div, .menu_user div, .menu_content div{
+	display: inline-block;
+}
+
+.pre_menu_current{
+	background-color: black!important;
+	color: white!important;
+}
+
+.sub_menu_current{
+	background-color: green!important;
+	color: white!important;
+}
