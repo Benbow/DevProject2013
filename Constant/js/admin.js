@@ -66,7 +66,9 @@
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".menu_general .Userlist").addClass('sub_menu_current');
 
-
+		var users = socket.emit('selectDB', {
+			table : 'Users'
+		});
 	});
 
 	$(".bouton_user").click(function(){
@@ -89,6 +91,10 @@
 		$(".bouton_general").removeClass("pre_menu_current");
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".menu_user .Alliances").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Alliances'
+		});
 	});
 
 	$(".bouton_content").click(function(){
@@ -111,6 +117,10 @@
 		$(".bouton_general").removeClass("pre_menu_current");
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".menu_content .ArmesSpec").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Armes_spec'
+		});
 	});
 
 	//General menu action
@@ -119,6 +129,10 @@
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Userlist").slideDown('slow');
 		$(".menu_general .Userlist").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Users'
+		});
 	});
 	$(".menu_general .UserSpec").click(function(){
 		$(".display_admin .general div").css('display', 'none');
@@ -131,30 +145,50 @@
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Tiles").slideDown('slow');
 		$(".menu_general .Tiles").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Tiles'
+		});
 	});
 	$(".menu_general .Pluie").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Pluie").slideDown('slow');
 		$(".menu_general .Pluie").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Pluie'
+		});
 	});
 	$(".menu_general .Tornade").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Tornade").slideDown('slow');
 		$(".menu_general .Tornade").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Tornade'
+		});
 	});
 	$(".menu_general .Sauterelle").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Sauterelle").slideDown('slow');
 		$(".menu_general .Sauterelle").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Sauterelles'
+		});
 	});
 	$(".menu_general .Meteor").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Meteor").slideDown('slow');
 		$(".menu_general .Meteor").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Meteor'
+		});
 	});
 
 	//User Content Actions
@@ -163,54 +197,90 @@
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .Alliances").slideDown('slow');
 		$(".menu_user .Alliances").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Alliances'
+		});
 	});
 	$(".menu_user .ArmesUser").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .ArmesUser").slideDown('slow');
 		$(".menu_user .ArmesUser").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Armes'
+		});
 	});
 	$(".menu_user .ArrosoirsUser").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .ArrosoirsUser").slideDown('slow');
 		$(".menu_user .ArrosoirsUser").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Arrosoirs'
+		});
 	});
 	$(".menu_user .EnergiesUser").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .EnergiesUser").slideDown('slow');
 		$(".menu_user .EnergiesUser").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Energies'
+		});
 	});
 	$(".menu_user .FruitsUser").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .FruitsUser").slideDown('slow');
 		$(".menu_user .FruitsUser").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Fruits'
+		});
 	});
 	$(".menu_user .GrainesUser").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .GrainesUser").slideDown('slow');
 		$(".menu_user .GrainesUser").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Graines'
+		});
 	});
 	$(".menu_user .MaisonsUser").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .MaisonsUser").slideDown('slow');
 		$(".menu_user .MaisonsUser").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Maisons'
+		});
 	});
 	$(".menu_user .PlantesUser").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .PlantesUser").slideDown('slow');
 		$(".menu_user .PlantesUser").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Plantes'
+		});
 	});
 	$(".menu_user .StockagesUser").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .StockagesUser").slideDown('slow');
 		$(".menu_user .StockagesUser").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Stockages'
+		});
 	});
 
 	//Content Actions
@@ -219,36 +289,60 @@
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .ArmesSpec").slideDown('slow');
 		$(".menu_content .ArmesSpec").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Armes_spec'
+		});
 	});
 	$(".menu_content .ArrosoirsSpec").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .ArrosoirsSpec").slideDown('slow');
 		$(".menu_content .ArrosoirsSpec").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Arrosoirs_spec'
+		});
 	});
 	$(".menu_content .EnergiesSpec").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .EnergiesSpec").slideDown('slow');
 		$(".menu_content .EnergiesSpec").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Energies_spec'
+		});
 	});
 	$(".menu_content .FruitSpec").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .FruitSpec").slideDown('slow');
 		$(".menu_content .FruitSpec").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Fruits_spec'
+		});
 	});
 	$(".menu_content .GrainesSpec").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .GrainesSpec").slideDown('slow');
 		$(".menu_content .GrainesSpec").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Graines_spec'
+		});
 	});
 	$(".menu_content .StockagesSpec").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .StockagesSpec").slideDown('slow');
 		$(".menu_content .StockagesSpec").addClass('sub_menu_current');
+
+		var users = socket.emit('selectDB', {
+			table : 'Stockages_spec'
+		});
 	});
 
 
@@ -256,6 +350,29 @@
 	socket.on('returnDB', function(data){
 		var str = '';
 		if(data[0] == "Users"){
+			str = '<tr><th>Id</th><th>Pseudo</th><th>email</th><th>Password</th><th>Status</th><th>Ip</th><th>Nb Fertilisants</th><th>Energies</th><th>Energies Max</th><th>Niveau</th><th>Alliance Id</th><th>Argent</th><th>Experience</th></tr>';
+			$('#Users').text('');
+			for(var i = 0; i < data[1].length; i++){
+				str = str+'<tr>';
+				str = str+'<td>'+data[1][i]['id']+'</td>';
+				str = str+'<td>'+data[1][i]['pseudo']+'</td>';
+				str = str+'<td>'+data[1][i]['mail']+'</td>';
+				str = str+'<td>'+data[1][i]['password']+'</td>';
+				str = str+'<td>'+data[1][i]['status']+'</td>';
+				str = str+'<td>'+data[1][i]['ip']+'</td>';
+				str = str+'<td>'+data[1][i]['nb_fertilisants']+'</td>';
+				str = str+'<td>'+data[1][i]['energies']+'</td>';
+				str = str+'<td>'+data[1][i]['energies_max']+'</td>';
+				str = str+'<td>'+data[1][i]['niveau']+'</td>';
+				str = str+'<td>'+data[1][i]['alliance_id']+'</td>';
+				str = str+'<td>'+data[1][i]['argent']+'</td>';
+				str = str+'<td>'+data[1][i]['experience']+'</td>';
+				str = str+'</tr>';
+				console.log(str);
+			}
+			$('#Users').append(str);
+		}
+		else if(data[0] == "Users_level_spec"){
 			str = '<tr><th>Id</th><th>Pseudo</th><th>email</th><th>Password</th><th>Status</th><th>Ip</th><th>Nb Fertilisants</th><th>Energies</th><th>Energies Max</th><th>Niveau</th><th>Alliance Id</th><th>Argent</th><th>Experience</th></tr>';
 			$('#Users').text('');
 			for(var i = 0; i < data[1].length; i++){

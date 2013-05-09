@@ -3,11 +3,11 @@ var DB = require('./DB');
 var Map = (function() {
     // "private" variables 
     var _longeur;
-    var _DB = new DB();
+    var _DB;
     var _table = "Tiles";
 
     // constructor
-    function Map(){ };
+    function Map(){};
 
     // add the methods to the prototype so that all of the 
     // Map instances can access the private static
@@ -21,7 +21,8 @@ var Map = (function() {
     Map.prototype.initialiseMap = function() { 
         var i = 0,j = 0;
         setInterval(function(){
-            _DB.insert(_table, '(id,x,y)', '("","' + i + '","' + j + '")');
+
+            connection.query('INSERT INTO Tiles (id,x,y) VALUES("","' + i + '","' + j + '");');
             if(j == 50)
             {
                 if(i == 50)
@@ -30,29 +31,14 @@ var Map = (function() {
                     console.log('done');
                 }
                 i++;
-                j=-1;
+                j=0;
             }
             j++;
         },20);
     };
 
-    Map.prototype.getMap = function(callback) {
-        var connection = _DB.connection();
-        connection.query('SELECT * FROM Tiles', function(err,rows,fields){
-            if(err) throw err;
-            var check = 0;
-            var string_map = '';
-            for(var i = 0;i < rows.length;i++)
-            {
-                string_map += rows[i].sprite_id + ((check < 50) ? "," : ((rows[i].x == 50) ? "" : ":"));
-                if(check == 50)
-                {
-                    check = 0;
-                }
-                check++;
-            }
-            callback(string_map);
-        });
+    Map.prototype.getMap = function() { 
+
     };
 
     return Map;
