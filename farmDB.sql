@@ -134,6 +134,7 @@ CREATE  TABLE IF NOT EXISTS `farmDB`.`Tiles` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `x` INT NULL ,
   `y` INT NULL ,
+  `sprite_id` INT NOT NULL DEFAULT  '1',
   `isEmpty` TINYINT NULL ,
   `humidite` INT NULL ,
   `fertilite` INT NULL ,

@@ -64,6 +64,12 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	socket.on('continue_game', function(data){
+		map.getMap(function(socket_map){
+			socket.emit('loadmap', socket_map);
+		});
+	});
+
 
 	//*********************************//
 	//************ For Admin **********//

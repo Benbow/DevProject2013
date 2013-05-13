@@ -52,21 +52,39 @@ var Map = (function() {
 
     Map.prototype.getMap = function(callback) { 
         var connection = _DB.connection();
+        var string_map = {
+            'map' : '',
+            'storage' : {}
+        };
         connection.query('SELECT * FROM Tiles', function(err,rows,fields){
             if(err) throw err;
             var check = 0;
-            var string_map = '';
             for(var i = 0;i < rows.length;i++)
             {
-                string_map += rows[i].sprite_id + ((check < 50) ? "," : ((rows[i].x == 50) ? "" : ":"));
+                string_map.map += rows[i].sprite_id + ((check < 50) ? "," : ((rows[i].x == 50) ? "" : ":"));
                 if(check == 50)
                 {
                     check = -1;
                 }
                check++;
             }
+        });
+
+        connection.query('SELECT t.x as x, t.y as y, s.id as id FROM Stockages as s LEFT JOIN Tiles as t ON s.tile_id = t.id', function(err,rows,fields){
+            if(err) throw err;
+            for(var i = 0;i < rows.length;i++)
+            {
+                string_map.storage[i] = {
+                    'x': rows[i].x,
+                    'y': rows[i].y,
+                    'id': rows[i].id
+                };
+            }
+
+            console.log(string_map);
             callback(string_map);
         });
+
     };
 
     return Map;

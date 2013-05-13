@@ -83,14 +83,23 @@
 		});
 	});
 
+	//Lorsque l'on continue notre partie
+	$("#continue_game").click(function(){
+		$("#div_begin").fadeOut('slow');
+		$("#overlay").fadeOut('slow');
+		socket.emit('continue_game', {
+			username : $("#menu_username").html()
+		});
+	});
+
 	socket.on('loadmap', function(map){
-		console.log(map.split(':'));
-		loadmap(map);
+		console.log(map);
+		//loadmap(map);
 	});
 
 	var loadmap = function(map) {
 		ppmap = $('#ppISO').pp3Diso({
-	        map: 		 map,       // la map
+	        map: 		 map.map,       // la map
 	        mapId: 		 1,         // id de la map
 	        tx: 		 256,       // dimension x des tuiles
 	        ty: 		 128,       // dimension y des tuiles
@@ -105,7 +114,6 @@
 	    });
 		ppmap.avatar(2, 2, 'images/sprite.png', 15, -30, true, 4); //notre avatar
 		ppmap.cursor('images/cursor-on.png', 'images/cursor-off.png', 0, 0); //notre curseur
-
 	};
 
 	var mouseClick = function(x, y) {
