@@ -42,7 +42,4 @@ var Graines = (function() {
     return Graines;
 })();
 
-exports.Graines = function(){
-	var a = new Graines();
-	return a;
-}
+module.exports = Graines;

@@ -50,7 +50,7 @@ var Map = (function() {
                 string_map += rows[i].sprite_id + ((check < 50) ? "," : ((rows[i].x == 50) ? "" : ":"));
                 if(check == 50)
                 {
-                    check = 0;
+                    check = -1;
                 }
                check++;
             }
