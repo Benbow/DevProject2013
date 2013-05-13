@@ -7,7 +7,9 @@ var Map = (function() {
     var _table = "Tiles";
 
     // constructor
-    function Map(){};
+    function Map(){
+        _DB = new DB();
+    };
 
     // add the methods to the prototype so that all of the 
     // Map instances can access the private static
