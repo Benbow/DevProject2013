@@ -40,7 +40,6 @@ io.sockets.on('connection', function(socket){
 		//On va chercher en bdd si le username existe.
 		user.loginUser(datalogin.username,datalogin.password,function(socket_user){
 			socket.emit('logginUser', socket_user);
-			console.log(socket_user[1] + "lol");
 			if(socket_user[1] != null) // true si le username existe
             {
 				if(socket_user[2] == datalogin.password)// On check le password
@@ -57,7 +56,7 @@ io.sockets.on('connection', function(socket){
 	});
 		
 		
-	
+
 
 	socket.on('newgame', function(data){
 		map.getMap(function(socket_map){

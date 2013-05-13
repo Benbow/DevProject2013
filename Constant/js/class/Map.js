@@ -16,6 +16,7 @@ var Map = (function() {
     Map.prototype.getL = function() {
         return _longeur;
     };
+
     Map.prototype.setL = function(L) {
         _longeur = L;
     };
@@ -38,6 +39,16 @@ var Map = (function() {
             j++;
         },20);
     };
+
+
+    Map.prototype.saveMap = function(x,y,id) {
+    
+        var connection = _DB.connection();
+        connection.query('UPDATE Tiles SET x=' + x + ' y=' + y + 'sprite_id=' + id + ' ;' , function(err,rows,fields){
+            if(err) throw err;
+        });
+    };
+
 
     Map.prototype.getMap = function(callback) { 
         var connection = _DB.connection();
