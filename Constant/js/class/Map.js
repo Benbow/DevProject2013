@@ -21,7 +21,7 @@ var Map = (function() {
     Map.prototype.initialiseMap = function() { 
         var i = 0,j = 0;
         setInterval(function(){
-
+            var connection = _DB.connection();
             connection.query('INSERT INTO Tiles (id,x,y) VALUES("","' + i + '","' + j + '");');
             if(j == 50)
             {
@@ -37,8 +37,23 @@ var Map = (function() {
         },20);
     };
 
-    Map.prototype.getMap = function() { 
-
+    Map.prototype.getMap = function(callback) { 
+        var connection = _DB.connection();
+        connection.query('SELECT * FROM Tiles', function(err,rows,fields){
+            if(err) throw err;
+            var check = 0;
+            var string_map = '';
+            for(var i = 0;i < rows.length;i++)
+            {
+                string_map += rows[i].sprite_id + ((check < 50) ? "," : ((rows[i].x == 50) ? "" : ":"));
+                if(check == 50)
+                {
+                    check = 0;
+                }
+               check++;
+            }
+            callback(string_map);
+        });
     };
 
     return Map;
