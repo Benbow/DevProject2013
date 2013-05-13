@@ -74,7 +74,6 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('selectDB', function(data){
-		console.log(data.table);
 		connection.query('SELECT * FROM '+data.table, function(err, rows, fields) {
 			if (err) throw err;
 			if(rows.length > 0){
