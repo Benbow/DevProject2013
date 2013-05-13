@@ -88,5 +88,24 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	socket.on('DeleteDB', function(data){
+		console.log(data);
+		connection.query('DELETE FROM '+data.table+' WHERE id='+data.id, function(err, rows, fields) {
+			if (err) throw err;
+		});
+
+		connection.query('SELECT * FROM '+data.table, function(err, rows, fields) {
+			if (err) throw err;
+			if(rows.length > 0){
+				var retour = new Array(data.table, rows);
+				socket.emit('returnDB', retour);
+				
+			}else{
+				var retour = new Array(data.table, 'empty');
+				socket.emit('returnDB', retour);
+			}
+		});
+	});
+
 
 });
