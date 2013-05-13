@@ -36,25 +36,28 @@ io.sockets.on('connection', function(socket){
 
 	// Action quand un utilisateur essaie de se connecter.
 	socket.on('login', function(datalogin){
+		var user = new User();
 		//On va chercher en bdd si le username existe.
-		connection.query('SELECT * FROM Users WHERE pseudo = "' + datalogin.username + '"', function(err, rows, fields) {
-			if (err) throw err;
-			if(rows.length > 0) // true si le username existe
-			{
-				if(rows[0].password == datalogin.password) // On check le password
+		user.loginUser(datalogin.username,datalogin.password,function(socket_user){
+			socket.emit('logginUser', socket_user);
+			console.log(socket_user[1] + "lol");
+			if(socket_user[1] != null) // true si le username existe
+            {
+				if(socket_user[2] == datalogin.password)// On check le password
 				{
-					socket.emit('valid', 'Connected !');
-					var test = new User(rows[0].id);
-					socket.emit('connected', test.getPseudo);
+					socket.emit('valid', 'Connected !');                
+                    socket.emit('connected', user.getPseudo);
 				}
 				else
-					socket.emit('error', 'Wrong password !');
-			}
-			else
-				socket.emit('error', 'Bad username !');
-
+                    socket.emit('error', 'Wrong password !');
+            }
+            else
+                socket.emit('error', 'Bad username !');
 		});
 	});
+		
+		
+	
 
 	socket.on('newgame', function(data){
 		map.getMap(function(socket_map){
