@@ -393,7 +393,7 @@
 			$('#Users').append(str);
 		}
 		else if(data[0] == "Users_level_spec"){
-			str = '<tr><th>Id</th><th>Tile next level</th><th>Conquete timer</th><th>Wait conquete timer</th><th>resistance</th><th>Resistance</th><th>Victory Timer</th><th>Win regen</th><th>Lose Regen</th><th>Action</th></tr>';
+			str = '<tr><th>Id</th><th>Tile next level</th><th>Conquete timer</th><th>Wait conquete timer</th><th>Resistance</th><th>Victory Timer</th><th>Win regen</th><th>Lose Regen</th><th>Action</th></tr>';
 			$('#Users_level_spec').text('');
 			if(data[1] != 'empty'){
 				for(var i = 0; i < data[1].length; i++){
@@ -414,7 +414,7 @@
 			$('#Users_level_spec').append(str);
 		}
 		else if(data[0] == "Tiles"){
-			str = '<tr><th>Id</th><th>Coord X</th><th>Coord Y</th><th>Empty</th><th>Humidite</th><th>Fertilite</th><th>Visible</th><th>User ID</th><th>Action</th></tr>';
+			str = '<tr><th>Id</th><th>Coord X</th><th>Coord Y</th><th>Sprite ID</th><th>Empty</th><th>Humidite</th><th>Fertilite</th><th>Visible</th><th>User ID</th><th>Action</th></tr>';
 			$('#Tiles').text('');
 			if(data[1] != 'empty'){
 				for(var i = 0; i < data[1].length; i++){
@@ -444,12 +444,13 @@
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
 					str = str+'<td>'+data[1][i]['id']+'</td>';
 					str = str+'<td>'+data[1][i]['isActive']+'</td>';
-					str = str+'<td>'+data[1][i]['origin_Tile_id']+'</td>';
+					str = str+'<td>'+data[1][i]['origin_tile_id']+'</td>';
 					str = str+'<td>'+data[1][i]['longueur']+'</td>';
 					str = str+'<td>'+data[1][i]['largeur']+'</td>';
 					str = str+'<td>'+data[1][i]['duree']+'</td>';
 					str = str+'<td>'+data[1][i]['x']+'</td>';
 					str = str+'<td>'+data[1][i]['y']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -464,14 +465,15 @@
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
 					str = str+'<td>'+data[1][i]['id']+'</td>';
 					str = str+'<td>'+data[1][i]['isActive']+'</td>';
-					str = str+'<td>'+data[1][i]['origin_Tile_id']+'</td>';
+					str = str+'<td>'+data[1][i]['origin_tile_id']+'</td>';
 					str = str+'<td>'+data[1][i]['vectorX']+'</td>';
-					str = str+'<td>'+data[1][i]['VectorY']+'</td>';
+					str = str+'<td>'+data[1][i]['vectorY']+'</td>';
 					str = str+'<td>'+data[1][i]['longueur']+'</td>';
 					str = str+'<td>'+data[1][i]['largeur']+'</td>';
 					str = str+'<td>'+data[1][i]['duree']+'</td>';
 					str = str+'<td>'+data[1][i]['x']+'</td>';
 					str = str+'<td>'+data[1][i]['y']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -486,36 +488,15 @@
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
 					str = str+'<td>'+data[1][i]['id']+'</td>';
 					str = str+'<td>'+data[1][i]['isActive']+'</td>';
-					str = str+'<td>'+data[1][i]['origin_Tile_id']+'</td>';
+					str = str+'<td>'+data[1][i]['origin_tile_id']+'</td>';
 					str = str+'<td>'+data[1][i]['vectorX']+'</td>';
-					str = str+'<td>'+data[1][i]['VectorY']+'</td>';
+					str = str+'<td>'+data[1][i]['vectorY']+'</td>';
 					str = str+'<td>'+data[1][i]['longueur']+'</td>';
 					str = str+'<td>'+data[1][i]['largeur']+'</td>';
 					str = str+'<td>'+data[1][i]['duree']+'</td>';
 					str = str+'<td>'+data[1][i]['x']+'</td>';
 					str = str+'<td>'+data[1][i]['y']+'</td>';
-					str = str+'</tr>';
-				}
-			}
-			$('#Sauterelles').append(str);
-		}
-		else if(data[0] == "Sauterelles"){
-			str = '<tr><th>Id</th><th>Active</th><th>Origin Tile ID</th><th>Vector X</th><th>Vector Y</th><th>Longueur</th><th>Largeur</th><th>duree</th><th>Coord X</th><th>Coord Y</th><th>Action</th></tr>';
-			$('#Sauterelles').text('');
-			if(data[1] != 'empty'){
-				for(var i = 0; i < data[1].length; i++){
-					var id = data[1][i]['id'];
-					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['isActive']+'</td>';
-					str = str+'<td>'+data[1][i]['origin_Tile_id']+'</td>';
-					str = str+'<td>'+data[1][i]['vectorX']+'</td>';
-					str = str+'<td>'+data[1][i]['VectorY']+'</td>';
-					str = str+'<td>'+data[1][i]['longueur']+'</td>';
-					str = str+'<td>'+data[1][i]['largeur']+'</td>';
-					str = str+'<td>'+data[1][i]['duree']+'</td>';
-					str = str+'<td>'+data[1][i]['x']+'</td>';
-					str = str+'<td>'+data[1][i]['y']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -530,12 +511,13 @@
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
 					str = str+'<td>'+data[1][i]['id']+'</td>';
 					str = str+'<td>'+data[1][i]['isActive']+'</td>';
-					str = str+'<td>'+data[1][i]['origin_Tile_id']+'</td>';
+					str = str+'<td>'+data[1][i]['origin_tile_id']+'</td>';
 					str = str+'<td>'+data[1][i]['longueur']+'</td>';
 					str = str+'<td>'+data[1][i]['largeur']+'</td>';
 					str = str+'<td>'+data[1][i]['duree']+'</td>';
 					str = str+'<td>'+data[1][i]['x']+'</td>';
 					str = str+'<td>'+data[1][i]['y']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -551,6 +533,7 @@
 					str = str+'<td>'+data[1][i]['id']+'</td>';
 					str = str+'<td>'+data[1][i]['name']+'</td>';
 					str = str+'<td>'+data[1][i]['master_user_id']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -566,6 +549,7 @@
 					str = str+'<td>'+data[1][i]['id']+'</td>';
 					str = str+'<td>'+data[1][i]['user_id']+'</td>';
 					str = str+'<td>'+data[1][i]['armes_spec_id']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -581,6 +565,7 @@
 					str = str+'<td>'+data[1][i]['id']+'</td>';
 					str = str+'<td>'+data[1][i]['user_id']+'</td>';
 					str = str+'<td>'+data[1][i]['arrosoirs_spec_id']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -598,6 +583,7 @@
 					str = str+'<td>'+data[1][i]['user_id']+'</td>';
 					str = str+'<td>'+data[1][i]['energies_spec_id']+'</td>';
 					str = str+'<td>'+data[1][i]['tile_id']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -614,6 +600,7 @@
 					str = str+'<td>'+data[1][i]['nb']+'</td>';
 					str = str+'<td>'+data[1][i]['user_id']+'</td>';
 					str = str+'<td>'+data[1][i]['fruits_spec_id']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -630,6 +617,7 @@
 					str = str+'<td>'+data[1][i]['nb']+'</td>';
 					str = str+'<td>'+data[1][i]['user_id']+'</td>';
 					str = str+'<td>'+data[1][i]['graines_spec_id']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -645,6 +633,7 @@
 					str = str+'<td>'+data[1][i]['id']+'</td>';
 					str = str+'<td>'+data[1][i]['tile_id']+'</td>';
 					str = str+'<td>'+data[1][i]['user_id']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -663,6 +652,7 @@
 					str = str+'<td>'+data[1][i]['user_id']+'</td>';
 					str = str+'<td>'+data[1][i]['graines_spec_id']+'</td>';
 					str = str+'<td>'+data[1][i]['tile_id']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -681,6 +671,7 @@
 					str = str+'<td>'+data[1][i]['user_id']+'</td>';
 					str = str+'<td>'+data[1][i]['stockages_spec_id']+'</td>';
 					str = str+'<td>'+data[1][i]['tile_id']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -699,6 +690,7 @@
 					str = str+'<td>'+data[1][i]['precision']+'</td>';
 					str = str+'<td>'+data[1][i]['vitesse']+'</td>';
 					str = str+'<td>'+data[1][i]['prix']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -715,6 +707,7 @@
 					str = str+'<td>'+data[1][i]['name']+'</td>';
 					str = str+'<td>'+data[1][i]['prix']+'</td>';
 					str = str+'<td>'+data[1][i]['stockage']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -733,6 +726,7 @@
 					str = str+'<td>'+data[1][i]['constructionTime']+'</td>';
 					str = str+'<td>'+data[1][i]['production']+'</td>';
 					str = str+'<td>'+data[1][i]['niveau_requis']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -750,6 +744,7 @@
 					str = str+'<td>'+data[1][i]['prix_vente']+'</td>';
 					str = str+'<td>'+data[1][i]['stockage']+'</td>';
 					str = str+'<td>'+data[1][i]['poids']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -773,6 +768,7 @@
 					str = str+'<td>'+data[1][i]['prix']+'</td>';
 					str = str+'<td>'+data[1][i]['sante_min']+'</td>';
 					str = str+'<td>'+data[1][i]['niveau_requis']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
@@ -793,6 +789,7 @@
 					str = str+'<td>'+data[1][i]['consommation']+'</td>';
 					str = str+'<td>'+data[1][i]['constructionTime']+'</td>';
 					str = str+'<td>'+data[1][i]['niveau_requis']+'</td>';
+					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
 			}
