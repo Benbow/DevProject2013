@@ -370,11 +370,25 @@
 
 	$("body").on({
 		click:function(){
-			$(this).parent().$('input').replaceWith($('<span>').attr({ value: $(this).text(), id: $(this).attr('id') }));
+			$parent = $(this).parent();
+			$val = $parent.children('input').val();
+			$id = $parent.children('input').attr('id');
+
+			var data = $id;
+		    var Table = data.split('-')[0];
+		    var Column = data.split('-')[1];
+		    var Id = data.split('-')[2];
+		   	socket.emit('UpdateDB', {
+				table : Table,
+				column : Column,
+				id : Id,
+				val : $val
+			});
+
+			$parent.children('input').replaceWith($('<span>').attr({ id: $id }));
+			$(this).remove();
 	    }
 	}, ".update");
-
-
 	//réception des bonnes tables
 	socket.on('returnDB', function(data){
 		var str = '';
