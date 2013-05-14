@@ -148,6 +148,7 @@
 }
 
 #button_admin{
+	display: none;
 	cursor: default;
 	background-color: green;
 	color: red;

@@ -70,6 +70,11 @@
 		$("#overlay").fadeIn('slow');
 	});
 
+	//Action lorsqu'on est admin
+	socket.on('isAdmin', function(){
+		$("#button_admin").fadeIn('fast');
+	});
+
 	//Lorsque l'on souhaite faire une nouvelle partie
 	$("#new_game").click(function(){
 		$("#liste_difficult").fadeIn('fast');

@@ -24,6 +24,7 @@ var User = (function() {
             userInfo[1] = rows[0].mail;
             userInfo[2] = rows[0].password;
             userInfo[3] = rows[0].id;
+            userInfo[4] = rows[0].status;
                
             callback(userInfo);             
         });

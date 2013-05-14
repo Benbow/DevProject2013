@@ -51,6 +51,11 @@ io.sockets.on('connection', function(socket){
                     socket.emit('connected', {
                     	'pseudo': user.getPseudo()
                     });
+                    if(socket_user[4]){
+                    	if(socket_user[4] == 2){
+                    		socket.emit('isAdmin');
+                    	}
+                    }
 				}
 				else
                     socket.emit('error', 'Wrong password !');
