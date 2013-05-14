@@ -11,14 +11,17 @@
 		name : '',
 		sprite : {
 			silo : {
+				id : 1,
 				decX : 0,
 				decY : -150
 			},
 			grange : {
+				id : 2,
 				decX : -128,
 				decY : -378
 			},
 			chambre : {
+				id : 3,
 				decX : -128,
 				decY : -292
 			}
@@ -32,7 +35,7 @@
 		event.preventDefault();
 		//Envoie de l'action pour se connecter
 		socket.emit('login', {
-			username : $("#username").val(),
+			mail : $("#mail").val(),
 			password : $("#password").val()
 		});
 		return false;
@@ -58,8 +61,9 @@
 	});
 
 	// Action lorsque la connection reussie.
-	socket.on('connected', function(pseudo){
-		$("#menu_username").html(pseudo);
+	socket.on('connected', function(user){
+		console.log(user)
+		$("#menu_username").html(user.pseudo);
 		$("#div_login").slideUp('fast');
 		$("#div_play").fadeIn('slow');
 		$("#div_menu").fadeIn('slow');
@@ -93,8 +97,7 @@
 	});
 
 	socket.on('loadmap', function(map){
-		console.log(map);
-		//loadmap(map);
+		loadmap(map);
 	});
 
 	var loadmap = function(map) {
@@ -112,6 +115,19 @@
 	            mouseClick(x, y);// Fonction que l'on fait quand on clique pour bouger le perso
 	        }
 	    });
+
+		//Mise en place des batiments quand tu load la map.
+	    $.each(map.storage, function(index, value) {
+	    	if(value.id == 1)
+	    		Batiment.name = 'silo';
+	    	else if (value.id == 2)
+	    		Batiment.name = 'grange';
+	    	else if (value.id == 3)
+	    		Batiment.name = 'chambre';
+
+		    ppmap.addBuilding(value.x, value.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
+		});
+
 		ppmap.avatar(2, 2, 'images/sprite.png', 15, -30, true, 4); //notre avatar
 		ppmap.cursor('images/cursor-on.png', 'images/cursor-off.png', 0, 0); //notre curseur
 	};
@@ -124,6 +140,11 @@
 		else if(User.isBuilding == true)
 		{
 			ppmap.addBuilding(x, y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
+			socket.emit('newstorage', {
+				x: x,
+				y: y,
+				id: Batiment.sprite[Batiment.name].id
+			});
 		}
 	};
 

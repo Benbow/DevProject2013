@@ -13,26 +13,30 @@ var User = (function() {
     };
 
 
-     User.prototype.loginUser = function(mail,password,callback) {
-          var connection = _DB.connection();
-          var userInfo = new Array();
+    User.prototype.loginUser = function(mail,password,callback) {
+        var connection = _DB.connection();
+        var userInfo = new Array();
        
-         var user = connection.query('SELECT * FROM Users WHERE mail = "' +  mail + '";',function(err,rows,fields){
+        var user = connection.query('SELECT * FROM Users WHERE mail = "' +  mail + '";',function(err,rows,fields){
             if(err) throw err;
                            
-                for(var i = 0;i < rows.length;i++)
-                    {
-                        userInfo[0] = rows[i].pseudo;
-                        userInfo[1] = rows[i].mail;
-                        userInfo[2] = rows[i].password;
-                    }
+            for(var i = 0;i < rows.length;i++)
+            {
+                userInfo[0] = rows[i].pseudo;
+                userInfo[1] = rows[i].mail;
+                userInfo[2] = rows[i].password;
+            }
                
-                 callback(userInfo);             
-            });
-      };
+            callback(userInfo);             
+        });
+    };
 
     User.prototype.getPseudo = function(){
         return this._pseudo;
+    };
+
+    User.prototype.setPseudo = function(pseudo){
+        this._pseudo = pseudo;
     };
 
     return User;
