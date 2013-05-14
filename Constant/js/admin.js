@@ -361,6 +361,18 @@
 	    }
 	}, ".delete");
 
+	$("body").on({
+		click:function(){
+			$(this).parent().append('<button class="update">OK</button>');
+		    $(this).replaceWith($('<input type=text>').attr({ value: $(this).text(), id: $(this).attr('id') }));
+	    }
+	}, "span");
+
+	$("body").on({
+		click:function(){
+			$(this).parent().$('input').replaceWith($('<span>').attr({ value: $(this).text(), id: $(this).attr('id') }));
+	    }
+	}, ".update");
 
 
 	//réception des bonnes tables
@@ -373,19 +385,19 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['pseudo']+'</td>';
-					str = str+'<td>'+data[1][i]['mail']+'</td>';
-					str = str+'<td>'+data[1][i]['password']+'</td>';
-					str = str+'<td>'+data[1][i]['status']+'</td>';
-					str = str+'<td>'+data[1][i]['ip']+'</td>';
-					str = str+'<td>'+data[1][i]['nb_fertilisants']+'</td>';
-					str = str+'<td>'+data[1][i]['energies']+'</td>';
-					str = str+'<td>'+data[1][i]['energies_max']+'</td>';
-					str = str+'<td>'+data[1][i]['niveau']+'</td>';
-					str = str+'<td>'+data[1][i]['alliance_id']+'</td>';
-					str = str+'<td>'+data[1][i]['argent']+'</td>';
-					str = str+'<td>'+data[1][i]['experience']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-pseudo-'+id+'">'+data[1][i]['pseudo']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-mail-'+id+'">'+data[1][i]['mail']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-password-'+id+'">'+data[1][i]['password']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-status-'+id+'">'+data[1][i]['status']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-ip-'+id+'">'+data[1][i]['ip']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-nb_fertilisants-'+id+'">'+data[1][i]['nb_fertilisants']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-energies-'+id+'">'+data[1][i]['energies']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-energies_max-'+id+'">'+data[1][i]['energies_max']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-niveau-'+id+'">'+data[1][i]['niveau']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-alliance_id-'+id+'">'+data[1][i]['alliance_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-argent-'+id+'">'+data[1][i]['argent']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-experience-'+id+'">'+data[1][i]['experience']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -399,14 +411,14 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['tile_next_level']+'</td>';
-					str = str+'<td>'+data[1][i]['conquete_timer']+'</td>';
-					str = str+'<td>'+data[1][i]['wait_conquetes_timer']+'</td>';
-					str = str+'<td>'+data[1][i]['resistance']+'</td>';
-					str = str+'<td>'+data[1][i]['victory_timer']+'</td>';
-					str = str+'<td>'+data[1][i]['win_regen']+'</td>';
-					str = str+'<td>'+data[1][i]['lose_regen']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['tile_next_level']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['conquete_timer']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['wait_conquetes_timer']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['resistance']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['victory_timer']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['win_regen']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['lose_regen']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -420,15 +432,15 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['x']+'</td>';
-					str = str+'<td>'+data[1][i]['y']+'</td>';
-					str = str+'<td>'+data[1][i]['sprite_id']+'</td>';
-					str = str+'<td>'+data[1][i]['isEmpty']+'</td>';
-					str = str+'<td>'+data[1][i]['humidite']+'</td>';
-					str = str+'<td>'+data[1][i]['fertilite']+'</td>';
-					str = str+'<td>'+data[1][i]['isVisible']+'</td>';
-					str = str+'<td>'+data[1][i]['user_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['x']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['y']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['sprite_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['isEmpty']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['humidite']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['fertilite']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['isVisible']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['user_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -442,14 +454,14 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['isActive']+'</td>';
-					str = str+'<td>'+data[1][i]['origin_tile_id']+'</td>';
-					str = str+'<td>'+data[1][i]['longueur']+'</td>';
-					str = str+'<td>'+data[1][i]['largeur']+'</td>';
-					str = str+'<td>'+data[1][i]['duree']+'</td>';
-					str = str+'<td>'+data[1][i]['x']+'</td>';
-					str = str+'<td>'+data[1][i]['y']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['isActive']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['origin_tile_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['longueur']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['largeur']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['duree']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['x']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['y']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -463,16 +475,16 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['isActive']+'</td>';
-					str = str+'<td>'+data[1][i]['origin_tile_id']+'</td>';
-					str = str+'<td>'+data[1][i]['vectorX']+'</td>';
-					str = str+'<td>'+data[1][i]['vectorY']+'</td>';
-					str = str+'<td>'+data[1][i]['longueur']+'</td>';
-					str = str+'<td>'+data[1][i]['largeur']+'</td>';
-					str = str+'<td>'+data[1][i]['duree']+'</td>';
-					str = str+'<td>'+data[1][i]['x']+'</td>';
-					str = str+'<td>'+data[1][i]['y']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['isActive']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['origin_tile_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['vectorX']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['vectorY']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['longueur']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['largeur']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['duree']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['x']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['y']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -486,16 +498,16 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['isActive']+'</td>';
-					str = str+'<td>'+data[1][i]['origin_tile_id']+'</td>';
-					str = str+'<td>'+data[1][i]['vectorX']+'</td>';
-					str = str+'<td>'+data[1][i]['vectorY']+'</td>';
-					str = str+'<td>'+data[1][i]['longueur']+'</td>';
-					str = str+'<td>'+data[1][i]['largeur']+'</td>';
-					str = str+'<td>'+data[1][i]['duree']+'</td>';
-					str = str+'<td>'+data[1][i]['x']+'</td>';
-					str = str+'<td>'+data[1][i]['y']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['isActive']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['origin_tile_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['vectorX']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['vectorY']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['longueur']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['largeur']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['duree']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['x']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['y']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -509,14 +521,14 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['isActive']+'</td>';
-					str = str+'<td>'+data[1][i]['origin_tile_id']+'</td>';
-					str = str+'<td>'+data[1][i]['longueur']+'</td>';
-					str = str+'<td>'+data[1][i]['largeur']+'</td>';
-					str = str+'<td>'+data[1][i]['duree']+'</td>';
-					str = str+'<td>'+data[1][i]['x']+'</td>';
-					str = str+'<td>'+data[1][i]['y']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['isActive']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['origin_tile_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['longueur']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['largeur']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['duree']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['x']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['y']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -530,9 +542,9 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['name']+'</td>';
-					str = str+'<td>'+data[1][i]['master_user_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['name']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['master_user_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -546,9 +558,9 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['user_id']+'</td>';
-					str = str+'<td>'+data[1][i]['armes_spec_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['user_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['armes_spec_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -562,9 +574,9 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['user_id']+'</td>';
-					str = str+'<td>'+data[1][i]['arrosoirs_spec_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['user_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['arrosoirs_spec_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -578,11 +590,11 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['isConstruct']+'</td>';
-					str = str+'<td>'+data[1][i]['user_id']+'</td>';
-					str = str+'<td>'+data[1][i]['energies_spec_id']+'</td>';
-					str = str+'<td>'+data[1][i]['tile_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['isConstruct']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['user_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['energies_spec_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['tile_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -596,10 +608,10 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['nb']+'</td>';
-					str = str+'<td>'+data[1][i]['user_id']+'</td>';
-					str = str+'<td>'+data[1][i]['fruits_spec_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['nb']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['user_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['fruits_spec_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -613,10 +625,10 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['nb']+'</td>';
-					str = str+'<td>'+data[1][i]['user_id']+'</td>';
-					str = str+'<td>'+data[1][i]['graines_spec_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['nb']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['user_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['graines_spec_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -630,9 +642,9 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['tile_id']+'</td>';
-					str = str+'<td>'+data[1][i]['user_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['tile_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['user_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -646,12 +658,12 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['croissance']+'</td>';
-					str = str+'<td>'+data[1][i]['health']+'</td>';
-					str = str+'<td>'+data[1][i]['user_id']+'</td>';
-					str = str+'<td>'+data[1][i]['graines_spec_id']+'</td>';
-					str = str+'<td>'+data[1][i]['tile_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['croissance']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['health']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['user_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['graines_spec_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['tile_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -665,12 +677,12 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['stockage_state']+'</td>';
-					str = str+'<td>'+data[1][i]['isConstruct']+'</td>';
-					str = str+'<td>'+data[1][i]['user_id']+'</td>';
-					str = str+'<td>'+data[1][i]['stockages_spec_id']+'</td>';
-					str = str+'<td>'+data[1][i]['tile_id']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['stockage_state']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['isConstruct']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['user_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['stockages_spec_id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['tile_id']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -684,12 +696,12 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['name']+'</td>';
-					str = str+'<td>'+data[1][i]['puissance']+'</td>';
-					str = str+'<td>'+data[1][i]['precision']+'</td>';
-					str = str+'<td>'+data[1][i]['vitesse']+'</td>';
-					str = str+'<td>'+data[1][i]['prix']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['name']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['puissance']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['precision']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['vitesse']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['prix']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -703,10 +715,10 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['name']+'</td>';
-					str = str+'<td>'+data[1][i]['prix']+'</td>';
-					str = str+'<td>'+data[1][i]['stockage']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['name']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['prix']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['stockage']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -720,12 +732,12 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['name']+'</td>';
-					str = str+'<td>'+data[1][i]['prix']+'</td>';
-					str = str+'<td>'+data[1][i]['constructionTime']+'</td>';
-					str = str+'<td>'+data[1][i]['production']+'</td>';
-					str = str+'<td>'+data[1][i]['niveau_requis']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['name']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['prix']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['constructionTime']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['production']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['niveau_requis']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -739,11 +751,11 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['name']+'</td>';
-					str = str+'<td>'+data[1][i]['prix_vente']+'</td>';
-					str = str+'<td>'+data[1][i]['stockage']+'</td>';
-					str = str+'<td>'+data[1][i]['poids']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['name']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['prix_vente']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['stockage']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['poids']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -757,17 +769,17 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['name']+'</td>';
-					str = str+'<td>'+data[1][i]['maturation']+'</td>';
-					str = str+'<td>'+data[1][i]['pourrissement']+'</td>';
-					str = str+'<td>'+data[1][i]['production']+'</td>';
-					str = str+'<td>'+data[1][i]['stockage']+'</td>';
-					str = str+'<td>'+data[1][i]['croissance']+'</td>';
-					str = str+'<td>'+data[1][i]['poids']+'</td>';
-					str = str+'<td>'+data[1][i]['prix']+'</td>';
-					str = str+'<td>'+data[1][i]['sante_min']+'</td>';
-					str = str+'<td>'+data[1][i]['niveau_requis']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['name']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['maturation']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['pourrissement']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['production']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['stockage']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['croissance']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['poids']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['prix']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['sante_min']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['niveau_requis']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
@@ -781,14 +793,14 @@
 				for(var i = 0; i < data[1].length; i++){
 					var id = data[1][i]['id'];
 					str = str+'<tr id="'+data[0]+'-'+id+'">';
-					str = str+'<td>'+data[1][i]['id']+'</td>';
-					str = str+'<td>'+data[1][i]['name']+'</td>';
-					str = str+'<td>'+data[1][i]['taille']+'</td>';
-					str = str+'<td>'+data[1][i]['prix']+'</td>';
-					str = str+'<td>'+data[1][i]['stockage']+'</td>';
-					str = str+'<td>'+data[1][i]['consommation']+'</td>';
-					str = str+'<td>'+data[1][i]['constructionTime']+'</td>';
-					str = str+'<td>'+data[1][i]['niveau_requis']+'</td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['id']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['name']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['taille']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['prix']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['stockage']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['consommation']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['constructionTime']+'</span></td>';
+					str = str+'<td><span id="'+data[0]+'-id-'+id+'">'+data[1][i]['niveau_requis']+'</span></td>';
 					str = str+'<td><button class="delete">DELETE</button></td>';
 					str = str+'</tr>';
 				}
