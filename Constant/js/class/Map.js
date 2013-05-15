@@ -23,21 +23,46 @@ var Map = (function() {
     };
 
     Map.prototype.initialiseMap = function() { 
-        var i = 0,j = 0;
-        setInterval(function(){
+        var i = 0,j = 0, rh = 0, rf = 0, count = 0;
+        var randhum = Math.floor((Math.random()*100)+1);
+        var randfert = Math.floor((Math.random()*100)+1);
+        var mapGeneration = setInterval(function(){
             var connection = _DB.connection();
-            connection.query('INSERT INTO Tiles (id,x,y) VALUES("","' + i + '","' + j + '");');
-            if(j == 50)
+            
+            if(i == 0){
+                if(j == 0){
+                    rh = randhum;
+                    rf = randfert;
+                }else{
+                    rh = makeTilesPropertyByLeft(rh);
+                    rf = makeTilesPropertyByLeft(rf);
+                }
+            }else{
+                if(j == 0){
+                    var retour = makeTilesPropertyByUp(i, j);
+                    rh = retour[0];
+                    rf = retour[1];
+                }else{
+                    var retour = makeTilesPropertyByLeftAndUp(i, j);
+                    rh = retour[0];
+                    rf = retour[1];
+                }
+            }
+
+            connection.query('INSERT INTO Tiles (id,x,y, humidite, fertilite) VALUES("","' + i + '","' + j + '","' + rh + '","' + rf + '");');
+            if(j == 49)
             {
-                if(i == 50)
+                if(i == 49)
                 {
-                    return false;
                     console.log('done');
+                    clearInterval(mapGeneration);
                 }
                 i++;
                 j=0;
+            }else{
+                j++;
             }
-            j++;
+            count++;
         },20);
     };
 
@@ -121,6 +146,147 @@ var Map = (function() {
             
             return rows[0].id;
         });
+    }
+
+    function makeTilesPropertyByLeft(value){
+        var plusOuMoins = Math.floor((Math.random()*2)+1);
+        var val = Math.floor((Math.random()*20)+1);
+
+        if(plusOuMoins == 1){
+            var retour = value + val;
+            if(retour > 100)
+                retour = 100;
+            return retour;
+        }else if(plusOuMoins == 2){
+            var retour = value - val;
+            if(retour < 0)
+                retour = 0;
+            return retour;
+        }
+    }
+
+    function makeTilesPropertyByLeftAndUp(i, j){
+        var connection = _DB.connection();
+        var tileLeft = new Array();
+        var tileUp = new Array();
+        var retour = new Array();
+        var xleft = j-1;
+        var yup = i-1;
+
+        // récupération du tile a sa gauche
+        connection.query('SELECT * FROM Tiles WHERE x = ' + i +' AND y =' + xleft + ' ;', function(err,rows,fields){
+            if(err) throw err;
+            tileLeft[0] = rows[0].humidite;
+            tileLeft[1] = rows[0].fertilite;
+            
+        });
+        //récupération du tile au dessus
+        connection.query('SELECT * FROM Tiles WHERE x = ' + yup +' AND y =' + j + ' ;', function(err,rows,fields){
+            if(err) throw err;
+            
+            tileUp[0] = rows[0].humidite;
+            tileUp[1] = rows[0].fertilite;   
+        });
+
+        // détermination de la valeur d'humidite de la nouvelle tile
+        if(tileLeft[0] > tileUp[0]){
+            var min = tileLeft[0] - 20;
+            var max = tileUp[0] + 20;
+
+            var val = Math.floor((Math.random()*max)+min);
+            retour[0] = val;
+
+        }else if(tileLeft[0] < tileUp[0]){
+            var max = tileLeft[0] + 20;
+            var min = tileUp[0] - 20;
+
+            var val = Math.floor((Math.random()*max)+min);
+            retour[0] = val;
+        }
+        else if (tileLeft[0] == tileUp[0]){
+            var max = tileLeft[0] + 10;
+            var min = tileUp[0] - 10;
+
+            var val = Math.floor((Math.random()*max)+min);
+            retour[0] = val;
+        }
+
+        // détermination de la valeur de fertilite de la nouvelle tile
+        if(tileLeft[1] > tileUp[1]){
+            var min = tileLeft[1] - 20;
+            var max = tileUp[1] + 20;
+
+            var val = Math.floor((Math.random()*max)+min);
+            retour[1] = val;
+
+        }else if(tileLeft[1] < tileUp[1]){
+            var max = tileLeft[1] + 20;
+            var min = tileUp[1] - 20;
+
+            var val = Math.floor((Math.random()*max)+min);
+            retour[1] = val;
+        }
+        else if (tileLeft[1] == tileUp[1]){
+            var max = tileLeft[1] + 10;
+            var min = tileUp[1] - 10;
+
+            var val = Math.floor((Math.random()*max)+min);
+            retour[1] = val;
+        }
+
+        //vérification des extrèmes
+        if(retour[0] > 100)
+            retour[0] = 100;
+        if(retour[0] < 0)
+            retour[0] = 0;
+        if(retour[1] > 100)
+            retour[1] = 100;
+        if(retour[1] < 0)
+            retour[1] = 0;
+
+        return retour;
+
+    }
+
+    function makeTilesPropertyByUp(i, j){
+        var connection = _DB.connection();
+        var tileUp = new Array();
+        var retour = new Array();
+        var yup = i-1;
+
+        //récupération du tile au dessus
+        connection.query('SELECT * FROM Tiles WHERE x = ' + yup +' AND y = ' + j + ' ;', function(err,rows,fields){
+            if(err) throw err;
+            tileUp[0] = rows[0].humidite;
+            tileUp[1] = rows[0].fertilite;   
+        });
+        var plusOuMoins = Math.floor((Math.random()*2)+1);
+        var val = Math.floor((Math.random()*20)+1);
+
+        if(plusOuMoins == 1){
+            retour[0] = tileUp[0] + val;
+            if(retour[0] > 100)
+                retour[0] = 100;
+        }else if(plusOuMoins == 2){
+            retour[0] = tileUp[0] - val;
+            if(retour[0] < 0)
+                retour[0] = 0;
+        }
+        
+        var plusOuMoins = Math.floor((Math.random()*2)+1);
+        var val = Math.floor((Math.random()*20)+1);
+
+        if(plusOuMoins == 1){
+            retour[1] = tileUp[1] + val;
+            if(retour[1] > 100)
+                retour[1] = 100;
+        }else if(plusOuMoins == 2){
+            retour[1] = tileUp[1] - val;
+            if(retour[1] < 0)
+                retour[1] = 0;
+        }
+        return retour;
+
     }
 
     return Map;

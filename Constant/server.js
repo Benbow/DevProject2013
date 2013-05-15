@@ -21,11 +21,9 @@ connection.connect();
 var Map  = require("./js/class/Map");
 var Stockages  = require("./js/class/Stockages");
 var User = require("./js/class/User");
-//var ClassGrainesSpec = require("./js/class/Graines_spec");
 
 var map = new Map();
-//var graines = ClassGrainesSpec.Graines_spec();
-
+map.initialiseMap();
 
 //Creation du serveur http.
 var server = http.createServer(function (req, res) { }).listen(1337);
