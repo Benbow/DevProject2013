@@ -26,44 +26,88 @@ var Map = (function() {
         var i = 0,j = 0, rh = 0, rf = 0, count = 0;
         var randhum = Math.floor((Math.random()*100)+1);
         var randfert = Math.floor((Math.random()*100)+1);
+
         var mapGeneration = setInterval(function(){
             var connection = _DB.connection();
-            
             if(i == 0){
                 if(j == 0){
                     rh = randhum;
                     rf = randfert;
+                    nextStep(i, j, rh, rf, function(){
+                        if(j == 49)
+                        {
+                            if(i == 49)
+                            {
+                                console.log('done');
+                                clearInterval(mapGeneration);
+                            }
+                            i++;
+                            j=0;
+                        }else{
+                            j++;
+                        }
+                    });
                 }else{
                     rh = makeTilesPropertyByLeft(rh);
                     rf = makeTilesPropertyByLeft(rf);
+                    nextStep(i, j, rh, rf, function(){
+                        if(j == 49)
+                        {
+                            if(i == 49)
+                            {
+                                console.log('done');
+                                   clearInterval(mapGeneration);
+                            }
+                            i++;
+                            j=0;
+                        }else{
+                            j++;
+                        }
+                    });
                 }
             }else{
                 if(j == 0){
-                    var retour = makeTilesPropertyByUp(i, j);
-                    rh = retour[0];
-                    rf = retour[1];
+                    makeTilesPropertyByUp(i, j,function(retour){
+                        rh = retour[0];
+                        rf = retour[1];
+                        nextStep(i, j, rh, rf, function(){
+                            if(j == 49)
+                            {
+                                if(i == 49)
+                                {
+                                    console.log('done');
+                                    clearInterval(mapGeneration);
+                                }
+                                i++;
+                                j=0;
+                            }else{
+                                j++;
+                            }
+                        });
+                    });
                 }else{
-                    var retour = makeTilesPropertyByLeftAndUp(i, j);
-                    rh = retour[0];
-                    rf = retour[1];
+                    makeTilesPropertyByLeftAndUp(i, j, function(retour){
+                        rh = retour[0];
+                        rf = retour[1];
+                        nextStep(i, j, rh, rf, function(){
+                            if(j == 49)
+                            {
+                                if(i == 49)
+                                {
+                                    console.log('done');
+                                    clearInterval(mapGeneration);
+                                }
+                                i++;
+                                j=0;
+                            }else{
+                                j++;
+                            }
+                        });
+                    });
+                    
                 }
             }
-
-            connection.query('INSERT INTO Tiles (id,x,y, humidite, fertilite) VALUES("","' + i + '","' + j + '","' + rh + '","' + rf + '");');
-            if(j == 49)
-            {
-                if(i == 49)
-                {
-                    console.log('done');
-                    clearInterval(mapGeneration);
-                }
-                i++;
-                j=0;
-            }else{
-                j++;
-            }
-            count++;
-        },20);
+        },200);
     };
 
 
@@ -165,128 +209,153 @@ var Map = (function() {
         }
     }
 
-    function makeTilesPropertyByLeftAndUp(i, j){
+    function makeTilesPropertyByLeftAndUp(i, j, callback){
         var connection = _DB.connection();
-        var tileLeft = new Array();
-        var tileUp = new Array();
-        var retour = new Array();
         var xleft = j-1;
         var yup = i-1;
+        var async = require('async');
 
-        // récupération du tile a sa gauche
-        connection.query('SELECT * FROM Tiles WHERE x = ' + i +' AND y =' + xleft + ' ;', function(err,rows,fields){
-            if(err) throw err;
-            tileLeft[0] = rows[0].humidite;
-            tileLeft[1] = rows[0].fertilite;
-            
+        tileLeft = recupTileLeft(xleft, i, function (tileLEFT){
+            var tL = tileLEFT;
+            tileUp = recupTileUp(yup, j, function (tileUP){
+                var tU = tileUP
+                var retour = new Array();
+
+                var tileL = tL;
+                var tileU = tU;
+
+                // détermination de la valeur d'humidite de la nouvelle tile
+                if(tileL[0] > tileU[0]){
+                    var min = tileL[0] - 20;
+                    var max = tileU[0] + 20;
+
+                    var val = Math.floor((Math.random()*max)+min);
+                    retour[0] = val;
+
+                }else if(tileL[0] < tileU[0]){
+                    var max = tileL[0] + 20;
+                    var min = tileU[0] - 20;
+
+                    var val = Math.floor((Math.random()*max)+min);
+                    retour[0] = val;
+                }
+                else if (tileL[0] == tileU[0]){
+                    var max = tileL[0] + 10;
+                    var min = tileU[0] - 10;
+
+                    var val = Math.floor((Math.random()*max)+min);
+                    retour[0] = val;
+                }
+
+                // détermination de la valeur de fertilite de la nouvelle tile
+                if(tileL[1] > tileU[1]){
+                    var min = tileL[1] - 20;
+                    var max = tileU[1] + 20;
+
+                    var val = Math.floor((Math.random()*max)+min);
+                    retour[1] = val;
+
+                }else if(tileL[1] < tileU[1]){
+                    var max = tileL[1] + 20;
+                    var min = tileU[1] - 20;
+
+                    var val = Math.floor((Math.random()*max)+min);
+                    retour[1] = val;
+                }
+                else if (tileL[1] == tileU[1]){
+                    var max = tileL[1] + 10;
+                    var min = tileU[1] - 10;
+
+                    var val = Math.floor((Math.random()*max)+min);
+                    retour[1] = val;
+                }
+
+                //vérification des extrèmes
+
+                if(retour[0] > 100)
+                    retour[0] = 100;
+                if(retour[0] < 0)
+                    retour[0] = 0;
+                if(retour[1] > 100)
+                    retour[1] = 100;
+                if(retour[1] < 0)
+                    retour[1] = 0;
+
+
+
+                callback(retour);
+
+            });
         });
+    }
+
+    function makeTilesPropertyByUp(i, j, callback){
+        var tileUp = new Array();
+        var retour = new Array();
+        var yup = i-1;
+
         //récupération du tile au dessus
-        connection.query('SELECT * FROM Tiles WHERE x = ' + yup +' AND y =' + j + ' ;', function(err,rows,fields){
-            if(err) throw err;
+       
+        tileUp = recupTileUp(yup, j, function (tile){
+            var plusOuMoins = Math.floor((Math.random()*2)+1);
+            var val = Math.floor((Math.random()*20)+1);
+
+            if(plusOuMoins == 1){
+                retour[0] = tile[0] + val;
+                if(retour[0] > 100)
+                    retour[0] = 100;
+            }else if(plusOuMoins == 2){
+                retour[0] = tile[0] - val;
+                if(retour[0] < 0)
+                    retour[0] = 0;
+            }
             
-            tileUp[0] = rows[0].humidite;
-            tileUp[1] = rows[0].fertilite;   
-        });
+            var plusOuMoins = Math.floor((Math.random()*2)+1);
+            var val = Math.floor((Math.random()*20)+1);
 
-        // détermination de la valeur d'humidite de la nouvelle tile
-        if(tileLeft[0] > tileUp[0]){
-            var min = tileLeft[0] - 20;
-            var max = tileUp[0] + 20;
-
-            var val = Math.floor((Math.random()*max)+min);
-            retour[0] = val;
-
-        }else if(tileLeft[0] < tileUp[0]){
-            var max = tileLeft[0] + 20;
-            var min = tileUp[0] - 20;
-
-            var val = Math.floor((Math.random()*max)+min);
-            retour[0] = val;
-        }
-        else if (tileLeft[0] == tileUp[0]){
-            var max = tileLeft[0] + 10;
-            var min = tileUp[0] - 10;
-
-            var val = Math.floor((Math.random()*max)+min);
-            retour[0] = val;
-        }
-
-        // détermination de la valeur de fertilite de la nouvelle tile
-        if(tileLeft[1] > tileUp[1]){
-            var min = tileLeft[1] - 20;
-            var max = tileUp[1] + 20;
-
-            var val = Math.floor((Math.random()*max)+min);
-            retour[1] = val;
-
-        }else if(tileLeft[1] < tileUp[1]){
-            var max = tileLeft[1] + 20;
-            var min = tileUp[1] - 20;
-
-            var val = Math.floor((Math.random()*max)+min);
-            retour[1] = val;
-        }
-        else if (tileLeft[1] == tileUp[1]){
-            var max = tileLeft[1] + 10;
-            var min = tileUp[1] - 10;
-
-            var val = Math.floor((Math.random()*max)+min);
-            retour[1] = val;
-        }
-
-        //vérification des extrèmes
-        if(retour[0] > 100)
-            retour[0] = 100;
-        if(retour[0] < 0)
-            retour[0] = 0;
-        if(retour[1] > 100)
-            retour[1] = 100;
-        if(retour[1] < 0)
-            retour[1] = 0;
-
-        return retour;
+            if(plusOuMoins == 1){
+                retour[1] = tile[1] + val;
+                if(retour[1] > 100)
+                    retour[1] = 100;
+            }else if(plusOuMoins == 2){
+                retour[1] = tile[1] - val;
+                if(retour[1] < 0)
+                    retour[1] = 0;
+            }
+            callback(retour);
+        });     
 
     }
 
-    function makeTilesPropertyByUp(i, j){
+    function recupTileUp(yup, j, callback){
         var connection = _DB.connection();
         var tileUp = new Array();
-        var retour = new Array();
-        var yup = i-1;
 
-        //récupération du tile au dessus
-        connection.query('SELECT * FROM Tiles WHERE x = ' + yup +' AND y = ' + j + ' ;', function(err,rows,fields){
+        var tile = connection.query('SELECT * FROM Tiles WHERE x = ' + yup +' AND y = ' + j + ' ;', function(err,rows,fields){
             if(err) throw err;
+
             tileUp[0] = rows[0].humidite;
-            tileUp[1] = rows[0].fertilite;   
+            tileUp[1] = rows[0].fertilite;
+            callback(tileUp);
         });
-        var plusOuMoins = Math.floor((Math.random()*2)+1);
-        var val = Math.floor((Math.random()*20)+1);
+    }
 
-        if(plusOuMoins == 1){
-            retour[0] = tileUp[0] + val;
-            if(retour[0] > 100)
-                retour[0] = 100;
-        }else if(plusOuMoins == 2){
-            retour[0] = tileUp[0] - val;
-            if(retour[0] < 0)
-                retour[0] = 0;
-        }
-        
-        var plusOuMoins = Math.floor((Math.random()*2)+1);
-        var val = Math.floor((Math.random()*20)+1);
+    function recupTileLeft(xleft, i, callback){
+        var connection = _DB.connection();
+        var tileLeft = new Array();
 
-        if(plusOuMoins == 1){
-            retour[1] = tileUp[1] + val;
-            if(retour[1] > 100)
-                retour[1] = 100;
-        }else if(plusOuMoins == 2){
-            retour[1] = tileUp[1] - val;
-            if(retour[1] < 0)
-                retour[1] = 0;
-        }
-        return retour;
+        var tile = connection.query('SELECT * FROM Tiles WHERE x = ' + i +' AND y =' + xleft + ' ;', function(err,rows,fields){
+            if(err) throw err;
+            tileLeft[0] = rows[0].humidite;
+            tileLeft[1] = rows[0].fertilite;
+            callback(tileLeft);
+        });
+    }
 
+    function nextStep(i, j, rh, rf, callback){
+        var connection = _DB.connection();
+        connection.query('INSERT INTO Tiles (id,x,y, humidite, fertilite) VALUES("","' + i + '","' + j + '","' + rh + '","' + rf + '");');
+        callback('ok');
     }
 
     return Map;

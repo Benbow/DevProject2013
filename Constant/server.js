@@ -23,7 +23,7 @@ var Stockages  = require("./js/class/Stockages");
 var User = require("./js/class/User");
 
 var map = new Map();
-map.initialiseMap();
+//map.initialiseMap();
 
 //Creation du serveur http.
 var server = http.createServer(function (req, res) { }).listen(1337);
