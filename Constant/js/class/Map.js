@@ -107,7 +107,7 @@ var Map = (function() {
                     
                 }
             }
-        },200);
+        },20);
     };
 
 
@@ -228,22 +228,24 @@ var Map = (function() {
                 if(tileL[0] > tileU[0]){
                     var min = tileL[0] - 20;
                     var max = tileU[0] + 20;
-
-                    var val = Math.floor((Math.random()*max)+min);
+                    if(min < 0) min = 0;
+                    if(max > 100) max = 100;
+                    var val = Math.floor(Math.random()*(max-min+1)+min);
                     retour[0] = val;
 
                 }else if(tileL[0] < tileU[0]){
                     var max = tileL[0] + 20;
                     var min = tileU[0] - 20;
-
-                    var val = Math.floor((Math.random()*max)+min);
+                    if(min < 0) min = 0;
+                    if(max > 100) max = 100;
+                    var val = Math.floor(Math.random()*(max-min+1)+min);
                     retour[0] = val;
                 }
                 else if (tileL[0] == tileU[0]){
                     var max = tileL[0] + 10;
                     var min = tileU[0] - 10;
-
-                    var val = Math.floor((Math.random()*max)+min);
+                    if(min < 0) min = 0;
+                    var val = Math.floor(Math.random()*(max-min+1)+min);
                     retour[0] = val;
                 }
 
@@ -251,27 +253,31 @@ var Map = (function() {
                 if(tileL[1] > tileU[1]){
                     var min = tileL[1] - 20;
                     var max = tileU[1] + 20;
-
-                    var val = Math.floor((Math.random()*max)+min);
+                    if(min < 0) min = 0;
+                    if(max > 100) max = 100;
+                    var val = Math.floor(Math.random()*(max-min+1)+min);
                     retour[1] = val;
 
                 }else if(tileL[1] < tileU[1]){
                     var max = tileL[1] + 20;
                     var min = tileU[1] - 20;
-
-                    var val = Math.floor((Math.random()*max)+min);
+                    if(min < 0) min = 0;
+                    if(max > 100) max = 100;
+                    var val = Math.floor(Math.random()*(max-min+1)+min);
                     retour[1] = val;
                 }
                 else if (tileL[1] == tileU[1]){
                     var max = tileL[1] + 10;
                     var min = tileU[1] - 10;
-
-                    var val = Math.floor((Math.random()*max)+min);
+                    if(min < 0) min = 0;
+                    if(max > 100) max = 100;
+                    var val = Math.floor(Math.random()*(max-min+1)+min);
                     retour[1] = val;
                 }
 
-                //vérification des extrèmes
+                //console.log(retour);
 
+                //vérification des extrèmes
                 if(retour[0] > 100)
                     retour[0] = 100;
                 if(retour[0] < 0)
@@ -280,8 +286,6 @@ var Map = (function() {
                     retour[1] = 100;
                 if(retour[1] < 0)
                     retour[1] = 0;
-
-
 
                 callback(retour);
 
