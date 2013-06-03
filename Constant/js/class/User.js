@@ -19,13 +19,11 @@ var User = (function() {
        
         var user = connection.query('SELECT * FROM Users WHERE mail = "' +  mail + '";',function(err,rows,fields){
             if(err) throw err;
-                           
-            for(var i = 0;i < rows.length;i++)
-            {
-                userInfo[0] = rows[i].pseudo;
-                userInfo[1] = rows[i].mail;
-                userInfo[2] = rows[i].password;
-            }
+
+            userInfo[0] = rows[0].pseudo;
+            userInfo[1] = rows[0].mail;
+            userInfo[2] = rows[0].password;
+            userInfo[3] = rows[0].id;
                
             callback(userInfo);             
         });
@@ -37,6 +35,14 @@ var User = (function() {
 
     User.prototype.setPseudo = function(pseudo){
         this._pseudo = pseudo;
+    };
+
+    User.prototype.getId = function(){
+        return this._id;
+    };
+
+    User.prototype.setId = function(id){
+        this._id = id;
     };
 
     return User;

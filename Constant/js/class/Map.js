@@ -50,11 +50,12 @@ var Map = (function() {
     };
 
 
-    Map.prototype.getMap = function(callback) { 
+    Map.prototype.getMap = function(userId,callback) { 
         var connection = _DB.connection();
         var string_map = {
             'map' : '',
-            'storage' : {}
+            'storage' : {},
+            'user' : {}
         };
         connection.query('SELECT * FROM Tiles', function(err,rows,fields){
             if(err) throw err;
@@ -80,12 +81,30 @@ var Map = (function() {
                     'id': rows[i].id
                 };
             }
+        });
 
-            console.log(string_map);
+        connection.query('SELECT * FROM Tiles WHERE user_id = ' + userId, function(err,rows,fields){
+            if(err) throw err;
+            string_map.user = {
+                'x': rows[0].x,
+                'y': rows[0].y
+            };
+            console.log(string_map.user);
+
             callback(string_map);
         });
 
     };
+
+    Map.prototype.getIdTile = function(x,y)
+    {
+        var connection = _DB.connection();
+        connection.query('SELECT id FROM Tiles WHERE x = ' + x + ' AND y = ' + y, function(err,rows,fields){
+            if(err) throw err;
+            
+            return rows[0].id;
+        });
+    }
 
     return Map;
 })();

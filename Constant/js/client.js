@@ -62,7 +62,6 @@
 
 	// Action lorsque la connection reussie.
 	socket.on('connected', function(user){
-		console.log(user)
 		$("#menu_username").html(user.pseudo);
 		$("#div_login").slideUp('fast');
 		$("#div_play").fadeIn('slow');
@@ -128,7 +127,7 @@
 		    ppmap.addBuilding(value.x, value.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
 		});
 
-		ppmap.avatar(2, 2, 'images/sprite.png', 15, -30, true, 4); //notre avatar
+		ppmap.avatar(map.user.x, map.user.y, 'images/sprite.png', 15, -30, true, 4); //notre avatar
 		ppmap.cursor('images/cursor-on.png', 'images/cursor-off.png', 0, 0); //notre curseur
 	};
 

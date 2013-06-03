@@ -19,6 +19,7 @@ var connection = mysql.createConnection({
 connection.connect();
 
 var Map  = require("./js/class/Map");
+var Stockages  = require("./js/class/Stockages");
 var User = require("./js/class/User");
 //var ClassGrainesSpec = require("./js/class/Graines_spec");
 
@@ -33,10 +34,10 @@ var io = require('socket.io').listen(server);
 
 // Action si un utilisateur arrive sur la page.
 io.sockets.on('connection', function(socket){
+	var user = new User();
 
 	// Action quand un utilisateur essaie de se connecter.
 	socket.on('login', function(datalogin){
-		var user = new User();
 		//On va chercher en bdd si le mail existe.
 		user.loginUser(datalogin.mail,datalogin.password,function(socket_user){
 			socket.emit('logginUser', socket_user);
@@ -45,6 +46,7 @@ io.sockets.on('connection', function(socket){
 				if(socket_user[2] == datalogin.password)// On check le password
 				{
 					user.setPseudo(socket_user[0]);
+					user.setId(socket_user[3]);
 					socket.emit('valid', 'Connected !');                
                     socket.emit('connected', {
                     	'pseudo': user.getPseudo()
@@ -62,15 +64,21 @@ io.sockets.on('connection', function(socket){
 
 
 	socket.on('newgame', function(data){
-		map.getMap(function(socket_map){
+		map.getMap(user.getId(),function(socket_map){
 			socket.emit('loadmap', socket_map);
 		});
 	});
 
 	socket.on('continue_game', function(data){
-		map.getMap(function(socket_map){
+		map.getMap(user.getId(),function(socket_map){
 			socket.emit('loadmap', socket_map);
 		});
+	});
+
+	socket.on('newstorage', function(data){
+		stockage = new Stockages();
+		console.log(0,1,user.getId(),data.id,getIdTile(data.x,data.y));
+		//stockage.Add_Stockages(0,1,user.getId(),data.id,getIdTile(data.x,data.y));
 	});
 
 
