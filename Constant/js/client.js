@@ -30,11 +30,8 @@
 	}
 
 
-$("#buttonRegister").click(function(){
-		$("#mail").slideUp('fast');
-		$("#password").slideUp('fast');
-		$("#submitlogin").slideUp('fast');
-		$("#buttonRegister").slideUp('fast');
+	$("#buttonRegister").click(function(){
+		$("#div_login").slideUp('fast');	
 		$("#div_register").fadeIn('slow');
 
 		
@@ -50,6 +47,15 @@ $("#buttonRegister").click(function(){
 			pseudo : $("#newPseudo").val()
 		});
 		return false;
+	});
+
+	// Action lorsque le compte est cree
+	socket.on('isRegistered', function(){
+		$("#div_register").fadeOut('fast');
+		$("#mail").slideDown('fast');
+		$("#password").slideDown('fast');
+		$("#submitlogin").slideDown('fast');
+		$("#buttonRegister").slideUp('fast');
 	});
 
 
@@ -84,14 +90,7 @@ $("#buttonRegister").click(function(){
 		}, 3000);
 	});
 
-	// Action lorsque le compte est cree
-	socket.on('isRegistered', function(){
-		$("#div_register").fadeOut('fast');
-		$("#mail").slideDown('fast');
-		$("#password").slideDown('fast');
-		$("#submitlogin").slideDown('fast');
-		$("#buttonRegister").slideUp('fast');
-	});
+	
 
 	// Action lorsque la connection reussie.
 	socket.on('connected', function(user){
