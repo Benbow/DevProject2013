@@ -164,9 +164,18 @@
 		    ppmap.addBuilding(value.x, value.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
 		});
 
+		//Mise en place des batiments quand tu load la map.
+	    $.each(map.all_user, function(index, value) {
+		    ppmap.addObject(value.x, value.y, 'images/avatar.png', 0, 0, value.pseudo, value.pseudo, 'char_'+value.id);
+		});
+
 		ppmap.avatar(map.user.x, map.user.y, 'images/sprite.png', 15, -30, true, 4); //notre avatar
 		ppmap.cursor('images/cursor-on.png', 'images/cursor-off.png', 0, 0); //notre curseur
 	};
+
+	socket.on('new_user_connected', function(data){
+		ppmap.addObject(data.x, data.y, 'images/avatar.png', 0, 0, '', data.pseudo, 'char_'+data.id);
+	});
 
 	var mouseClick = function(x, y) {
 		socket.emit('userMove', {

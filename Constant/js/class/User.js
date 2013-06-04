@@ -10,6 +10,7 @@ var User = (function() {
     // constructor
     function User(){
         _DB = new DB();
+        _id = 0;
     };
 
 

@@ -164,7 +164,7 @@ var Map = (function() {
             console.log(string_map.user);
         });
 
-        connection.query('SELECT t.x as x, t.y as y, u.pseudo as pseudo FROM Users_Connected as uc LEFT JOIN Users as u ON uc.user_id = u.id LEFT JOIN Tiles as t ON uc.user_id = t.user_id',function(err,rows,fields){
+        connection.query('SELECT t.x as x, t.y as y, u.pseudo as pseudo, u.id as id FROM Users_Connected as uc LEFT JOIN Users as u ON uc.user_id = u.id LEFT JOIN Tiles as t ON uc.user_id = t.user_id WHERE uc.isConnected = 1',function(err,rows,fields){
             if(err) throw err;
 
             for(var i = 0;i < rows.length;i++)
@@ -173,6 +173,7 @@ var Map = (function() {
                     string_map.all_user[i] = {
                         'x': rows[i].x,
                         'y': rows[i].y,
+                        'pseudo': rows[i].pseudo,
                         'id': rows[i].id
                     };
             }
@@ -189,6 +190,21 @@ var Map = (function() {
             if(err) throw err;
             
             return rows[0].id;
+        });
+    }
+
+    Map.prototype.getUserTile = function(id, callback)
+    {
+        var connection = _DB.connection();
+        var data = {
+            'x': 0,
+            'y': 0           
+        }
+        connection.query('SELECT * FROM Tiles WHERE user_id = ' + id, function(err,rows,fields){
+            if(err) throw err;
+            data.x = rows[0].x;
+            data.y = rows[0].y;
+            callback(data);
         });
     }
 
