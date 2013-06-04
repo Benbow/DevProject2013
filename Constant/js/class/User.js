@@ -70,31 +70,32 @@ var User = (function() {
 
     User.prototype.connected = function(){
         var connection = _DB.connection();
+
         var d = new Date();
         var datetime = d.getFullYear()+'-'+(d.getMonth() + 1)+'-'+d.getDate()+' '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
-        /*connection.query('SELECT * FROM Users_Connected WHERE user_id = ' + this._id,function(err,rows,fields){
+        var id = this._id;
+
+        connection.query('SELECT * FROM Users_Connected WHERE user_id = '+this._id,function(err,rows,fields){
             if(err) throw err;
 
-            if(rows[0].connected != undefined)
-            {
-                connection.query('UPDATE Users_Connected SET isConnected = 1 WHERE user_id = '+this._id, function(err,rows,fields){
+            if(rows.length > 0)
+            {        
+                connection.query('UPDATE Users_Connected SET isConnected = 1 WHERE user_id = '+id, function(err,rows,fields){
                     if(err) throw err;
                 });
             }
             else
-            {*/
-                connection.query('INSERT INTO Users_Connected VALUE ("",'+ this._id +',1,0,"'+ datetime +'")', function(err,rows,fields){
+            {
+                connection.query('INSERT INTO Users_Connected VALUE ("",'+ id +',1,0,"'+ datetime +'")', function(err,rows,fields){
                     if(err) throw err;
                 });
-            /*}          
+            }     
         });
-        */
-        
     };
 
     User.prototype.disconnect = function(){
         var connection = _DB.connection();
-        connection.query('UPDATE Users_Connected SET connected = 0 WHERE user_id = '+this._id, function(err,rows,fields){
+        connection.query('UPDATE Users_Connected SET isConnected = 0 WHERE user_id = '+this._id, function(err,rows,fields){
             if(err) throw err;
         });
     };
