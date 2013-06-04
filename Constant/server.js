@@ -65,6 +65,10 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 		
+	socket.on('register', function(dataRegister){
+		user.registerUser(dataRegister.mail,dataRegister.pseudo,dataRegister.password)
+		socket.emit('isRegistered');
+	});
 		
 
 

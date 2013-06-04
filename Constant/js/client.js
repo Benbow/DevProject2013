@@ -29,6 +29,30 @@
 
 	}
 
+
+$("#buttonRegister").click(function(){
+		$("#mail").slideUp('fast');
+		$("#password").slideUp('fast');
+		$("#submitlogin").slideUp('fast');
+		$("#buttonRegister").slideUp('fast');
+		$("#div_register").fadeIn('slow');
+
+		
+	});
+	//Lorsque l'on veut s'enregistrer'
+	$('#registerform').submit(function(event)
+	{
+		event.preventDefault();
+		//Envoie de l'action pour s'enregister'
+		socket.emit('register', {
+			mail : $("#newMail").val(),
+			password : $("#newPassword").val(),
+			pseudo : $("#newPseudo").val()
+		});
+		return false;
+	});
+
+
 	// Lorsque l'on submit notre formulaire de connection
 	$('#loginform').submit(function(event)
 	{
@@ -58,6 +82,15 @@
 		setTimeout(function(){
 			$("#valid").fadeOut('slow');
 		}, 3000);
+	});
+
+	// Action lorsque le compte est cree
+	socket.on('isRegistered', function(){
+		$("#div_register").fadeOut('fast');
+		$("#mail").slideDown('fast');
+		$("#password").slideDown('fast');
+		$("#submitlogin").slideDown('fast');
+		$("#buttonRegister").slideUp('fast');
 	});
 
 	// Action lorsque la connection reussie.

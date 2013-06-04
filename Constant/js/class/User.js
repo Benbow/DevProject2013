@@ -30,6 +30,17 @@ var User = (function() {
         });
     };
 
+    User.prototype.registerUser = function(mail, pseudo, password) {
+        var connection = _DB.connection();
+        var newUserInfo = new Array();
+        var newUser = connection.query('INSERT INTO Users (id,pseudo,password,mail) VALUES ("","' + pseudo + '","' + password + '","' + mail + '");',function(err,row,fields){
+            if(err) throw err;
+
+             
+        });
+
+    };
+
     User.prototype.getPseudo = function(){
         return this._pseudo;
     };

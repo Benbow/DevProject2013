@@ -66,6 +66,19 @@
 	padding: 10px;
 }
 
+#div_register {
+	position: absolute;
+	
+	
+	top: 125px;
+	left: 160px;
+	height: 400px;
+	width: 400px;
+	display: none;
+	z-index: 110;
+	padding: 10px;
+}
+
 #overlay {
 	position: absolute;
 	background-color: black;
@@ -117,6 +130,15 @@
 	height: 100%;
 	width: 100%;
 	float: left;
+}
+
+#submitregister {
+
+	position: absolute;
+	top: 560px;
+	left: 721px;
+	width: 82px;
+	height: 38px;
 }
 
 /* Creation d'une partie */
@@ -214,4 +236,8 @@
 .sub_menu_current{
 	background-color: green!important;
 	color: white!important;
+}
+
+#containerRegister {
+	display: none;
 }
