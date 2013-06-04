@@ -169,6 +169,10 @@
 	};
 
 	var mouseClick = function(x, y) {
+		socket.emit('userMove', {
+			x: x,
+			y: y
+		});
 		if(User.isPlanting == true)
 		{
 			ppmap.changeOneMap(x,y,2);

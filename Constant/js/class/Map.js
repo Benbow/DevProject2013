@@ -1,4 +1,5 @@
 var DB = require('./DB');
+var User = require('./User');
 
 var Map = (function() {
     // "private" variables 
@@ -50,13 +51,15 @@ var Map = (function() {
     };
 
 
-    Map.prototype.getMap = function(userId,callback) { 
+    Map.prototype.getMap = function(user,callback) { 
         var connection = _DB.connection();
         var string_map = {
             'map' : '',
             'storage' : {},
-            'user' : {}
+            'user' : {},
+            'all_user' : {}
         };
+        var user_pseudo = 
         connection.query('SELECT * FROM Tiles', function(err,rows,fields){
             if(err) throw err;
             var check = 0;
@@ -83,13 +86,27 @@ var Map = (function() {
             }
         });
 
-        connection.query('SELECT * FROM Tiles WHERE user_id = ' + userId, function(err,rows,fields){
+        connection.query('SELECT * FROM Tiles WHERE user_id = ' + user.getId() , function(err,rows,fields){
             if(err) throw err;
             string_map.user = {
                 'x': rows[0].x,
                 'y': rows[0].y
             };
             console.log(string_map.user);
+        });
+
+        connection.query('SELECT t.x as x, t.y as y, u.pseudo as pseudo FROM Users_Connected as uc LEFT JOIN Users as u ON uc.user_id = u.id LEFT JOIN Tiles as t ON uc.user_id = t.user_id',function(err,rows,fields){
+            if(err) throw err;
+
+            for(var i = 0;i < rows.length;i++)
+            {
+                if(rows[i].pseudo != user.getPseudo())
+                    string_map.all_user[i] = {
+                        'x': rows[i].x,
+                        'y': rows[i].y,
+                        'id': rows[i].id
+                    };
+            }
 
             callback(string_map);
         });

@@ -40,13 +40,13 @@ io.sockets.on('connection', function(socket){
 	socket.on('login', function(datalogin){
 		//On va chercher en bdd si le mail existe.
 		user.loginUser(datalogin.mail,datalogin.password,function(socket_user){
-			socket.emit('logginUser', socket_user);
 			if(socket_user[1] != null) // true si le mail existe
             {
 				if(socket_user[2] == datalogin.password)// On check le password
 				{
 					user.setPseudo(socket_user[0]);
 					user.setId(socket_user[3]);
+					user.connected();
 					socket.emit('valid', 'Connected !');                
                     socket.emit('connected', {
                     	'pseudo': user.getPseudo()
@@ -72,14 +72,18 @@ io.sockets.on('connection', function(socket){
 		
 
 
+	socket.on('userMove', function(data){
+		user.move(data.x, data.y);
+	});
+
 	socket.on('newgame', function(data){
-		map.getMap(user.getId(),function(socket_map){
+		map.getMap(user,function(socket_map){
 			socket.emit('loadmap', socket_map);
 		});
 	});
 
 	socket.on('continue_game', function(data){
-		map.getMap(user.getId(),function(socket_map){
+		map.getMap(user,function(socket_map){
 			socket.emit('loadmap', socket_map);
 		});
 	});
@@ -88,6 +92,10 @@ io.sockets.on('connection', function(socket){
 		stockage = new Stockages();
 		console.log(0,1,user.getId(),data.id,getIdTile(data.x,data.y));
 		//stockage.Add_Stockages(0,1,user.getId(),data.id,getIdTile(data.x,data.y));
+	});
+
+	socket.on('disconnect', function(socket){
+		user.disconnect();
 	});
 
 

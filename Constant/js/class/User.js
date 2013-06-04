@@ -17,7 +17,7 @@ var User = (function() {
         var connection = _DB.connection();
         var userInfo = new Array();
        
-        var user = connection.query('SELECT * FROM Users WHERE mail = "' +  mail + '";',function(err,rows,fields){
+        var user = connection.query('SELECT * FROM Users WHERE mail = "' + mail + '";',function(err,rows,fields){
             if(err) throw err;
 
             userInfo[0] = rows[0].pseudo;
@@ -55,6 +55,48 @@ var User = (function() {
 
     User.prototype.setId = function(id){
         this._id = id;
+    };
+
+    User.prototype.move = function(x,y){
+        var connection = _DB.connection();
+
+        connection.query('UPDATE Tiles SET user_id = NULL WHERE user_id = ' + this._id, function(err,rows,fields){
+            if(err) throw err;
+        });
+        connection.query('UPDATE Tiles SET user_id = ' + this._id + ' WHERE x = ' + x + ' AND y = ' + y, function(err,rows,fields){
+            if(err) throw err;
+        });
+    };
+
+    User.prototype.connected = function(){
+        var connection = _DB.connection();
+        var d = new Date();
+        var datetime = d.getFullYear()+'-'+(d.getMonth() + 1)+'-'+d.getDate()+' '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
+        /*connection.query('SELECT * FROM Users_Connected WHERE user_id = ' + this._id,function(err,rows,fields){
+            if(err) throw err;
+
+            if(rows[0].connected != undefined)
+            {
+                connection.query('UPDATE Users_Connected SET isConnected = 1 WHERE user_id = '+this._id, function(err,rows,fields){
+                    if(err) throw err;
+                });
+            }
+            else
+            {*/
+                connection.query('INSERT INTO Users_Connected VALUE ("",'+ this._id +',1,0,"'+ datetime +'")', function(err,rows,fields){
+                    if(err) throw err;
+                });
+            /*}          
+        });
+        */
+        
+    };
+
+    User.prototype.disconnect = function(){
+        var connection = _DB.connection();
+        connection.query('UPDATE Users_Connected SET connected = 0 WHERE user_id = '+this._id, function(err,rows,fields){
+            if(err) throw err;
+        });
     };
 
     return User;
