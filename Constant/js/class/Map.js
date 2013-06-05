@@ -134,8 +134,8 @@ var Map = (function() {
             var check = 0;
             for(var i = 0;i < rows.length;i++)
             {
-                string_map.map += rows[i].sprite_id + ((check < 50) ? "," : ((rows[i].x == 50) ? "" : ":"));
-                if(check == 50)
+                string_map.map += rows[i].sprite_id + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+                if(check == 49)
                 {
                     check = -1;
                 }
