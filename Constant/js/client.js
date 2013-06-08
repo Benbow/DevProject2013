@@ -197,6 +197,7 @@
 		}
 	};
 
+
 	$(".button_menu").click(function(){
 		var type = $(this).attr('id').substr(12,$(this).attr('id').length);
 		$("#menu_select_"+type+"_type").toggle('fast');
@@ -223,5 +224,15 @@
 		ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		$(this).parent().toggle('fast');
 	});
+
+	var count = 0;
+	$("#s_1_1").hover(
+		function () {
+			alert('plop');
+		},
+		function (){
+
+		}
+	);
 
 })(jQuery);
