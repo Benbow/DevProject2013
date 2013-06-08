@@ -120,6 +120,14 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	socket.on('watering', function(data){
+		tile = new Tiles();
+		//TODO generate croissance and health
+		map.getIdTile(data.x,data.y,function(id){
+			
+		});
+	});
+
 	socket.on('disconnect', function(socket){
 		if(user.getId() != 0)
 			user.disconnect();

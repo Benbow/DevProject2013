@@ -5,7 +5,8 @@
 	var map = false;
 	var User = {
 		isPlanting : false,
-		isBuilding : false
+		isBuilding : false,
+		isWatering : false
 	};
 	var Batiment = {
 		name : '',
@@ -212,6 +213,11 @@
 				y: y,
 				id: Batiment.sprite[Batiment.name].id
 			});
+		}else if(User.isWatering == true){
+			socket.emit('watering', {
+				x: x,
+				y: y
+			});
 		}
 	};
 
@@ -222,9 +228,19 @@
 		$("#menu_select_"+type+"_type").toggle('fast');
 	});
 
+	$("#menu_arrosage_plantes").click(function(){
+		User.isBuilding = false;
+		User.isPlanting = false;
+		User.isWatering = true;
+
+		ppmap.changeCursor('images/arrosoir.jpg','images/cursor-off.png',64,0);
+
+	});
+
 	$(".button_menu_plantes").click(function(){
 		User.isPlanting = true;
 		User.isBuilding = false;
+		User.isWatering = false;
 		var type = $(this).attr('id').substr(20,$(this).attr('id').length);
 		Plantes.name = type;
 		ppmap.changeCursor('images/'+Plantes.sprite[Plantes.name].sprite_id+'.png','images/cursor-off.png',0,0);
@@ -233,6 +249,7 @@
 	$(".button_menu_batiments").click(function(){
 		User.isBuilding = true;
 		User.isPlanting = false;
+		User.isWatering = false;
 		var type = $(this).attr('id').substr(22,$(this).attr('id').length);
 		Batiment.name = type;
 		ppmap.changeCursor('images/'+type+'.png','images/cursor-off.png',Batiment.sprite[Batiment.name].decX,Batiment.sprite[Batiment.name].decY);
@@ -241,6 +258,7 @@
 	$(".end_menu_build").click(function(){
 		User.isBuilding = false;
 		User.isPlanting = false;
+		User.isWatering = false;
 		ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		$(this).parent().toggle('fast');
 	});
