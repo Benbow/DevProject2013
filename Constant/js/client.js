@@ -152,6 +152,7 @@
 
 		//Mise en place des batiments quand tu load la map.
 	    $.each(map.storage, function(index, value) {
+	    	console.log(value.id);
 	    	if(value.id == 1)
 	    		Batiment.name = 'silo';
 	    	else if (value.id == 2)

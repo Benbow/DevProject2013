@@ -106,8 +106,9 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('newstorage', function(data){
 		stockage = new Stockages();
-		console.log(0,1,user.getId(),data.id,getIdTile(data.x,data.y));
-		//stockage.Add_Stockages(0,1,user.getId(),data.id,getIdTile(data.x,data.y));
+		map.getIdTile(data.x,data.y,function(id){
+			stockage.Add_Stockages(0,1,user.getId(),data.id,id);
+		});
 	});
 
 	socket.on('disconnect', function(socket){

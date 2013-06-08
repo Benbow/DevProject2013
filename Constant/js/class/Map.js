@@ -122,13 +122,15 @@ var Map = (function() {
 
     Map.prototype.getMap = function(user,callback) { 
         var connection = _DB.connection();
+        var user_id = user.getId();
+        var user_pseudo = user.getPseudo();
+        console.log('User_id getMap : '+user_id);
         var string_map = {
             'map' : '',
             'storage' : {},
             'user' : {},
             'all_user' : {}
         };
-        var user_pseudo = 
         connection.query('SELECT * FROM Tiles', function(err,rows,fields){
             if(err) throw err;
             var check = 0;
@@ -143,7 +145,7 @@ var Map = (function() {
             }
         });
 
-        connection.query('SELECT t.x as x, t.y as y, s.id as id FROM Stockages as s LEFT JOIN Tiles as t ON s.tile_id = t.id', function(err,rows,fields){
+        connection.query('SELECT t.x as x, t.y as y, s.stockages_spec_id as id FROM Stockages as s LEFT JOIN Tiles as t ON s.tile_id = t.id', function(err,rows,fields){
             if(err) throw err;
             for(var i = 0;i < rows.length;i++)
             {
@@ -155,13 +157,8 @@ var Map = (function() {
             }
         });
 
-        connection.query('SELECT * FROM Tiles WHERE user_id = ' + user.getId() , function(err,rows,fields){
-            if(err) throw err;
-            string_map.user = {
-                'x': rows[0].x,
-                'y': rows[0].y
-            };
-            console.log(string_map.user);
+        this.getUserTile(user_id,function(data){
+            string_map.user = data;
         });
 
         connection.query('SELECT t.x as x, t.y as y, u.pseudo as pseudo, u.id as id FROM Users_Connected as uc LEFT JOIN Users as u ON uc.user_id = u.id LEFT JOIN Tiles as t ON uc.user_id = t.user_id WHERE uc.isConnected = 1',function(err,rows,fields){
@@ -183,13 +180,13 @@ var Map = (function() {
 
     };
 
-    Map.prototype.getIdTile = function(x,y)
+    Map.prototype.getIdTile = function(x,y,callback)
     {
         var connection = _DB.connection();
         connection.query('SELECT id FROM Tiles WHERE x = ' + x + ' AND y = ' + y, function(err,rows,fields){
             if(err) throw err;
             
-            return rows[0].id;
+            callback(rows[0].id);
         });
     }
 

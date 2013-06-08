@@ -85,9 +85,4 @@ var Stockages = (function() {
     return Stockages;
 })();
 
-exports.Stockages = function(){
-	var a = new Stockages();
-    //a.Add_Stockages(1, 1, 1, 1, 1);
-    //a.Delete_Stockages(1);
-	return a;
-}
+module.exports = Stockages;
