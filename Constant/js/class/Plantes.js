@@ -1,3 +1,11 @@
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'toor',
+    database : 'farmDB',
+});
+
 //Classe qui enregistre les Plantes de chaque user
 
 var Plantes = (function() {
@@ -10,6 +18,14 @@ var Plantes = (function() {
 
     function Plantes(){
         
+    };
+
+    Plantes.prototype.Add_Plantes = function(croissance, health, user_id, graines_spec_id, tile_id){
+        var query = 'INSERT INTO Plantes (croissance, health, user_id, graines_spec_id, tile_id) VALUES ('+croissance+', '+health+', '+user_id+', '+graines_spec_id+', '+tile_id+');';
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            console.log("Plantes created");
+        });
     };
 
     //Getters
@@ -56,7 +72,4 @@ var Plantes = (function() {
     return Plantes;
 })();
 
-exports.Plantes = function(){
-	var a = new Plantes();
-	return a;
-}
+module.exports = Plantes;

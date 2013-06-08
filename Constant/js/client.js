@@ -198,6 +198,11 @@
 		{
 			ppmap.addObject(x, y, 'images/'+Plantes.name + '.png', 0, 0);
 			ppmap.changeOneMap(x,y,Plantes.sprite[Plantes.name].sprite_id);
+			socket.emit('newCrops', {
+				x: x,
+				y: y,
+				id: Plantes.sprite[Plantes.name].id
+			});
 		}
 		else if(User.isBuilding == true)
 		{

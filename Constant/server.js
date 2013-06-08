@@ -20,6 +20,7 @@ connection.connect();
 
 var Map  = require("./js/class/Map");
 var Stockages  = require("./js/class/Stockages");
+var Plantes  = require("./js/class/Plantes");
 var User = require("./js/class/User");
 
 var map = new Map();
@@ -108,6 +109,14 @@ io.sockets.on('connection', function(socket){
 		stockage = new Stockages();
 		map.getIdTile(data.x,data.y,function(id){
 			stockage.Add_Stockages(0,1,user.getId(),data.id,id);
+		});
+	});
+
+	socket.on('newCrops', function(data){
+		crops = new Plantes();
+		//TODO generate croissance and health
+		map.getIdTile(data.x,data.y,function(id){
+			crops.Add_Plantes(50,50,user.getId(),data.id,id);
 		});
 	});
 
