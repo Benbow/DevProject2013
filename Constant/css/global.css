@@ -90,33 +90,61 @@
 #newPseudo {
 	position: absolute;
 	top: 194px;
-	left: 508px;
-	width: 185px;
+	left: 560px;
+	width: 153px;
 	height: 38px;
 }
 
 #newMail {
 	position: absolute;
 	top: 256px;
-	left: 500px;
-	width: 193px;
+	left: 560px;
+	width: 153px;
 	height: 38px;
 }
 
 #newPassword {
 	position: absolute;
 	top: 318px;
-	left: 537px;
-	width: 156px;
+	left: 560px;
+	width: 153px;
 	height: 38px;
 }
 
 #confirmNewPassword{
 	position: absolute;
 	top: 381px;
-	left: 566px;
-	width: 126px;
+	left: 560px;
+	width: 152px;
 	height: 38px;
+}
+
+#buttonRegister {
+	position: absolute;
+top: 463px;
+left: 447px;
+height: 50px;
+width: 227px;
+cursor: pointer;
+opacity: 0;
+}
+
+#registerform{
+	background-repeat: no-repeat;
+	background-image: url("../images/SignIn.png");
+	height: 100%;
+	width: 100%;
+	float: left;
+}
+
+#submitRegister {
+	position: absolute;
+	top: 456px;
+	left: 469px;
+	height: 50px;
+	width: 175px;
+	cursor: pointer;
+	opacity: 0;
 }
 
 /* Formulaire de connection */
@@ -154,23 +182,7 @@
 	width: 100%;
 	float: left;
 }
-#registerform{
-	background-repeat: no-repeat;
-	background-image: url("../images/SignIn.png");
-	height: 100%;
-	width: 100%;
-	float: left;
-}
 
-#submitRegister {
-	position: absolute;
-	top: 456px;
-	left: 469px;
-	height: 50px;
-	width: 175px;
-	cursor: pointer;
-	opacity: 0;
-}
 
 
 /* Creation d'une partie */

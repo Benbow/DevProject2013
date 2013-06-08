@@ -51,11 +51,9 @@
 
 	// Action lorsque le compte est cree
 	socket.on('isRegistered', function(){
-		$("#div_register").fadeOut('fast');
-		$("#mail").slideDown('fast');
-		$("#password").slideDown('fast');
-		$("#submitlogin").slideDown('fast');
-		$("#buttonRegister").slideUp('fast');
+		$("#div_register").slideUp('fast');
+		$("#div_login").fadeIn('fast');	
+		
 	});
 
 

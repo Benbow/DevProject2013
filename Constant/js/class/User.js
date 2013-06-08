@@ -31,6 +31,28 @@ var User = (function() {
         });
     };
 
+    User.prototype.existMail = function(mail,callback) {
+         var connection = _DB.connection();
+        var newUserInfo = new Array();
+       
+        var user = connection.query('SELECT * FROM Users WHERE mail = "' + mail + '";',function(err,rows,fields){
+            if(err) throw err;
+
+            newUserInfo[0] = rows[0].pseudo;
+            newUserInfo[1] = rows[0].mail;
+           
+               console.log(newUserInfo[0] + " lol " +newUserInfo[1])
+
+        });
+       
+            if(newUserInfo[0] != null)
+                return true;
+            else 
+                return false;
+
+
+    };
+
     User.prototype.registerUser = function(mail, pseudo, password) {
         var connection = _DB.connection();
         var newUserInfo = new Array();
