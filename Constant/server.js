@@ -39,27 +39,35 @@ io.sockets.on('connection', function(socket){
 		//On va chercher en bdd si le mail existe.
 		user.loginUser(datalogin.mail,datalogin.password,function(socket_user){
 			if(socket_user[1] != null) // true si le mail existe
-			{
+            {
 				if(socket_user[2] == datalogin.password)// On check le password
 				{
 					user.setPseudo(socket_user[0]);
 					user.setId(socket_user[3]);
 					user.connected();
 					socket.emit('valid', 'Connected !');                
-					socket.emit('connected', {
-						'pseudo': user.getPseudo()
-					});
-					if(socket_user[4]){
-						if(socket_user[4] == 2){
-							socket.emit('isAdmin');
-						}
-					}
+                    socket.emit('connected', {
+                    	'pseudo': user.getPseudo()
+                    });
+                    map.getUserTile(user.getId(),function(user_tile){
+	                    socket.broadcast.emit('new_user_connected',{
+	                    	'pseudo' : socket_user[0],
+	                    	'id'     : socket_user[3],
+	                    	'x'      : user_tile.x,
+	                    	'y'		 : user_tile.y
+	                    });
+                    });
+                    if(socket_user[4]){
+                    	if(socket_user[4] == 2){
+                    		socket.emit('isAdmin');
+                    	}
+                    }
 				}
 				else
-					socket.emit('error', 'Wrong password !');
-			}
-			else
-				socket.emit('error', 'Bad mail !');
+                    socket.emit('error', 'Wrong password !');
+            }
+            else
+                socket.emit('error', 'Bad mail !');
 		});
 	});
 		

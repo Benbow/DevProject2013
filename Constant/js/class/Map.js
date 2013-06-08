@@ -23,26 +23,26 @@ var Map = (function() {
     };
 
     Map.prototype.initialiseMap = function() { 
-        var i = 0,j = 0, rh = 0, rf = 0, count = 0;
+        var i = 1,j = 1, rh = 0, rf = 0, count = 0;
         var randhum = Math.floor((Math.random()*100)+1);
         var randfert = Math.floor((Math.random()*100)+1);
 
         var mapGeneration = setInterval(function(){
             var connection = _DB.connection();
-            if(i == 0){
-                if(j == 0){
+            if(i == 1){
+                if(j == 1){
                     rh = randhum;
                     rf = randfert;
                     nextStep(i, j, rh, rf, function(){
-                        if(j == 49)
+                        if(j == 50)
                         {
-                            if(i == 49)
+                            if(i == 50)
                             {
                                 console.log('done');
                                 clearInterval(mapGeneration);
                             }
                             i++;
-                            j=0;
+                            j=1;
                         }else{
                             j++;
                         }
@@ -51,35 +51,35 @@ var Map = (function() {
                     rh = makeTilesPropertyByLeft(rh);
                     rf = makeTilesPropertyByLeft(rf);
                     nextStep(i, j, rh, rf, function(){
-                        if(j == 49)
+                        if(j == 50)
                         {
-                            if(i == 49)
+                            if(i == 50)
                             {
                                 console.log('done');
                                    clearInterval(mapGeneration);
                             }
                             i++;
-                            j=0;
+                            j=1;
                         }else{
                             j++;
                         }
                     });
                 }
             }else{
-                if(j == 0){
+                if(j == 1){
                     makeTilesPropertyByUp(i, j,function(retour){
                         rh = retour[0];
                         rf = retour[1];
                         nextStep(i, j, rh, rf, function(){
-                            if(j == 49)
+                            if(j == 50)
                             {
-                                if(i == 49)
+                                if(i == 50)
                                 {
                                     console.log('done');
                                     clearInterval(mapGeneration);
                                 }
                                 i++;
-                                j=0;
+                                j=1;
                             }else{
                                 j++;
                             }
@@ -90,15 +90,15 @@ var Map = (function() {
                         rh = retour[0];
                         rf = retour[1];
                         nextStep(i, j, rh, rf, function(){
-                            if(j == 49)
+                            if(j == 50)
                             {
-                                if(i == 49)
+                                if(i == 50)
                                 {
                                     console.log('done');
                                     clearInterval(mapGeneration);
                                 }
                                 i++;
-                                j=0;
+                                j=1;
                             }else{
                                 j++;
                             }
@@ -378,7 +378,8 @@ var Map = (function() {
 
     function nextStep(i, j, rh, rf, callback){
         var connection = _DB.connection();
-        connection.query('INSERT INTO Tiles (id,x,y, humidite, fertilite) VALUES("","' + i + '","' + j + '","' + rh + '","' + rf + '");');
+        var sprite_id = 1;
+        connection.query('INSERT INTO Tiles (id,x,y, humidite, fertilite, sprite_id) VALUES("","' + i + '","' + j + '","' + rh + '","' + rf + '","' + sprite_id + '");');
         callback('ok');
     }
 
