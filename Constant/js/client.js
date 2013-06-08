@@ -26,7 +26,20 @@
 				decY : -292
 			}
 		}
+	}
 
+	var Plantes = {
+		name : '',
+		sprite : {
+			tomates : {
+				id : 1,
+				sprite_id : 2
+			},
+			mais : {
+				id : 2,
+				sprite_id : 13
+			}
+		}
 	}
 
 
@@ -183,7 +196,8 @@
 		});
 		if(User.isPlanting == true)
 		{
-			ppmap.changeOneMap(x,y,2);
+			ppmap.addObject(x, y, 'images/'+Plantes.name + '.png', 0, 0);
+			ppmap.changeOneMap(x,y,Plantes.sprite[Plantes.name].sprite_id);
 		}
 		else if(User.isBuilding == true)
 		{
@@ -207,7 +221,8 @@
 		User.isPlanting = true;
 		User.isBuilding = false;
 		var type = $(this).attr('id').substr(20,$(this).attr('id').length);
-		ppmap.changeCursor('images/2.png','images/cursor-off.png',0,0);
+		Plantes.name = type;
+		ppmap.changeCursor('images/'+Plantes.sprite[Plantes.name].sprite_id+'.png','images/cursor-off.png',0,0);
 	});
 
 	$(".button_menu_batiments").click(function(){
@@ -225,14 +240,6 @@
 		$(this).parent().toggle('fast');
 	});
 
-	var count = 0;
-	$("#s_1_1").hover(
-		function () {
-			alert('plop');
-		},
-		function (){
-
-		}
-	);
+	
 
 })(jQuery);
