@@ -200,6 +200,7 @@
 
 	$(".button_menu").click(function(){
 		var type = $(this).attr('id').substr(12,$(this).attr('id').length);
+		$('.menu_select_options').css('display','none');
 		$("#menu_select_"+type+"_type").toggle('fast');
 	});
 

@@ -1,550 +1,3092 @@
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
-
-DROP SCHEMA IF EXISTS `farmDB` ;
-CREATE SCHEMA IF NOT EXISTS `farmDB` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
-USE `farmDB` ;
-
--- -----------------------------------------------------
--- Table `farmDB`.`Alliances`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Alliances` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Alliances` (
-  `id` INT NOT NULL ,
-  `name` VARCHAR(45) NULL ,
-  `master_user_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `master_idx` (`master_user_id` ASC) ,
-  CONSTRAINT `master`
-    FOREIGN KEY (`master_user_id` )
-    REFERENCES `farmDB`.`Users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Users`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Users` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Users` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `pseudo` VARCHAR(45) NULL ,
-  `mail` VARCHAR(45) NULL ,
-  `password` VARCHAR(100) NULL,
-  `status` TINYINT NULL ,
-  `ip` VARCHAR(45) NULL ,
-  `nb_fertilisants` INT NULL ,
-  `energies` INT NULL ,
-  `energies_max` INT NULL ,
-  `niveau` INT NULL ,
-  `alliance_id` INT NULL ,
-  `argent` INT NULL ,
-  `experience` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `users_to_alliances_idx` (`alliance_id` ASC) ,
-  CONSTRAINT `users_to_alliances`
-    FOREIGN KEY (`alliance_id` )
-    REFERENCES `farmDB`.`Alliances` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Stockages_spec`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Stockages_spec` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Stockages_spec` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NULL ,
-  `taille` INT NULL ,
-  `prix` INT NULL ,
-  `stockage` INT NULL ,
-  `consommation` INT NULL ,
-  `constructionTime` INT NULL ,
-  `niveau_requis` INT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Energies_spec`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Energies_spec` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Energies_spec` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NULL ,
-  `prix` INT NULL ,
-  `constructionTime` INT NULL ,
-  `production` INT NULL ,
-  `niveau_requis` INT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Armes_spec`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Armes_spec` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Armes_spec` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NULL ,
-  `puissance` INT NULL ,
-  `precision` INT NULL ,
-  `vitesse` INT NULL ,
-  `prix` INT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Graines_spec`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Graines_spec` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Graines_spec` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NULL ,
-  `maturation` INT NULL ,
-  `pourrissement` INT NULL ,
-  `production` INT NULL ,
-  `stockage` INT NULL ,
-  `croissance` INT NULL ,
-  `poids` INT NULL ,
-  `prix` INT NULL ,
-  `sante_min` INT NULL ,
-  `niveau_requis` INT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Tiles`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Tiles` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Tiles` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `x` INT NULL ,
-  `y` INT NULL ,
-  `sprite_id` INT NOT NULL DEFAULT  '1',
-  `isEmpty` TINYINT NULL ,
-  `humidite` INT NULL ,
-  `fertilite` INT NULL ,
-  `isVisible` TINYINT NULL ,
-  `user_id` INT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Stockages`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Stockages` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Stockages` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `stockage_state` INT NULL ,
-  `isConstruct` TINYINT NULL ,
-  `user_id` INT NULL ,
-  `stockages_spec_id` INT NULL ,
-  `tile_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `stockages_to_user_idx` (`user_id` ASC) ,
-  INDEX `stockages_to_spec_idx` (`stockages_spec_id` ASC) ,
-  INDEX `stockages_to_tiles_idx` (`tile_id` ASC) ,
-  CONSTRAINT `stockages_to_user`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `farmDB`.`Users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `stockages_to_spec`
-    FOREIGN KEY (`stockages_spec_id` )
-    REFERENCES `farmDB`.`Stockages_spec` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `stockages_to_tiles`
-    FOREIGN KEY (`tile_id` )
-    REFERENCES `farmDB`.`Tiles` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-COMMENT = '<double-click to overwrite multiple objects>';
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Energies`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Energies` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Energies` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `isConstruct` TINYINT NULL ,
-  `user_id` INT NULL ,
-  `energies_spec_id` INT NULL ,
-  `tile_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `energies_to_user_idx` (`user_id` ASC) ,
-  INDEX `energies_to_spec_idx` (`energies_spec_id` ASC) ,
-  INDEX `energies_to_tiles_idx` (`tile_id` ASC) ,
-  CONSTRAINT `energies_to_user`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `farmDB`.`Users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `energies_to_spec`
-    FOREIGN KEY (`energies_spec_id` )
-    REFERENCES `farmDB`.`Energies_spec` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `energies_to_tiles`
-    FOREIGN KEY (`tile_id` )
-    REFERENCES `farmDB`.`Tiles` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-COMMENT = '<double-click to overwrite multiple objects>';
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Armes`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Armes` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Armes` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `user_id` INT NULL ,
-  `armes_spec_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `armes_to_user_idx` (`user_id` ASC) ,
-  INDEX `armes_to_spec_idx` (`armes_spec_id` ASC) ,
-  CONSTRAINT `armes_to_user`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `farmDB`.`Users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `armes_to_spec`
-    FOREIGN KEY (`armes_spec_id` )
-    REFERENCES `farmDB`.`Armes_spec` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-COMMENT = '<double-click to overwrite multiple objects>';
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Graines`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Graines` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Graines` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `nb` INT NULL ,
-  `user_id` INT NULL ,
-  `graines_spec_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `graines_tp_user_idx` (`user_id` ASC) ,
-  INDEX `graines_to_spec_idx` (`graines_spec_id` ASC) ,
-  CONSTRAINT `graines_to_user`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `farmDB`.`Users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `graines_to_spec`
-    FOREIGN KEY (`graines_spec_id` )
-    REFERENCES `farmDB`.`Graines_spec` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-COMMENT = '<double-click to overwrite multiple objects>';
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Fruits_spec`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Fruits_spec` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Fruits_spec` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NULL ,
-  `prix_vente` INT NULL ,
-  `stockage` INT NULL ,
-  `poids` INT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Fruits`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Fruits` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Fruits` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `nb` INT NULL ,
-  `user_id` INT NULL ,
-  `fruits_spec_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fruits_to_user_idx` (`user_id` ASC) ,
-  INDEX `fruit_to_spec_idx` (`fruits_spec_id` ASC) ,
-  CONSTRAINT `fruits_to_user`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `farmDB`.`Users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fruits_to_spec`
-    FOREIGN KEY (`fruits_spec_id` )
-    REFERENCES `farmDB`.`Fruits_spec` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-COMMENT = '<double-click to overwrite multiple objects>';
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Plantes`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Plantes` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Plantes` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `croissance` INT NULL ,
-  `health` INT NULL ,
-  `user_id` INT NULL ,
-  `graines_spec_id` INT NULL ,
-  `tile_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `plantes_to_user_idx` (`user_id` ASC) ,
-  INDEX `plantes_to_spec_idx` (`graines_spec_id` ASC) ,
-  INDEX `plantes_to_tiles_idx` (`tile_id` ASC) ,
-  CONSTRAINT `plantes_to_user`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `farmDB`.`Users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `plantes_to_spec`
-    FOREIGN KEY (`graines_spec_id` )
-    REFERENCES `farmDB`.`Graines_spec` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `plantes_to_tiles`
-    FOREIGN KEY (`tile_id` )
-    REFERENCES `farmDB`.`Tiles` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-COMMENT = '<double-click to overwrite multiple objects>';
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Maisons`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Maisons` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Maisons` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `tile_id` INT NULL ,
-  `user_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `maisons_to_users_idx` (`user_id` ASC) ,
-  INDEX `maisons_to_tiles_idx` (`tile_id` ASC) ,
-  CONSTRAINT `maisons_to_users`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `farmDB`.`Users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `maisons_to_tiles`
-    FOREIGN KEY (`tile_id` )
-    REFERENCES `farmDB`.`Tiles` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Arrosoirs_spec`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Arrosoirs_spec` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Arrosoirs_spec` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NULL ,
-  `prix` INT NULL ,
-  `stockage` INT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Arrosoirs`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Arrosoirs` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Arrosoirs` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `user_id` INT NULL ,
-  `arrosoirs_spec_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `arrosoirs_to_user_idx` (`user_id` ASC) ,
-  INDEX `arrosoirs_to_spec_idx` (`arrosoirs_spec_id` ASC) ,
-  CONSTRAINT `arrosoirs_to_user`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `farmDB`.`Users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `arrosoirs_to_spec`
-    FOREIGN KEY (`arrosoirs_spec_id` )
-    REFERENCES `farmDB`.`Arrosoirs_spec` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Users_level_spec`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Users_level_spec` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Users_level_spec` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `tile_next_level` INT NULL ,
-  `conquete_timer` INT NULL ,
-  `wait_conquetes_timer` INT NULL ,
-  `resistance` INT NULL ,
-  `victory_timer` INT NULL ,
-  `win_regen` INT NULL ,
-  `lose_regen` INT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Achats`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Achats` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Achats` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `date` DATETIME NULL ,
-  `graines_spec_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `achats_to_spec_idx` (`graines_spec_id` ASC) ,
-  CONSTRAINT `achats_to_spec`
-    FOREIGN KEY (`graines_spec_id` )
-    REFERENCES `farmDB`.`Graines_spec` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Pluie`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Pluie` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Pluie` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `isActive` TINYINT NULL ,
-  `origin_tile_id` INT NULL ,
-  `longueur` INT NULL ,
-  `largeur` INT NULL ,
-  `duree` INT NULL ,
-  `x` INT NULL ,
-  `y` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `origin_tile_id_idx` (`origin_tile_id` ASC) ,
-  CONSTRAINT `pluie_to_tiles`
-    FOREIGN KEY (`origin_tile_id` )
-    REFERENCES `farmDB`.`Tiles` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Tornade`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Tornade` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Tornade` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `isActive` TINYINT NULL ,
-  `origin_tile_id` INT NULL ,
-  `vectorX` INT NULL ,
-  `vexctorY` INT NULL ,
-  `longueur` INT NULL ,
-  `largeur` INT NULL ,
-  `duree` INT NULL ,
-  `x` INT NULL ,
-  `y` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `origin_tile_id_idx` (`origin_tile_id` ASC) ,
-  CONSTRAINT `tornades_to_tiles`
-    FOREIGN KEY (`origin_tile_id` )
-    REFERENCES `farmDB`.`Tiles` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Meteor`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Meteor` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Meteor` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `isActive` TINYINT NULL ,
-  `origin_tile_id` INT NULL ,
-  `longueur` INT NULL ,
-  `largeur` INT NULL ,
-  `duree` INT NULL ,
-  `x` INT NULL ,
-  `y` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `meteor_to_tiles_idx` (`origin_tile_id` ASC) ,
-  CONSTRAINT `meteor_to_tiles`
-    FOREIGN KEY (`origin_tile_id` )
-    REFERENCES `farmDB`.`Tiles` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `farmDB`.`Sauterelles`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `farmDB`.`Sauterelles` ;
-
-CREATE  TABLE IF NOT EXISTS `farmDB`.`Sauterelles` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `isActive` TINYINT NULL ,
-  `origin_tile_id` INT NULL ,
-  `vectorX` INT NULL ,
-  `vexctorY` INT NULL ,
-  `longueur` INT NULL ,
-  `largeur` INT NULL ,
-  `duree` INT NULL ,
-  `x` INT NULL ,
-  `y` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `sauterelles_to_tiles_idx` (`origin_tile_id` ASC) ,
-  CONSTRAINT `sauterelles_to_tiles`
-    FOREIGN KEY (`origin_tile_id` )
-    REFERENCES `farmDB`.`Tiles` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+-- phpMyAdmin SQL Dump
+-- version 3.4.10.1deb1
+-- http://www.phpmyadmin.net
+--
+-- Client: localhost
+-- Généré le : Sam 08 Juin 2013 à 10:14
+-- Version du serveur: 5.5.31
+-- Version de PHP: 5.4.15-1~precise+1
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Base de données: `farmDB`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Achats`
+--
+
+CREATE TABLE IF NOT EXISTS `Achats` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` datetime DEFAULT NULL,
+  `graines_spec_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `achats_to_spec_idx` (`graines_spec_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Alliances`
+--
+
+CREATE TABLE IF NOT EXISTS `Alliances` (
+  `id` int(11) NOT NULL,
+  `name` varchar(45) DEFAULT NULL,
+  `master_user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `master_idx` (`master_user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Armes`
+--
+
+CREATE TABLE IF NOT EXISTS `Armes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `armes_spec_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `armes_to_user_idx` (`user_id`),
+  KEY `armes_to_spec_idx` (`armes_spec_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='<double-click to overwrite multiple objects>' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Armes_spec`
+--
+
+CREATE TABLE IF NOT EXISTS `Armes_spec` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `puissance` int(11) DEFAULT NULL,
+  `precision` int(11) DEFAULT NULL,
+  `vitesse` int(11) DEFAULT NULL,
+  `prix` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Arrosoirs`
+--
+
+CREATE TABLE IF NOT EXISTS `Arrosoirs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `arrosoirs_spec_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `arrosoirs_to_user_idx` (`user_id`),
+  KEY `arrosoirs_to_spec_idx` (`arrosoirs_spec_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Arrosoirs_spec`
+--
+
+CREATE TABLE IF NOT EXISTS `Arrosoirs_spec` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `prix` int(11) DEFAULT NULL,
+  `stockage` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Energies`
+--
+
+CREATE TABLE IF NOT EXISTS `Energies` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isConstruct` tinyint(4) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `energies_spec_id` int(11) DEFAULT NULL,
+  `tile_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `energies_to_user_idx` (`user_id`),
+  KEY `energies_to_spec_idx` (`energies_spec_id`),
+  KEY `energies_to_tiles_idx` (`tile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='<double-click to overwrite multiple objects>' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Energies_spec`
+--
+
+CREATE TABLE IF NOT EXISTS `Energies_spec` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `prix` int(11) DEFAULT NULL,
+  `constructionTime` int(11) DEFAULT NULL,
+  `production` int(11) DEFAULT NULL,
+  `niveau_requis` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Fruits`
+--
+
+CREATE TABLE IF NOT EXISTS `Fruits` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nb` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `fruits_spec_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fruits_to_user_idx` (`user_id`),
+  KEY `fruit_to_spec_idx` (`fruits_spec_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='<double-click to overwrite multiple objects>' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Fruits_spec`
+--
+
+CREATE TABLE IF NOT EXISTS `Fruits_spec` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `prix_vente` int(11) DEFAULT NULL,
+  `stockage` int(11) DEFAULT NULL,
+  `poids` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Graines`
+--
+
+CREATE TABLE IF NOT EXISTS `Graines` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nb` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `graines_spec_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `graines_tp_user_idx` (`user_id`),
+  KEY `graines_to_spec_idx` (`graines_spec_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='<double-click to overwrite multiple objects>' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Graines_spec`
+--
+
+CREATE TABLE IF NOT EXISTS `Graines_spec` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `maturation` int(11) DEFAULT NULL,
+  `pourrissement` int(11) DEFAULT NULL,
+  `production` int(11) DEFAULT NULL,
+  `stockage` int(11) DEFAULT NULL,
+  `croissance` int(11) DEFAULT NULL,
+  `poids` int(11) DEFAULT NULL,
+  `prix` int(11) DEFAULT NULL,
+  `sante_min` int(11) DEFAULT NULL,
+  `niveau_requis` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Contenu de la table `Graines_spec`
+--
+
+INSERT INTO `Graines_spec` (`id`, `name`, `maturation`, `pourrissement`, `production`, `stockage`, `croissance`, `poids`, `prix`, `sante_min`, `niveau_requis`) VALUES
+(1, 'test', 1, 1, 1, 1, 1, 1, 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Maisons`
+--
+
+CREATE TABLE IF NOT EXISTS `Maisons` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tile_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `maisons_to_users_idx` (`user_id`),
+  KEY `maisons_to_tiles_idx` (`tile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Meteor`
+--
+
+CREATE TABLE IF NOT EXISTS `Meteor` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isActive` tinyint(4) DEFAULT NULL,
+  `origin_tile_id` int(11) DEFAULT NULL,
+  `longueur` int(11) DEFAULT NULL,
+  `largeur` int(11) DEFAULT NULL,
+  `duree` int(11) DEFAULT NULL,
+  `x` int(11) DEFAULT NULL,
+  `y` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `meteor_to_tiles_idx` (`origin_tile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Plantes`
+--
+
+CREATE TABLE IF NOT EXISTS `Plantes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `croissance` int(11) DEFAULT NULL,
+  `health` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `graines_spec_id` int(11) DEFAULT NULL,
+  `tile_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `plantes_to_user_idx` (`user_id`),
+  KEY `plantes_to_spec_idx` (`graines_spec_id`),
+  KEY `plantes_to_tiles_idx` (`tile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='<double-click to overwrite multiple objects>' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Pluie`
+--
+
+CREATE TABLE IF NOT EXISTS `Pluie` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isActive` tinyint(4) DEFAULT NULL,
+  `origin_tile_id` int(11) DEFAULT NULL,
+  `longueur` int(11) DEFAULT NULL,
+  `largeur` int(11) DEFAULT NULL,
+  `duree` int(11) DEFAULT NULL,
+  `x` int(11) DEFAULT NULL,
+  `y` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `origin_tile_id_idx` (`origin_tile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Sauterelles`
+--
+
+CREATE TABLE IF NOT EXISTS `Sauterelles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isActive` tinyint(4) DEFAULT NULL,
+  `origin_tile_id` int(11) DEFAULT NULL,
+  `vectorX` int(11) DEFAULT NULL,
+  `vexctorY` int(11) DEFAULT NULL,
+  `longueur` int(11) DEFAULT NULL,
+  `largeur` int(11) DEFAULT NULL,
+  `duree` int(11) DEFAULT NULL,
+  `x` int(11) DEFAULT NULL,
+  `y` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sauterelles_to_tiles_idx` (`origin_tile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Stockages`
+--
+
+CREATE TABLE IF NOT EXISTS `Stockages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stockage_state` int(11) DEFAULT NULL,
+  `isConstruct` tinyint(4) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `stockages_spec_id` int(11) DEFAULT NULL,
+  `tile_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `stockages_to_user_idx` (`user_id`),
+  KEY `stockages_to_spec_idx` (`stockages_spec_id`),
+  KEY `stockages_to_tiles_idx` (`tile_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='<double-click to overwrite multiple objects>' AUTO_INCREMENT=2 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Stockages_spec`
+--
+
+CREATE TABLE IF NOT EXISTS `Stockages_spec` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `taille` int(11) DEFAULT NULL,
+  `prix` int(11) DEFAULT NULL,
+  `stockage` int(11) DEFAULT NULL,
+  `consommation` int(11) DEFAULT NULL,
+  `constructionTime` int(11) DEFAULT NULL,
+  `niveau_requis` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Contenu de la table `Stockages_spec`
+--
+
+INSERT INTO `Stockages_spec` (`id`, `name`, `taille`, `prix`, `stockage`, `consommation`, `constructionTime`, `niveau_requis`) VALUES
+(1, 'silo', 1, 10, 100, 10, 10, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Tiles`
+--
+
+CREATE TABLE IF NOT EXISTS `Tiles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `x` int(11) DEFAULT NULL,
+  `y` int(11) DEFAULT NULL,
+  `sprite_id` int(11) NOT NULL DEFAULT '1',
+  `isEmpty` tinyint(4) DEFAULT NULL,
+  `humidite` int(11) DEFAULT NULL,
+  `fertilite` int(11) DEFAULT NULL,
+  `isVisible` tinyint(4) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2501 ;
+
+--
+-- Contenu de la table `Tiles`
+--
+
+INSERT INTO `Tiles` (`id`, `x`, `y`, `sprite_id`, `isEmpty`, `humidite`, `fertilite`, `isVisible`, `user_id`) VALUES
+(1, 0, 0, 1, NULL, 8, 43, NULL, NULL),
+(2, 0, 1, 1, NULL, 0, 51, NULL, NULL),
+(3, 0, 2, 1, NULL, 18, 61, NULL, NULL),
+(4, 0, 3, 1, NULL, 4, 46, NULL, NULL),
+(5, 0, 4, 1, NULL, 19, 65, NULL, NULL),
+(6, 0, 5, 1, NULL, 11, 50, NULL, NULL),
+(7, 0, 6, 1, NULL, 28, 39, NULL, NULL),
+(8, 0, 7, 1, NULL, 42, 57, NULL, NULL),
+(9, 0, 8, 1, NULL, 51, 64, NULL, NULL),
+(10, 0, 9, 1, NULL, 52, 67, NULL, NULL),
+(11, 0, 10, 1, NULL, 58, 54, NULL, NULL),
+(12, 0, 11, 1, NULL, 52, 65, NULL, NULL),
+(13, 0, 12, 1, NULL, 38, 83, NULL, NULL),
+(14, 0, 13, 1, NULL, 57, 75, NULL, NULL),
+(15, 0, 14, 1, NULL, 56, 76, NULL, NULL),
+(16, 0, 15, 1, NULL, 44, 87, NULL, NULL),
+(17, 0, 16, 1, NULL, 60, 95, NULL, NULL),
+(18, 0, 17, 1, NULL, 45, 91, NULL, NULL),
+(19, 0, 18, 1, NULL, 57, 81, NULL, NULL),
+(20, 0, 19, 1, NULL, 68, 98, NULL, NULL),
+(21, 0, 20, 1, NULL, 77, 100, NULL, NULL),
+(22, 0, 21, 1, NULL, 85, 100, NULL, NULL),
+(23, 0, 22, 1, NULL, 100, 82, NULL, NULL),
+(24, 0, 23, 1, NULL, 87, 77, NULL, NULL),
+(25, 0, 24, 1, NULL, 81, 65, NULL, NULL),
+(26, 0, 25, 1, NULL, 73, 55, NULL, NULL),
+(27, 0, 26, 1, NULL, 87, 35, NULL, NULL),
+(28, 0, 27, 1, NULL, 99, 44, NULL, NULL),
+(29, 0, 28, 1, NULL, 100, 49, NULL, NULL),
+(30, 0, 29, 1, NULL, 100, 46, NULL, NULL),
+(31, 0, 30, 1, NULL, 84, 26, NULL, NULL),
+(32, 0, 31, 1, NULL, 71, 19, NULL, NULL),
+(33, 0, 32, 1, NULL, 62, 1, NULL, NULL),
+(34, 0, 33, 1, NULL, 58, 10, NULL, NULL),
+(35, 0, 34, 1, NULL, 53, 0, NULL, NULL),
+(36, 0, 35, 1, NULL, 70, 0, NULL, NULL),
+(37, 0, 36, 1, NULL, 75, 8, NULL, NULL),
+(38, 0, 37, 1, NULL, 67, 24, NULL, NULL),
+(39, 0, 38, 1, NULL, 63, 5, NULL, NULL),
+(40, 0, 39, 1, NULL, 50, 9, NULL, NULL),
+(41, 0, 40, 1, NULL, 67, 25, NULL, NULL),
+(42, 0, 41, 1, NULL, 55, 10, NULL, NULL),
+(43, 0, 42, 1, NULL, 43, 0, NULL, NULL),
+(44, 0, 43, 1, NULL, 56, 0, NULL, NULL),
+(45, 0, 44, 1, NULL, 38, 0, NULL, NULL),
+(46, 0, 45, 1, NULL, 49, 0, NULL, NULL),
+(47, 0, 46, 1, NULL, 30, 19, NULL, NULL),
+(48, 0, 47, 1, NULL, 23, 10, NULL, NULL),
+(49, 0, 48, 1, NULL, 29, 0, NULL, NULL),
+(50, 0, 49, 1, NULL, 49, 8, NULL, NULL),
+(51, 1, 0, 1, NULL, 0, 52, NULL, NULL),
+(52, 1, 1, 1, NULL, 3, 39, NULL, NULL),
+(53, 1, 2, 1, NULL, 22, 47, NULL, NULL),
+(54, 1, 3, 1, NULL, 7, 57, NULL, NULL),
+(55, 1, 4, 1, NULL, 9, 61, NULL, NULL),
+(56, 1, 5, 1, NULL, 11, 65, NULL, NULL),
+(57, 1, 6, 1, NULL, 22, 49, NULL, NULL),
+(58, 1, 7, 1, NULL, 38, 54, NULL, NULL),
+(59, 1, 8, 1, NULL, 33, 54, NULL, NULL),
+(60, 1, 9, 1, NULL, 36, 65, NULL, NULL),
+(61, 1, 10, 1, NULL, 47, 71, NULL, NULL),
+(62, 1, 11, 1, NULL, 65, 51, NULL, NULL),
+(63, 1, 12, 1, NULL, 53, 65, NULL, NULL),
+(64, 1, 13, 1, NULL, 57, 72, NULL, NULL),
+(65, 1, 14, 1, NULL, 66, 87, NULL, NULL),
+(66, 1, 15, 1, NULL, 53, 81, NULL, NULL),
+(67, 1, 16, 1, NULL, 68, 80, NULL, NULL),
+(68, 1, 17, 1, NULL, 58, 84, NULL, NULL),
+(69, 1, 18, 1, NULL, 41, 93, NULL, NULL),
+(70, 1, 19, 1, NULL, 56, 99, NULL, NULL),
+(71, 1, 20, 1, NULL, 62, 88, NULL, NULL),
+(72, 1, 21, 1, NULL, 66, 96, NULL, NULL),
+(73, 1, 22, 1, NULL, 85, 96, NULL, NULL),
+(74, 1, 23, 1, NULL, 92, 97, NULL, NULL),
+(75, 1, 24, 1, NULL, 89, 79, NULL, NULL),
+(76, 1, 25, 1, NULL, 87, 59, NULL, NULL),
+(77, 1, 26, 1, NULL, 82, 54, NULL, NULL),
+(78, 1, 27, 1, NULL, 96, 52, NULL, NULL),
+(79, 1, 28, 1, NULL, 81, 55, NULL, NULL),
+(80, 1, 29, 1, NULL, 97, 50, NULL, NULL),
+(81, 1, 30, 1, NULL, 99, 42, NULL, NULL),
+(82, 1, 31, 1, NULL, 89, 33, NULL, NULL),
+(83, 1, 32, 1, NULL, 76, 21, NULL, NULL),
+(84, 1, 33, 1, NULL, 64, 4, NULL, NULL),
+(85, 1, 34, 1, NULL, 47, 9, NULL, NULL),
+(86, 1, 35, 1, NULL, 66, 20, NULL, NULL),
+(87, 1, 36, 1, NULL, 60, 6, NULL, NULL),
+(88, 1, 37, 1, NULL, 75, 20, NULL, NULL),
+(89, 1, 38, 1, NULL, 69, 4, NULL, NULL),
+(90, 1, 39, 1, NULL, 61, 1, NULL, NULL),
+(91, 1, 40, 1, NULL, 51, 11, NULL, NULL),
+(92, 1, 41, 1, NULL, 58, 1, NULL, NULL),
+(93, 1, 42, 1, NULL, 39, 15, NULL, NULL),
+(94, 1, 43, 1, NULL, 47, 3, NULL, NULL),
+(95, 1, 44, 1, NULL, 48, 3, NULL, NULL),
+(96, 1, 45, 1, NULL, 47, 0, NULL, NULL),
+(97, 1, 46, 1, NULL, 28, 7, NULL, NULL),
+(98, 1, 47, 1, NULL, 30, 5, NULL, NULL),
+(99, 1, 48, 1, NULL, 43, 6, NULL, NULL),
+(100, 1, 49, 1, NULL, 55, 13, NULL, NULL),
+(101, 2, 0, 1, NULL, 0, 64, NULL, NULL),
+(102, 2, 1, 1, NULL, 4, 56, NULL, NULL),
+(103, 2, 2, 1, NULL, 5, 41, NULL, NULL),
+(104, 2, 3, 1, NULL, 3, 52, NULL, NULL),
+(105, 2, 4, 1, NULL, 17, 49, NULL, NULL),
+(106, 2, 5, 1, NULL, 10, 54, NULL, NULL),
+(107, 2, 6, 1, NULL, 2, 68, NULL, NULL),
+(108, 2, 7, 1, NULL, 21, 62, NULL, NULL),
+(109, 2, 8, 1, NULL, 37, 58, NULL, NULL),
+(110, 2, 9, 1, NULL, 44, 57, NULL, NULL),
+(111, 2, 10, 1, NULL, 40, 53, NULL, NULL),
+(112, 2, 11, 1, NULL, 45, 47, NULL, NULL),
+(113, 2, 12, 1, NULL, 53, 63, NULL, NULL),
+(114, 2, 13, 1, NULL, 50, 63, NULL, NULL),
+(115, 2, 14, 1, NULL, 67, 76, NULL, NULL),
+(116, 2, 15, 1, NULL, 70, 72, NULL, NULL),
+(117, 2, 16, 1, NULL, 50, 83, NULL, NULL),
+(118, 2, 17, 1, NULL, 40, 94, NULL, NULL),
+(119, 2, 18, 1, NULL, 54, 94, NULL, NULL),
+(120, 2, 19, 1, NULL, 57, 94, NULL, NULL),
+(121, 2, 20, 1, NULL, 50, 78, NULL, NULL),
+(122, 2, 21, 1, NULL, 70, 84, NULL, NULL),
+(123, 2, 22, 1, NULL, 80, 92, NULL, NULL),
+(124, 2, 23, 1, NULL, 77, 83, NULL, NULL),
+(125, 2, 24, 1, NULL, 71, 78, NULL, NULL),
+(126, 2, 25, 1, NULL, 89, 67, NULL, NULL),
+(127, 2, 26, 1, NULL, 74, 58, NULL, NULL),
+(128, 2, 27, 1, NULL, 84, 49, NULL, NULL),
+(129, 2, 28, 1, NULL, 76, 62, NULL, NULL),
+(130, 2, 29, 1, NULL, 88, 46, NULL, NULL),
+(131, 2, 30, 1, NULL, 85, 55, NULL, NULL),
+(132, 2, 31, 1, NULL, 100, 37, NULL, NULL),
+(133, 2, 32, 1, NULL, 93, 33, NULL, NULL),
+(134, 2, 33, 1, NULL, 74, 16, NULL, NULL),
+(135, 2, 34, 1, NULL, 65, 21, NULL, NULL),
+(136, 2, 35, 1, NULL, 54, 26, NULL, NULL),
+(137, 2, 36, 1, NULL, 54, 22, NULL, NULL),
+(138, 2, 37, 1, NULL, 61, 6, NULL, NULL),
+(139, 2, 38, 1, NULL, 54, 12, NULL, NULL),
+(140, 2, 39, 1, NULL, 63, 3, NULL, NULL),
+(141, 2, 40, 1, NULL, 58, 7, NULL, NULL),
+(142, 2, 41, 1, NULL, 52, 17, NULL, NULL),
+(143, 2, 42, 1, NULL, 32, 13, NULL, NULL),
+(144, 2, 43, 1, NULL, 45, 2, NULL, NULL),
+(145, 2, 44, 1, NULL, 40, 13, NULL, NULL),
+(146, 2, 45, 1, NULL, 44, 0, NULL, NULL),
+(147, 2, 46, 1, NULL, 35, 20, NULL, NULL),
+(148, 2, 47, 1, NULL, 33, 16, NULL, NULL),
+(149, 2, 48, 1, NULL, 41, 7, NULL, NULL),
+(150, 2, 49, 1, NULL, 54, 20, NULL, NULL),
+(151, 3, 0, 1, NULL, 0, 60, NULL, NULL),
+(152, 3, 1, 1, NULL, 7, 51, NULL, NULL),
+(153, 3, 2, 1, NULL, 8, 43, NULL, NULL),
+(154, 3, 3, 1, NULL, 2, 54, NULL, 1),
+(155, 3, 4, 1, NULL, 17, 36, NULL, NULL),
+(156, 3, 5, 1, NULL, 15, 54, NULL, NULL),
+(157, 3, 6, 1, NULL, 19, 72, NULL, NULL),
+(158, 3, 7, 1, NULL, 32, 75, NULL, NULL),
+(159, 3, 8, 1, NULL, 35, 78, NULL, NULL),
+(160, 3, 9, 1, NULL, 55, 75, NULL, NULL),
+(161, 3, 10, 1, NULL, 40, 69, NULL, NULL),
+(162, 3, 11, 1, NULL, 55, 65, NULL, NULL),
+(163, 3, 12, 1, NULL, 37, 83, NULL, NULL),
+(164, 3, 13, 1, NULL, 51, 77, NULL, NULL),
+(165, 3, 14, 1, NULL, 56, 60, NULL, NULL),
+(166, 3, 15, 1, NULL, 59, 74, NULL, NULL),
+(167, 3, 16, 1, NULL, 51, 68, NULL, NULL),
+(168, 3, 17, 1, NULL, 39, 81, NULL, NULL),
+(169, 3, 18, 1, NULL, 59, 94, NULL, NULL),
+(170, 3, 19, 1, NULL, 51, 96, NULL, NULL),
+(171, 3, 20, 1, NULL, 60, 98, NULL, NULL),
+(172, 3, 21, 1, NULL, 79, 96, NULL, NULL),
+(173, 3, 22, 1, NULL, 68, 88, NULL, NULL),
+(174, 3, 23, 1, NULL, 76, 85, NULL, NULL),
+(175, 3, 24, 1, NULL, 61, 66, NULL, NULL),
+(176, 3, 25, 1, NULL, 79, 72, NULL, NULL),
+(177, 3, 26, 1, NULL, 72, 72, NULL, NULL),
+(178, 3, 27, 1, NULL, 66, 68, NULL, NULL),
+(179, 3, 28, 1, NULL, 60, 55, NULL, NULL),
+(180, 3, 29, 1, NULL, 70, 46, NULL, NULL),
+(181, 3, 30, 1, NULL, 72, 44, NULL, NULL),
+(182, 3, 31, 1, NULL, 89, 49, NULL, NULL),
+(183, 3, 32, 1, NULL, 92, 52, NULL, NULL),
+(184, 3, 33, 1, NULL, 94, 33, NULL, NULL),
+(185, 3, 34, 1, NULL, 79, 40, NULL, NULL),
+(186, 3, 35, 1, NULL, 71, 32, NULL, NULL),
+(187, 3, 36, 1, NULL, 66, 31, NULL, NULL),
+(188, 3, 37, 1, NULL, 62, 15, NULL, NULL),
+(189, 3, 38, 1, NULL, 60, 15, NULL, NULL),
+(190, 3, 39, 1, NULL, 72, 5, NULL, NULL),
+(191, 3, 40, 1, NULL, 62, 20, NULL, NULL),
+(192, 3, 41, 1, NULL, 51, 21, NULL, NULL),
+(193, 3, 42, 1, NULL, 41, 2, NULL, NULL),
+(194, 3, 43, 1, NULL, 56, 4, NULL, NULL),
+(195, 3, 44, 1, NULL, 55, 9, NULL, NULL),
+(196, 3, 45, 1, NULL, 39, 19, NULL, NULL),
+(197, 3, 46, 1, NULL, 31, 38, NULL, NULL),
+(198, 3, 47, 1, NULL, 51, 34, NULL, NULL),
+(199, 3, 48, 1, NULL, 47, 19, NULL, NULL),
+(200, 3, 49, 1, NULL, 46, 33, NULL, NULL),
+(201, 4, 0, 1, NULL, 6, 72, NULL, NULL),
+(202, 4, 1, 1, NULL, 15, 61, NULL, NULL),
+(203, 4, 2, 1, NULL, 17, 62, NULL, NULL),
+(204, 4, 3, 1, NULL, 17, 43, NULL, NULL),
+(205, 4, 4, 1, NULL, 22, 50, NULL, NULL),
+(206, 4, 5, 1, NULL, 26, 59, NULL, NULL),
+(207, 4, 6, 1, NULL, 31, 78, NULL, NULL),
+(208, 4, 7, 1, NULL, 15, 76, NULL, NULL),
+(209, 4, 8, 1, NULL, 34, 87, NULL, NULL),
+(210, 4, 9, 1, NULL, 40, 88, NULL, NULL),
+(211, 4, 10, 1, NULL, 37, 78, NULL, NULL),
+(212, 4, 11, 1, NULL, 40, 63, NULL, NULL),
+(213, 4, 12, 1, NULL, 44, 68, NULL, NULL),
+(214, 4, 13, 1, NULL, 47, 76, NULL, NULL),
+(215, 4, 14, 1, NULL, 44, 65, NULL, NULL),
+(216, 4, 15, 1, NULL, 54, 80, NULL, NULL),
+(217, 4, 16, 1, NULL, 44, 76, NULL, NULL),
+(218, 4, 17, 1, NULL, 28, 72, NULL, NULL),
+(219, 4, 18, 1, NULL, 45, 82, NULL, NULL),
+(220, 4, 19, 1, NULL, 34, 98, NULL, NULL),
+(221, 4, 20, 1, NULL, 42, 88, NULL, NULL),
+(222, 4, 21, 1, NULL, 59, 92, NULL, NULL),
+(223, 4, 22, 1, NULL, 60, 89, NULL, NULL),
+(224, 4, 23, 1, NULL, 76, 91, NULL, NULL),
+(225, 4, 24, 1, NULL, 56, 86, NULL, NULL),
+(226, 4, 25, 1, NULL, 76, 68, NULL, NULL),
+(227, 4, 26, 1, NULL, 62, 87, NULL, NULL),
+(228, 4, 27, 1, NULL, 77, 77, NULL, NULL),
+(229, 4, 28, 1, NULL, 69, 69, NULL, NULL),
+(230, 4, 29, 1, NULL, 53, 54, NULL, NULL),
+(231, 4, 30, 1, NULL, 68, 58, NULL, NULL),
+(232, 4, 31, 1, NULL, 78, 46, NULL, NULL),
+(233, 4, 32, 1, NULL, 96, 35, NULL, NULL),
+(234, 4, 33, 1, NULL, 94, 15, NULL, NULL),
+(235, 4, 34, 1, NULL, 83, 27, NULL, NULL),
+(236, 4, 35, 1, NULL, 85, 25, NULL, NULL),
+(237, 4, 36, 1, NULL, 65, 36, NULL, NULL),
+(238, 4, 37, 1, NULL, 46, 33, NULL, NULL),
+(239, 4, 38, 1, NULL, 51, 31, NULL, NULL),
+(240, 4, 39, 1, NULL, 59, 23, NULL, NULL),
+(241, 4, 40, 1, NULL, 51, 34, NULL, NULL),
+(242, 4, 41, 1, NULL, 61, 24, NULL, NULL),
+(243, 4, 42, 1, NULL, 45, 19, NULL, NULL),
+(244, 4, 43, 1, NULL, 51, 13, NULL, NULL),
+(245, 4, 44, 1, NULL, 47, 27, NULL, NULL),
+(246, 4, 45, 1, NULL, 43, 23, NULL, NULL),
+(247, 4, 46, 1, NULL, 29, 27, NULL, NULL),
+(248, 4, 47, 1, NULL, 32, 15, NULL, NULL),
+(249, 4, 48, 1, NULL, 34, 35, NULL, NULL),
+(250, 4, 49, 1, NULL, 37, 24, NULL, NULL),
+(251, 5, 0, 1, NULL, 7, 87, NULL, NULL),
+(252, 5, 1, 1, NULL, 22, 69, NULL, NULL),
+(253, 5, 2, 1, NULL, 5, 63, NULL, NULL),
+(254, 5, 3, 1, NULL, 4, 61, NULL, NULL),
+(255, 5, 4, 1, NULL, 15, 62, NULL, NULL),
+(256, 5, 5, 1, NULL, 26, 50, NULL, NULL),
+(257, 5, 6, 1, NULL, 30, 70, NULL, NULL),
+(258, 5, 7, 1, NULL, 16, 90, NULL, NULL),
+(259, 5, 8, 1, NULL, 17, 100, NULL, NULL),
+(260, 5, 9, 1, NULL, 27, 95, NULL, NULL),
+(261, 5, 10, 1, NULL, 26, 79, NULL, NULL),
+(262, 5, 11, 1, NULL, 30, 65, NULL, NULL),
+(263, 5, 12, 1, NULL, 30, 49, NULL, NULL),
+(264, 5, 13, 1, NULL, 40, 57, NULL, NULL),
+(265, 5, 14, 1, NULL, 36, 66, NULL, NULL),
+(266, 5, 15, 1, NULL, 35, 76, NULL, NULL),
+(267, 5, 16, 1, NULL, 25, 78, NULL, NULL),
+(268, 5, 17, 1, NULL, 10, 66, NULL, NULL),
+(269, 5, 18, 1, NULL, 29, 80, NULL, NULL),
+(270, 5, 19, 1, NULL, 31, 78, NULL, NULL),
+(271, 5, 20, 1, NULL, 37, 75, NULL, NULL),
+(272, 5, 21, 1, NULL, 57, 84, NULL, NULL),
+(273, 5, 22, 1, NULL, 66, 84, NULL, NULL),
+(274, 5, 23, 1, NULL, 84, 75, NULL, NULL),
+(275, 5, 24, 1, NULL, 74, 79, NULL, NULL),
+(276, 5, 25, 1, NULL, 86, 61, NULL, NULL),
+(277, 5, 26, 1, NULL, 73, 78, NULL, NULL),
+(278, 5, 27, 1, NULL, 84, 67, NULL, NULL),
+(279, 5, 28, 1, NULL, 68, 59, NULL, NULL),
+(280, 5, 29, 1, NULL, 66, 56, NULL, NULL),
+(281, 5, 30, 1, NULL, 59, 56, NULL, NULL),
+(282, 5, 31, 1, NULL, 63, 52, NULL, NULL),
+(283, 5, 32, 1, NULL, 83, 47, NULL, NULL),
+(284, 5, 33, 1, NULL, 79, 31, NULL, NULL),
+(285, 5, 34, 1, NULL, 70, 23, NULL, NULL),
+(286, 5, 35, 1, NULL, 85, 25, NULL, NULL),
+(287, 5, 36, 1, NULL, 82, 39, NULL, NULL),
+(288, 5, 37, 1, NULL, 64, 28, NULL, NULL),
+(289, 5, 38, 1, NULL, 51, 30, NULL, NULL),
+(290, 5, 39, 1, NULL, 48, 27, NULL, NULL),
+(291, 5, 40, 1, NULL, 62, 17, NULL, NULL),
+(292, 5, 41, 1, NULL, 71, 8, NULL, NULL),
+(293, 5, 42, 1, NULL, 53, 26, NULL, NULL),
+(294, 5, 43, 1, NULL, 60, 11, NULL, NULL),
+(295, 5, 44, 1, NULL, 43, 24, NULL, NULL),
+(296, 5, 45, 1, NULL, 38, 40, NULL, NULL),
+(297, 5, 46, 1, NULL, 24, 23, NULL, NULL),
+(298, 5, 47, 1, NULL, 14, 4, NULL, NULL),
+(299, 5, 48, 1, NULL, 27, 24, NULL, NULL),
+(300, 5, 49, 1, NULL, 37, 34, NULL, NULL),
+(301, 6, 0, 1, NULL, 24, 96, NULL, NULL),
+(302, 6, 1, 1, NULL, 41, 83, NULL, NULL),
+(303, 6, 2, 1, NULL, 22, 82, NULL, NULL),
+(304, 6, 3, 1, NULL, 8, 62, NULL, NULL),
+(305, 6, 4, 1, NULL, 27, 68, NULL, NULL),
+(306, 6, 5, 1, NULL, 17, 69, NULL, NULL),
+(307, 6, 6, 1, NULL, 35, 68, NULL, NULL),
+(308, 6, 7, 1, NULL, 26, 87, NULL, NULL),
+(309, 6, 8, 1, NULL, 28, 85, NULL, NULL),
+(310, 6, 9, 1, NULL, 37, 76, NULL, NULL),
+(311, 6, 10, 1, NULL, 45, 63, NULL, NULL),
+(312, 6, 11, 1, NULL, 28, 63, NULL, NULL),
+(313, 6, 12, 1, NULL, 20, 48, NULL, NULL),
+(314, 6, 13, 1, NULL, 23, 63, NULL, NULL),
+(315, 6, 14, 1, NULL, 28, 73, NULL, NULL),
+(316, 6, 15, 1, NULL, 35, 72, NULL, NULL),
+(317, 6, 16, 1, NULL, 23, 81, NULL, NULL),
+(318, 6, 17, 1, NULL, 19, 71, NULL, NULL),
+(319, 6, 18, 1, NULL, 15, 76, NULL, NULL),
+(320, 6, 19, 1, NULL, 18, 83, NULL, NULL),
+(321, 6, 20, 1, NULL, 17, 68, NULL, NULL),
+(322, 6, 21, 1, NULL, 37, 71, NULL, NULL),
+(323, 6, 22, 1, NULL, 55, 78, NULL, NULL),
+(324, 6, 23, 1, NULL, 72, 76, NULL, NULL),
+(325, 6, 24, 1, NULL, 57, 76, NULL, NULL),
+(326, 6, 25, 1, NULL, 70, 78, NULL, NULL),
+(327, 6, 26, 1, NULL, 74, 80, NULL, NULL),
+(328, 6, 27, 1, NULL, 78, 86, NULL, NULL),
+(329, 6, 28, 1, NULL, 71, 76, NULL, NULL),
+(330, 6, 29, 1, NULL, 58, 68, NULL, NULL),
+(331, 6, 30, 1, NULL, 57, 48, NULL, NULL),
+(332, 6, 31, 1, NULL, 74, 43, NULL, NULL),
+(333, 6, 32, 1, NULL, 70, 62, NULL, NULL),
+(334, 6, 33, 1, NULL, 72, 47, NULL, NULL),
+(335, 6, 34, 1, NULL, 62, 35, NULL, NULL),
+(336, 6, 35, 1, NULL, 72, 25, NULL, NULL),
+(337, 6, 36, 1, NULL, 65, 44, NULL, NULL),
+(338, 6, 37, 1, NULL, 71, 37, NULL, NULL),
+(339, 6, 38, 1, NULL, 69, 36, NULL, NULL),
+(340, 6, 39, 1, NULL, 54, 41, NULL, NULL),
+(341, 6, 40, 1, NULL, 70, 22, NULL, NULL),
+(342, 6, 41, 1, NULL, 85, 25, NULL, NULL),
+(343, 6, 42, 1, NULL, 73, 45, NULL, NULL),
+(344, 6, 43, 1, NULL, 57, 30, NULL, NULL),
+(345, 6, 44, 1, NULL, 40, 18, NULL, NULL),
+(346, 6, 45, 1, NULL, 41, 29, NULL, NULL),
+(347, 6, 46, 1, NULL, 22, 17, NULL, NULL),
+(348, 6, 47, 1, NULL, 14, 3, NULL, NULL),
+(349, 6, 48, 1, NULL, 30, 22, NULL, NULL),
+(350, 6, 49, 1, NULL, 24, 34, NULL, NULL),
+(351, 7, 0, 1, NULL, 18, 99, NULL, NULL),
+(352, 7, 1, 1, NULL, 35, 94, NULL, NULL),
+(353, 7, 2, 1, NULL, 27, 93, NULL, NULL),
+(354, 7, 3, 1, NULL, 16, 74, NULL, NULL),
+(355, 7, 4, 1, NULL, 11, 57, NULL, NULL),
+(356, 7, 5, 1, NULL, 17, 60, NULL, NULL),
+(357, 7, 6, 1, NULL, 36, 77, NULL, NULL),
+(358, 7, 7, 1, NULL, 34, 68, NULL, NULL),
+(359, 7, 8, 1, NULL, 22, 77, NULL, NULL),
+(360, 7, 9, 1, NULL, 30, 92, NULL, NULL),
+(361, 7, 10, 1, NULL, 26, 76, NULL, NULL),
+(362, 7, 11, 1, NULL, 37, 69, NULL, NULL),
+(363, 7, 12, 1, NULL, 39, 63, NULL, NULL),
+(364, 7, 13, 1, NULL, 42, 68, NULL, NULL),
+(365, 7, 14, 1, NULL, 40, 73, NULL, NULL),
+(366, 7, 15, 1, NULL, 36, 77, NULL, NULL),
+(367, 7, 16, 1, NULL, 24, 97, NULL, NULL),
+(368, 7, 17, 1, NULL, 24, 91, NULL, NULL),
+(369, 7, 18, 1, NULL, 32, 95, NULL, NULL),
+(370, 7, 19, 1, NULL, 27, 94, NULL, NULL),
+(371, 7, 20, 1, NULL, 11, 88, NULL, NULL),
+(372, 7, 21, 1, NULL, 23, 91, NULL, NULL),
+(373, 7, 22, 1, NULL, 42, 91, NULL, NULL),
+(374, 7, 23, 1, NULL, 57, 80, NULL, NULL),
+(375, 7, 24, 1, NULL, 51, 61, NULL, NULL),
+(376, 7, 25, 1, NULL, 68, 62, NULL, NULL),
+(377, 7, 26, 1, NULL, 77, 74, NULL, NULL),
+(378, 7, 27, 1, NULL, 69, 93, NULL, NULL),
+(379, 7, 28, 1, NULL, 81, 96, NULL, NULL),
+(380, 7, 29, 1, NULL, 66, 87, NULL, NULL),
+(381, 7, 30, 1, NULL, 64, 67, NULL, NULL),
+(382, 7, 31, 1, NULL, 66, 48, NULL, NULL),
+(383, 7, 32, 1, NULL, 50, 62, NULL, NULL),
+(384, 7, 33, 1, NULL, 59, 51, NULL, NULL),
+(385, 7, 34, 1, NULL, 77, 33, NULL, NULL),
+(386, 7, 35, 1, NULL, 77, 37, NULL, NULL),
+(387, 7, 36, 1, NULL, 63, 55, NULL, NULL),
+(388, 7, 37, 1, NULL, 81, 39, NULL, NULL),
+(389, 7, 38, 1, NULL, 72, 33, NULL, NULL),
+(390, 7, 39, 1, NULL, 65, 42, NULL, NULL),
+(391, 7, 40, 1, NULL, 76, 22, NULL, NULL),
+(392, 7, 41, 1, NULL, 80, 30, NULL, NULL),
+(393, 7, 42, 1, NULL, 82, 30, NULL, NULL),
+(394, 7, 43, 1, NULL, 65, 33, NULL, NULL),
+(395, 7, 44, 1, NULL, 47, 17, NULL, NULL),
+(396, 7, 45, 1, NULL, 50, 28, NULL, NULL),
+(397, 7, 46, 1, NULL, 34, 24, NULL, NULL),
+(398, 7, 47, 1, NULL, 15, 9, NULL, NULL),
+(399, 7, 48, 1, NULL, 23, 4, NULL, NULL),
+(400, 7, 49, 1, NULL, 31, 16, NULL, NULL),
+(401, 8, 0, 1, NULL, 35, 100, NULL, NULL),
+(402, 8, 1, 1, NULL, 27, 91, NULL, NULL),
+(403, 8, 2, 1, NULL, 36, 78, NULL, NULL),
+(404, 8, 3, 1, NULL, 23, 67, NULL, NULL),
+(405, 8, 4, 1, NULL, 11, 56, NULL, NULL),
+(406, 8, 5, 1, NULL, 22, 67, NULL, NULL),
+(407, 8, 6, 1, NULL, 36, 65, NULL, NULL),
+(408, 8, 7, 1, NULL, 17, 64, NULL, NULL),
+(409, 8, 8, 1, NULL, 28, 69, NULL, NULL),
+(410, 8, 9, 1, NULL, 48, 87, NULL, NULL),
+(411, 8, 10, 1, NULL, 32, 91, NULL, NULL),
+(412, 8, 11, 1, NULL, 45, 76, NULL, NULL),
+(413, 8, 12, 1, NULL, 56, 76, NULL, NULL),
+(414, 8, 13, 1, NULL, 49, 71, NULL, NULL),
+(415, 8, 14, 1, NULL, 56, 74, NULL, NULL),
+(416, 8, 15, 1, NULL, 53, 84, NULL, NULL),
+(417, 8, 16, 1, NULL, 44, 80, NULL, NULL),
+(418, 8, 17, 1, NULL, 40, 80, NULL, NULL),
+(419, 8, 18, 1, NULL, 23, 100, NULL, NULL),
+(420, 8, 19, 1, NULL, 28, 94, NULL, NULL),
+(421, 8, 20, 1, NULL, 26, 95, NULL, NULL),
+(422, 8, 21, 1, NULL, 38, 75, NULL, NULL),
+(423, 8, 22, 1, NULL, 27, 88, NULL, NULL),
+(424, 8, 23, 1, NULL, 40, 85, NULL, NULL),
+(425, 8, 24, 1, NULL, 40, 81, NULL, NULL),
+(426, 8, 25, 1, NULL, 60, 77, NULL, NULL),
+(427, 8, 26, 1, NULL, 78, 62, NULL, NULL),
+(428, 8, 27, 1, NULL, 75, 74, NULL, NULL),
+(429, 8, 28, 1, NULL, 93, 87, NULL, NULL),
+(430, 8, 29, 1, NULL, 78, 89, NULL, NULL),
+(431, 8, 30, 1, NULL, 77, 82, NULL, NULL),
+(432, 8, 31, 1, NULL, 71, 62, NULL, NULL),
+(433, 8, 32, 1, NULL, 56, 61, NULL, NULL),
+(434, 8, 33, 1, NULL, 45, 65, NULL, NULL),
+(435, 8, 34, 1, NULL, 60, 51, NULL, NULL),
+(436, 8, 35, 1, NULL, 60, 39, NULL, NULL),
+(437, 8, 36, 1, NULL, 58, 58, NULL, NULL),
+(438, 8, 37, 1, NULL, 71, 49, NULL, NULL),
+(439, 8, 38, 1, NULL, 86, 29, NULL, NULL),
+(440, 8, 39, 1, NULL, 75, 31, NULL, NULL),
+(441, 8, 40, 1, NULL, 88, 30, NULL, NULL),
+(442, 8, 41, 1, NULL, 77, 25, NULL, NULL),
+(443, 8, 42, 1, NULL, 80, 17, NULL, NULL),
+(444, 8, 43, 1, NULL, 64, 17, NULL, NULL),
+(445, 8, 44, 1, NULL, 46, 23, NULL, NULL),
+(446, 8, 45, 1, NULL, 30, 17, NULL, NULL),
+(447, 8, 46, 1, NULL, 26, 9, NULL, NULL),
+(448, 8, 47, 1, NULL, 22, 13, NULL, NULL),
+(449, 8, 48, 1, NULL, 27, 16, NULL, NULL),
+(450, 8, 49, 1, NULL, 15, 10, NULL, NULL),
+(451, 9, 0, 1, NULL, 25, 100, NULL, NULL),
+(452, 9, 1, 1, NULL, 33, 99, NULL, NULL),
+(453, 9, 2, 1, NULL, 38, 86, NULL, NULL),
+(454, 9, 3, 1, NULL, 23, 73, NULL, NULL),
+(455, 9, 4, 1, NULL, 25, 62, NULL, NULL),
+(456, 9, 5, 1, NULL, 17, 79, NULL, NULL),
+(457, 9, 6, 1, NULL, 22, 75, NULL, NULL),
+(458, 9, 7, 1, NULL, 8, 60, NULL, NULL),
+(459, 9, 8, 1, NULL, 12, 69, NULL, NULL),
+(460, 9, 9, 1, NULL, 29, 72, NULL, NULL),
+(461, 9, 10, 1, NULL, 43, 90, NULL, NULL),
+(462, 9, 11, 1, NULL, 25, 79, NULL, NULL),
+(463, 9, 12, 1, NULL, 36, 74, NULL, NULL),
+(464, 9, 13, 1, NULL, 29, 84, NULL, NULL),
+(465, 9, 14, 1, NULL, 45, 90, NULL, NULL),
+(466, 9, 15, 1, NULL, 58, 83, NULL, NULL),
+(467, 9, 16, 1, NULL, 59, 93, NULL, NULL),
+(468, 9, 17, 1, NULL, 58, 87, NULL, NULL),
+(469, 9, 18, 1, NULL, 43, 85, NULL, NULL),
+(470, 9, 19, 1, NULL, 39, 81, NULL, NULL),
+(471, 9, 20, 1, NULL, 23, 81, NULL, NULL),
+(472, 9, 21, 1, NULL, 42, 67, NULL, NULL),
+(473, 9, 22, 1, NULL, 41, 79, NULL, NULL),
+(474, 9, 23, 1, NULL, 56, 91, NULL, NULL),
+(475, 9, 24, 1, NULL, 44, 72, NULL, NULL),
+(476, 9, 25, 1, NULL, 44, 92, NULL, NULL),
+(477, 9, 26, 1, NULL, 63, 79, NULL, NULL),
+(478, 9, 27, 1, NULL, 58, 88, NULL, NULL),
+(479, 9, 28, 1, NULL, 73, 74, NULL, NULL),
+(480, 9, 29, 1, NULL, 92, 78, NULL, NULL),
+(481, 9, 30, 1, NULL, 89, 66, NULL, NULL),
+(482, 9, 31, 1, NULL, 72, 51, NULL, NULL),
+(483, 9, 32, 1, NULL, 67, 57, NULL, NULL),
+(484, 9, 33, 1, NULL, 54, 47, NULL, NULL),
+(485, 9, 34, 1, NULL, 49, 58, NULL, NULL),
+(486, 9, 35, 1, NULL, 67, 38, NULL, NULL),
+(487, 9, 36, 1, NULL, 61, 41, NULL, NULL),
+(488, 9, 37, 1, NULL, 73, 52, NULL, NULL),
+(489, 9, 38, 1, NULL, 75, 45, NULL, NULL),
+(490, 9, 39, 1, NULL, 85, 44, NULL, NULL),
+(491, 9, 40, 1, NULL, 89, 35, NULL, NULL),
+(492, 9, 41, 1, NULL, 96, 33, NULL, NULL),
+(493, 9, 42, 1, NULL, 83, 34, NULL, NULL),
+(494, 9, 43, 1, NULL, 74, 29, NULL, NULL),
+(495, 9, 44, 1, NULL, 64, 15, NULL, NULL),
+(496, 9, 45, 1, NULL, 49, 10, NULL, NULL),
+(497, 9, 46, 1, NULL, 41, 0, NULL, NULL),
+(498, 9, 47, 1, NULL, 25, 12, NULL, NULL),
+(499, 9, 48, 1, NULL, 40, 18, NULL, NULL),
+(500, 9, 49, 1, NULL, 32, 29, NULL, NULL),
+(501, 10, 0, 1, NULL, 14, 86, NULL, NULL),
+(502, 10, 1, 1, NULL, 26, 92, NULL, NULL),
+(503, 10, 2, 1, NULL, 40, 83, NULL, NULL),
+(504, 10, 3, 1, NULL, 27, 81, NULL, NULL),
+(505, 10, 4, 1, NULL, 38, 80, NULL, NULL),
+(506, 10, 5, 1, NULL, 25, 69, NULL, NULL),
+(507, 10, 6, 1, NULL, 34, 70, NULL, NULL),
+(508, 10, 7, 1, NULL, 17, 68, NULL, NULL),
+(509, 10, 8, 1, NULL, 26, 52, NULL, NULL),
+(510, 10, 9, 1, NULL, 11, 70, NULL, NULL),
+(511, 10, 10, 1, NULL, 27, 85, NULL, NULL),
+(512, 10, 11, 1, NULL, 24, 77, NULL, NULL),
+(513, 10, 12, 1, NULL, 26, 91, NULL, NULL),
+(514, 10, 13, 1, NULL, 29, 100, NULL, NULL),
+(515, 10, 14, 1, NULL, 44, 98, NULL, NULL),
+(516, 10, 15, 1, NULL, 54, 88, NULL, NULL),
+(517, 10, 16, 1, NULL, 55, 86, NULL, NULL),
+(518, 10, 17, 1, NULL, 62, 98, NULL, NULL),
+(519, 10, 18, 1, NULL, 62, 81, NULL, NULL),
+(520, 10, 19, 1, NULL, 55, 76, NULL, NULL),
+(521, 10, 20, 1, NULL, 41, 68, NULL, NULL),
+(522, 10, 21, 1, NULL, 54, 59, NULL, NULL),
+(523, 10, 22, 1, NULL, 40, 64, NULL, NULL),
+(524, 10, 23, 1, NULL, 37, 76, NULL, NULL),
+(525, 10, 24, 1, NULL, 43, 72, NULL, NULL),
+(526, 10, 25, 1, NULL, 32, 91, NULL, NULL),
+(527, 10, 26, 1, NULL, 52, 72, NULL, NULL),
+(528, 10, 27, 1, NULL, 40, 71, NULL, NULL),
+(529, 10, 28, 1, NULL, 59, 89, NULL, NULL),
+(530, 10, 29, 1, NULL, 76, 84, NULL, NULL),
+(531, 10, 30, 1, NULL, 95, 82, NULL, NULL),
+(532, 10, 31, 1, NULL, 89, 70, NULL, NULL),
+(533, 10, 32, 1, NULL, 86, 63, NULL, NULL),
+(534, 10, 33, 1, NULL, 74, 53, NULL, NULL),
+(535, 10, 34, 1, NULL, 54, 58, NULL, NULL),
+(536, 10, 35, 1, NULL, 53, 40, NULL, NULL),
+(537, 10, 36, 1, NULL, 44, 34, NULL, NULL),
+(538, 10, 37, 1, NULL, 53, 42, NULL, NULL),
+(539, 10, 38, 1, NULL, 62, 25, NULL, NULL),
+(540, 10, 39, 1, NULL, 72, 45, NULL, NULL),
+(541, 10, 40, 1, NULL, 77, 32, NULL, NULL),
+(542, 10, 41, 1, NULL, 91, 23, NULL, NULL),
+(543, 10, 42, 1, NULL, 93, 19, NULL, NULL),
+(544, 10, 43, 1, NULL, 79, 16, NULL, NULL),
+(545, 10, 44, 1, NULL, 68, 11, NULL, NULL),
+(546, 10, 45, 1, NULL, 52, 2, NULL, NULL),
+(547, 10, 46, 1, NULL, 61, 19, NULL, NULL),
+(548, 10, 47, 1, NULL, 43, 5, NULL, NULL),
+(549, 10, 48, 1, NULL, 42, 9, NULL, NULL),
+(550, 10, 49, 1, NULL, 25, 24, NULL, NULL),
+(551, 11, 0, 1, NULL, 4, 74, NULL, NULL),
+(552, 11, 1, 1, NULL, 23, 87, NULL, NULL),
+(553, 11, 2, 1, NULL, 24, 73, NULL, NULL),
+(554, 11, 3, 1, NULL, 27, 82, NULL, NULL),
+(555, 11, 4, 1, NULL, 34, 99, NULL, NULL),
+(556, 11, 5, 1, NULL, 35, 88, NULL, NULL),
+(557, 11, 6, 1, NULL, 53, 69, NULL, NULL),
+(558, 11, 7, 1, NULL, 36, 54, NULL, NULL),
+(559, 11, 8, 1, NULL, 43, 59, NULL, NULL),
+(560, 11, 9, 1, NULL, 28, 69, NULL, NULL),
+(561, 11, 10, 1, NULL, 45, 89, NULL, NULL),
+(562, 11, 11, 1, NULL, 35, 87, NULL, NULL),
+(563, 11, 12, 1, NULL, 19, 76, NULL, NULL),
+(564, 11, 13, 1, NULL, 32, 83, NULL, NULL),
+(565, 11, 14, 1, NULL, 43, 100, NULL, NULL),
+(566, 11, 15, 1, NULL, 57, 98, NULL, NULL),
+(567, 11, 16, 1, NULL, 56, 93, NULL, NULL),
+(568, 11, 17, 1, NULL, 71, 81, NULL, NULL),
+(569, 11, 18, 1, NULL, 71, 91, NULL, NULL),
+(570, 11, 19, 1, NULL, 51, 83, NULL, NULL),
+(571, 11, 20, 1, NULL, 37, 75, NULL, NULL),
+(572, 11, 21, 1, NULL, 56, 60, NULL, NULL),
+(573, 11, 22, 1, NULL, 36, 80, NULL, NULL),
+(574, 11, 23, 1, NULL, 54, 90, NULL, NULL),
+(575, 11, 24, 1, NULL, 48, 90, NULL, NULL),
+(576, 11, 25, 1, NULL, 33, 96, NULL, NULL),
+(577, 11, 26, 1, NULL, 48, 92, NULL, NULL),
+(578, 11, 27, 1, NULL, 60, 86, NULL, NULL),
+(579, 11, 28, 1, NULL, 69, 79, NULL, NULL),
+(580, 11, 29, 1, NULL, 66, 73, NULL, NULL),
+(581, 11, 30, 1, NULL, 78, 68, NULL, NULL),
+(582, 11, 31, 1, NULL, 84, 88, NULL, NULL),
+(583, 11, 32, 1, NULL, 71, 73, NULL, NULL),
+(584, 11, 33, 1, NULL, 73, 72, NULL, NULL),
+(585, 11, 34, 1, NULL, 54, 71, NULL, NULL),
+(586, 11, 35, 1, NULL, 43, 55, NULL, NULL),
+(587, 11, 36, 1, NULL, 26, 45, NULL, NULL),
+(588, 11, 37, 1, NULL, 38, 60, NULL, NULL),
+(589, 11, 38, 1, NULL, 48, 41, NULL, NULL),
+(590, 11, 39, 1, NULL, 61, 39, NULL, NULL),
+(591, 11, 40, 1, NULL, 65, 38, NULL, NULL),
+(592, 11, 41, 1, NULL, 72, 35, NULL, NULL),
+(593, 11, 42, 1, NULL, 74, 28, NULL, NULL),
+(594, 11, 43, 1, NULL, 70, 23, NULL, NULL),
+(595, 11, 44, 1, NULL, 63, 27, NULL, NULL),
+(596, 11, 45, 1, NULL, 54, 9, NULL, NULL),
+(597, 11, 46, 1, NULL, 48, 16, NULL, NULL),
+(598, 11, 47, 1, NULL, 34, 12, NULL, NULL),
+(599, 11, 48, 1, NULL, 28, 18, NULL, NULL),
+(600, 11, 49, 1, NULL, 27, 13, NULL, NULL),
+(601, 12, 0, 1, NULL, 14, 58, NULL, NULL),
+(602, 12, 1, 1, NULL, 19, 70, NULL, NULL),
+(603, 12, 2, 1, NULL, 26, 84, NULL, NULL),
+(604, 12, 3, 1, NULL, 31, 91, NULL, NULL),
+(605, 12, 4, 1, NULL, 51, 97, NULL, NULL),
+(606, 12, 5, 1, NULL, 53, 86, NULL, NULL),
+(607, 12, 6, 1, NULL, 54, 82, NULL, NULL),
+(608, 12, 7, 1, NULL, 41, 71, NULL, NULL),
+(609, 12, 8, 1, NULL, 23, 54, NULL, NULL),
+(610, 12, 9, 1, NULL, 9, 51, NULL, NULL),
+(611, 12, 10, 1, NULL, 27, 69, NULL, NULL),
+(612, 12, 11, 1, NULL, 26, 81, NULL, NULL),
+(613, 12, 12, 1, NULL, 23, 78, NULL, NULL),
+(614, 12, 13, 1, NULL, 27, 82, NULL, NULL),
+(615, 12, 14, 1, NULL, 35, 84, NULL, NULL),
+(616, 12, 15, 1, NULL, 42, 98, NULL, NULL),
+(617, 12, 16, 1, NULL, 37, 97, NULL, NULL),
+(618, 12, 17, 1, NULL, 55, 88, NULL, NULL),
+(619, 12, 18, 1, NULL, 66, 79, NULL, NULL),
+(620, 12, 19, 1, NULL, 66, 70, NULL, NULL),
+(621, 12, 20, 1, NULL, 54, 86, NULL, NULL),
+(622, 12, 21, 1, NULL, 45, 75, NULL, NULL),
+(623, 12, 22, 1, NULL, 48, 91, NULL, NULL),
+(624, 12, 23, 1, NULL, 40, 76, NULL, NULL),
+(625, 12, 24, 1, NULL, 58, 78, NULL, NULL),
+(626, 12, 25, 1, NULL, 50, 95, NULL, NULL),
+(627, 12, 26, 1, NULL, 41, 77, NULL, NULL),
+(628, 12, 27, 1, NULL, 60, 66, NULL, NULL),
+(629, 12, 28, 1, NULL, 72, 82, NULL, NULL),
+(630, 12, 29, 1, NULL, 54, 62, NULL, NULL),
+(631, 12, 30, 1, NULL, 72, 59, NULL, NULL),
+(632, 12, 31, 1, NULL, 74, 76, NULL, NULL),
+(633, 12, 32, 1, NULL, 72, 74, NULL, NULL),
+(634, 12, 33, 1, NULL, 53, 64, NULL, NULL),
+(635, 12, 34, 1, NULL, 38, 80, NULL, NULL),
+(636, 12, 35, 1, NULL, 30, 60, NULL, NULL),
+(637, 12, 36, 1, NULL, 20, 59, NULL, NULL),
+(638, 12, 37, 1, NULL, 36, 41, NULL, NULL),
+(639, 12, 38, 1, NULL, 35, 37, NULL, NULL),
+(640, 12, 39, 1, NULL, 45, 35, NULL, NULL),
+(641, 12, 40, 1, NULL, 52, 19, NULL, NULL),
+(642, 12, 41, 1, NULL, 69, 37, NULL, NULL),
+(643, 12, 42, 1, NULL, 85, 40, NULL, NULL),
+(644, 12, 43, 1, NULL, 73, 28, NULL, NULL),
+(645, 12, 44, 1, NULL, 54, 40, NULL, NULL),
+(646, 12, 45, 1, NULL, 63, 29, NULL, NULL),
+(647, 12, 46, 1, NULL, 63, 35, NULL, NULL),
+(648, 12, 47, 1, NULL, 50, 21, NULL, NULL),
+(649, 12, 48, 1, NULL, 30, 15, NULL, NULL),
+(650, 12, 49, 1, NULL, 28, 21, NULL, NULL),
+(651, 13, 0, 1, NULL, 9, 65, NULL, NULL),
+(652, 13, 1, 1, NULL, 14, 81, NULL, NULL),
+(653, 13, 2, 1, NULL, 7, 91, NULL, NULL),
+(654, 13, 3, 1, NULL, 26, 84, NULL, NULL),
+(655, 13, 4, 1, NULL, 32, 80, NULL, NULL),
+(656, 13, 5, 1, NULL, 51, 71, NULL, NULL),
+(657, 13, 6, 1, NULL, 67, 85, NULL, NULL),
+(658, 13, 7, 1, NULL, 61, 81, NULL, NULL),
+(659, 13, 8, 1, NULL, 41, 63, NULL, NULL),
+(660, 13, 9, 1, NULL, 22, 52, NULL, NULL),
+(661, 13, 10, 1, NULL, 42, 65, NULL, NULL),
+(662, 13, 11, 1, NULL, 28, 77, NULL, NULL),
+(663, 13, 12, 1, NULL, 20, 61, NULL, NULL),
+(664, 13, 13, 1, NULL, 40, 72, NULL, NULL),
+(665, 13, 14, 1, NULL, 27, 69, NULL, NULL),
+(666, 13, 15, 1, NULL, 42, 87, NULL, NULL),
+(667, 13, 16, 1, NULL, 47, 86, NULL, NULL),
+(668, 13, 17, 1, NULL, 50, 80, NULL, NULL),
+(669, 13, 18, 1, NULL, 57, 99, NULL, NULL),
+(670, 13, 19, 1, NULL, 55, 79, NULL, NULL),
+(671, 13, 20, 1, NULL, 38, 67, NULL, NULL),
+(672, 13, 21, 1, NULL, 52, 66, NULL, NULL),
+(673, 13, 22, 1, NULL, 62, 79, NULL, NULL),
+(674, 13, 23, 1, NULL, 42, 64, NULL, NULL),
+(675, 13, 24, 1, NULL, 61, 71, NULL, NULL),
+(676, 13, 25, 1, NULL, 47, 76, NULL, NULL),
+(677, 13, 26, 1, NULL, 28, 86, NULL, NULL),
+(678, 13, 27, 1, NULL, 44, 70, NULL, NULL),
+(679, 13, 28, 1, NULL, 58, 70, NULL, NULL),
+(680, 13, 29, 1, NULL, 66, 75, NULL, NULL),
+(681, 13, 30, 1, NULL, 64, 67, NULL, NULL),
+(682, 13, 31, 1, NULL, 65, 56, NULL, NULL),
+(683, 13, 32, 1, NULL, 52, 64, NULL, NULL),
+(684, 13, 33, 1, NULL, 66, 67, NULL, NULL),
+(685, 13, 34, 1, NULL, 50, 63, NULL, NULL),
+(686, 13, 35, 1, NULL, 48, 44, NULL, NULL),
+(687, 13, 36, 1, NULL, 40, 42, NULL, NULL),
+(688, 13, 37, 1, NULL, 22, 54, NULL, NULL),
+(689, 13, 38, 1, NULL, 22, 43, NULL, NULL),
+(690, 13, 39, 1, NULL, 37, 55, NULL, NULL),
+(691, 13, 40, 1, NULL, 46, 36, NULL, NULL),
+(692, 13, 41, 1, NULL, 63, 32, NULL, NULL),
+(693, 13, 42, 1, NULL, 69, 21, NULL, NULL),
+(694, 13, 43, 1, NULL, 70, 20, NULL, NULL),
+(695, 13, 44, 1, NULL, 57, 27, NULL, NULL),
+(696, 13, 45, 1, NULL, 45, 42, NULL, NULL),
+(697, 13, 46, 1, NULL, 46, 46, NULL, NULL),
+(698, 13, 47, 1, NULL, 31, 27, NULL, NULL),
+(699, 13, 48, 1, NULL, 28, 21, NULL, NULL),
+(700, 13, 49, 1, NULL, 18, 31, NULL, NULL),
+(701, 14, 0, 1, NULL, 26, 63, NULL, NULL),
+(702, 14, 1, 1, NULL, 15, 77, NULL, NULL),
+(703, 14, 2, 1, NULL, 27, 73, NULL, NULL),
+(704, 14, 3, 1, NULL, 38, 89, NULL, NULL),
+(705, 14, 4, 1, NULL, 36, 84, NULL, NULL),
+(706, 14, 5, 1, NULL, 38, 83, NULL, NULL),
+(707, 14, 6, 1, NULL, 47, 95, NULL, NULL),
+(708, 14, 7, 1, NULL, 54, 84, NULL, NULL),
+(709, 14, 8, 1, NULL, 35, 74, NULL, NULL),
+(710, 14, 9, 1, NULL, 20, 66, NULL, NULL),
+(711, 14, 10, 1, NULL, 29, 75, NULL, NULL),
+(712, 14, 11, 1, NULL, 40, 66, NULL, NULL),
+(713, 14, 12, 1, NULL, 20, 56, NULL, NULL),
+(714, 14, 13, 1, NULL, 34, 67, NULL, NULL),
+(715, 14, 14, 1, NULL, 30, 79, NULL, NULL),
+(716, 14, 15, 1, NULL, 29, 87, NULL, NULL),
+(717, 14, 16, 1, NULL, 37, 68, NULL, NULL),
+(718, 14, 17, 1, NULL, 30, 86, NULL, NULL),
+(719, 14, 18, 1, NULL, 40, 92, NULL, NULL),
+(720, 14, 19, 1, NULL, 48, 77, NULL, NULL),
+(721, 14, 20, 1, NULL, 49, 76, NULL, NULL),
+(722, 14, 21, 1, NULL, 66, 66, NULL, NULL),
+(723, 14, 22, 1, NULL, 60, 82, NULL, NULL),
+(724, 14, 23, 1, NULL, 61, 84, NULL, NULL),
+(725, 14, 24, 1, NULL, 61, 78, NULL, NULL),
+(726, 14, 25, 1, NULL, 58, 77, NULL, NULL),
+(727, 14, 26, 1, NULL, 39, 71, NULL, NULL),
+(728, 14, 27, 1, NULL, 54, 84, NULL, NULL),
+(729, 14, 28, 1, NULL, 46, 86, NULL, NULL),
+(730, 14, 29, 1, NULL, 61, 69, NULL, NULL),
+(731, 14, 30, 1, NULL, 58, 62, NULL, NULL),
+(732, 14, 31, 1, NULL, 47, 65, NULL, NULL),
+(733, 14, 32, 1, NULL, 48, 78, NULL, NULL),
+(734, 14, 33, 1, NULL, 57, 60, NULL, NULL),
+(735, 14, 34, 1, NULL, 56, 47, NULL, NULL),
+(736, 14, 35, 1, NULL, 57, 33, NULL, NULL),
+(737, 14, 36, 1, NULL, 59, 50, NULL, NULL),
+(738, 14, 37, 1, NULL, 42, 36, NULL, NULL),
+(739, 14, 38, 1, NULL, 38, 46, NULL, NULL),
+(740, 14, 39, 1, NULL, 19, 42, NULL, NULL),
+(741, 14, 40, 1, NULL, 29, 33, NULL, NULL),
+(742, 14, 41, 1, NULL, 47, 43, NULL, NULL),
+(743, 14, 42, 1, NULL, 57, 41, NULL, NULL),
+(744, 14, 43, 1, NULL, 56, 27, NULL, NULL),
+(745, 14, 44, 1, NULL, 59, 36, NULL, NULL),
+(746, 14, 45, 1, NULL, 60, 46, NULL, NULL),
+(747, 14, 46, 1, NULL, 65, 48, NULL, NULL),
+(748, 14, 47, 1, NULL, 45, 45, NULL, NULL),
+(749, 14, 48, 1, NULL, 43, 36, NULL, NULL),
+(750, 14, 49, 1, NULL, 30, 21, NULL, NULL),
+(751, 15, 0, 1, NULL, 43, 73, NULL, NULL),
+(752, 15, 1, 1, NULL, 29, 63, NULL, NULL),
+(753, 15, 2, 1, NULL, 16, 64, NULL, NULL),
+(754, 15, 3, 1, NULL, 23, 77, NULL, NULL),
+(755, 15, 4, 1, NULL, 22, 92, NULL, NULL),
+(756, 15, 5, 1, NULL, 38, 93, NULL, NULL),
+(757, 15, 6, 1, NULL, 52, 78, NULL, NULL),
+(758, 15, 7, 1, NULL, 71, 70, NULL, NULL),
+(759, 15, 8, 1, NULL, 53, 75, NULL, NULL),
+(760, 15, 9, 1, NULL, 40, 62, NULL, NULL),
+(761, 15, 10, 1, NULL, 33, 82, NULL, NULL),
+(762, 15, 11, 1, NULL, 38, 71, NULL, NULL),
+(763, 15, 12, 1, NULL, 27, 73, NULL, NULL),
+(764, 15, 13, 1, NULL, 27, 66, NULL, NULL),
+(765, 15, 14, 1, NULL, 41, 68, NULL, NULL),
+(766, 15, 15, 1, NULL, 38, 85, NULL, NULL),
+(767, 15, 16, 1, NULL, 40, 85, NULL, NULL),
+(768, 15, 17, 1, NULL, 29, 76, NULL, NULL),
+(769, 15, 18, 1, NULL, 33, 90, NULL, NULL),
+(770, 15, 19, 1, NULL, 36, 94, NULL, NULL),
+(771, 15, 20, 1, NULL, 38, 75, NULL, NULL),
+(772, 15, 21, 1, NULL, 46, 69, NULL, NULL),
+(773, 15, 22, 1, NULL, 41, 84, NULL, NULL),
+(774, 15, 23, 1, NULL, 56, 75, NULL, NULL),
+(775, 15, 24, 1, NULL, 57, 86, NULL, NULL),
+(776, 15, 25, 1, NULL, 52, 73, NULL, NULL),
+(777, 15, 26, 1, NULL, 46, 87, NULL, NULL),
+(778, 15, 27, 1, NULL, 49, 68, NULL, NULL),
+(779, 15, 28, 1, NULL, 49, 83, NULL, NULL),
+(780, 15, 29, 1, NULL, 53, 88, NULL, NULL),
+(781, 15, 30, 1, NULL, 72, 77, NULL, NULL),
+(782, 15, 31, 1, NULL, 54, 71, NULL, NULL),
+(783, 15, 32, 1, NULL, 43, 61, NULL, NULL),
+(784, 15, 33, 1, NULL, 50, 58, NULL, NULL),
+(785, 15, 34, 1, NULL, 68, 51, NULL, NULL),
+(786, 15, 35, 1, NULL, 49, 52, NULL, NULL),
+(787, 15, 36, 1, NULL, 45, 68, NULL, NULL),
+(788, 15, 37, 1, NULL, 30, 56, NULL, NULL),
+(789, 15, 38, 1, NULL, 37, 47, NULL, NULL),
+(790, 15, 39, 1, NULL, 30, 49, NULL, NULL),
+(791, 15, 40, 1, NULL, 23, 48, NULL, NULL),
+(792, 15, 41, 1, NULL, 28, 40, NULL, NULL),
+(793, 15, 42, 1, NULL, 44, 46, NULL, NULL),
+(794, 15, 43, 1, NULL, 55, 31, NULL, NULL),
+(795, 15, 44, 1, NULL, 42, 34, NULL, NULL),
+(796, 15, 45, 1, NULL, 54, 32, NULL, NULL),
+(797, 15, 46, 1, NULL, 45, 36, NULL, NULL),
+(798, 15, 47, 1, NULL, 38, 31, NULL, NULL),
+(799, 15, 48, 1, NULL, 47, 34, NULL, NULL),
+(800, 15, 49, 1, NULL, 50, 37, NULL, NULL),
+(801, 16, 0, 1, NULL, 48, 89, NULL, NULL),
+(802, 16, 1, 1, NULL, 47, 74, NULL, NULL),
+(803, 16, 2, 1, NULL, 33, 72, NULL, NULL),
+(804, 16, 3, 1, NULL, 37, 59, NULL, NULL),
+(805, 16, 4, 1, NULL, 35, 79, NULL, NULL),
+(806, 16, 5, 1, NULL, 36, 91, NULL, NULL),
+(807, 16, 6, 1, NULL, 42, 88, NULL, NULL),
+(808, 16, 7, 1, NULL, 56, 88, NULL, NULL),
+(809, 16, 8, 1, NULL, 38, 83, NULL, NULL),
+(810, 16, 9, 1, NULL, 23, 63, NULL, NULL),
+(811, 16, 10, 1, NULL, 31, 76, NULL, NULL),
+(812, 16, 11, 1, NULL, 41, 73, NULL, NULL),
+(813, 16, 12, 1, NULL, 47, 83, NULL, NULL),
+(814, 16, 13, 1, NULL, 31, 84, NULL, NULL),
+(815, 16, 14, 1, NULL, 42, 81, NULL, NULL),
+(816, 16, 15, 1, NULL, 55, 65, NULL, NULL),
+(817, 16, 16, 1, NULL, 44, 74, NULL, NULL),
+(818, 16, 17, 1, NULL, 36, 81, NULL, NULL),
+(819, 16, 18, 1, NULL, 38, 79, NULL, NULL),
+(820, 16, 19, 1, NULL, 41, 85, NULL, NULL),
+(821, 16, 20, 1, NULL, 51, 69, NULL, NULL),
+(822, 16, 21, 1, NULL, 33, 72, NULL, NULL),
+(823, 16, 22, 1, NULL, 50, 75, NULL, NULL),
+(824, 16, 23, 1, NULL, 47, 82, NULL, NULL),
+(825, 16, 24, 1, NULL, 56, 67, NULL, NULL),
+(826, 16, 25, 1, NULL, 59, 64, NULL, NULL),
+(827, 16, 26, 1, NULL, 47, 71, NULL, NULL),
+(828, 16, 27, 1, NULL, 50, 64, NULL, NULL),
+(829, 16, 28, 1, NULL, 54, 80, NULL, NULL),
+(830, 16, 29, 1, NULL, 42, 91, NULL, NULL),
+(831, 16, 30, 1, NULL, 61, 96, NULL, NULL),
+(832, 16, 31, 1, NULL, 41, 86, NULL, NULL),
+(833, 16, 32, 1, NULL, 28, 73, NULL, NULL),
+(834, 16, 33, 1, NULL, 45, 55, NULL, NULL),
+(835, 16, 34, 1, NULL, 48, 61, NULL, NULL),
+(836, 16, 35, 1, NULL, 34, 68, NULL, NULL),
+(837, 16, 36, 1, NULL, 54, 70, NULL, NULL),
+(838, 16, 37, 1, NULL, 34, 71, NULL, NULL),
+(839, 16, 38, 1, NULL, 23, 54, NULL, NULL),
+(840, 16, 39, 1, NULL, 35, 54, NULL, NULL),
+(841, 16, 40, 1, NULL, 19, 39, NULL, NULL),
+(842, 16, 41, 1, NULL, 9, 21, NULL, NULL),
+(843, 16, 42, 1, NULL, 28, 34, NULL, NULL),
+(844, 16, 43, 1, NULL, 47, 42, NULL, NULL),
+(845, 16, 44, 1, NULL, 55, 34, NULL, NULL),
+(846, 16, 45, 1, NULL, 43, 27, NULL, NULL),
+(847, 16, 46, 1, NULL, 32, 44, NULL, NULL),
+(848, 16, 47, 1, NULL, 21, 24, NULL, NULL),
+(849, 16, 48, 1, NULL, 35, 41, NULL, NULL),
+(850, 16, 49, 1, NULL, 46, 37, NULL, NULL),
+(851, 17, 0, 1, NULL, 35, 96, NULL, NULL),
+(852, 17, 1, 1, NULL, 51, 88, NULL, NULL),
+(853, 17, 2, 1, NULL, 37, 74, NULL, NULL),
+(854, 17, 3, 1, NULL, 27, 60, NULL, NULL),
+(855, 17, 4, 1, NULL, 24, 78, NULL, NULL),
+(856, 17, 5, 1, NULL, 20, 93, NULL, NULL),
+(857, 17, 6, 1, NULL, 38, 81, NULL, NULL),
+(858, 17, 7, 1, NULL, 52, 92, NULL, NULL),
+(859, 17, 8, 1, NULL, 38, 89, NULL, NULL),
+(860, 17, 9, 1, NULL, 43, 78, NULL, NULL),
+(861, 17, 10, 1, NULL, 51, 93, NULL, NULL),
+(862, 17, 11, 1, NULL, 56, 81, NULL, NULL),
+(863, 17, 12, 1, NULL, 54, 68, NULL, NULL),
+(864, 17, 13, 1, NULL, 40, 87, NULL, NULL),
+(865, 17, 14, 1, NULL, 44, 85, NULL, NULL),
+(866, 17, 15, 1, NULL, 56, 76, NULL, NULL),
+(867, 17, 16, 1, NULL, 47, 82, NULL, NULL),
+(868, 17, 17, 1, NULL, 37, 69, NULL, NULL),
+(869, 17, 18, 1, NULL, 30, 86, NULL, NULL),
+(870, 17, 19, 1, NULL, 48, 75, NULL, NULL),
+(871, 17, 20, 1, NULL, 40, 89, NULL, NULL),
+(872, 17, 21, 1, NULL, 36, 81, NULL, NULL),
+(873, 17, 22, 1, NULL, 46, 93, NULL, NULL),
+(874, 17, 23, 1, NULL, 32, 100, NULL, NULL),
+(875, 17, 24, 1, NULL, 43, 85, NULL, NULL),
+(876, 17, 25, 1, NULL, 54, 77, NULL, NULL),
+(877, 17, 26, 1, NULL, 66, 58, NULL, NULL),
+(878, 17, 27, 1, NULL, 58, 58, NULL, NULL),
+(879, 17, 28, 1, NULL, 67, 77, NULL, NULL),
+(880, 17, 29, 1, NULL, 53, 79, NULL, NULL),
+(881, 17, 30, 1, NULL, 48, 83, NULL, NULL),
+(882, 17, 31, 1, NULL, 36, 68, NULL, NULL),
+(883, 17, 32, 1, NULL, 22, 69, NULL, NULL),
+(884, 17, 33, 1, NULL, 35, 59, NULL, NULL),
+(885, 17, 34, 1, NULL, 41, 75, NULL, NULL),
+(886, 17, 35, 1, NULL, 54, 73, NULL, NULL),
+(887, 17, 36, 1, NULL, 59, 74, NULL, NULL),
+(888, 17, 37, 1, NULL, 54, 76, NULL, NULL),
+(889, 17, 38, 1, NULL, 36, 65, NULL, NULL),
+(890, 17, 39, 1, NULL, 16, 46, NULL, NULL),
+(891, 17, 40, 1, NULL, 26, 46, NULL, NULL),
+(892, 17, 41, 1, NULL, 15, 32, NULL, NULL),
+(893, 17, 42, 1, NULL, 27, 19, NULL, NULL),
+(894, 17, 43, 1, NULL, 35, 32, NULL, NULL),
+(895, 17, 44, 1, NULL, 40, 17, NULL, NULL),
+(896, 17, 45, 1, NULL, 57, 31, NULL, NULL),
+(897, 17, 46, 1, NULL, 50, 39, NULL, NULL),
+(898, 17, 47, 1, NULL, 36, 30, NULL, NULL),
+(899, 17, 48, 1, NULL, 37, 47, NULL, NULL),
+(900, 17, 49, 1, NULL, 57, 37, NULL, NULL),
+(901, 18, 0, 1, NULL, 19, 83, NULL, NULL),
+(902, 18, 1, 1, NULL, 37, 84, NULL, NULL),
+(903, 18, 2, 1, NULL, 28, 91, NULL, NULL),
+(904, 18, 3, 1, NULL, 8, 76, NULL, NULL),
+(905, 18, 4, 1, NULL, 27, 62, NULL, NULL),
+(906, 18, 5, 1, NULL, 35, 77, NULL, NULL),
+(907, 18, 6, 1, NULL, 43, 90, NULL, NULL),
+(908, 18, 7, 1, NULL, 42, 73, NULL, NULL),
+(909, 18, 8, 1, NULL, 40, 89, NULL, NULL),
+(910, 18, 9, 1, NULL, 38, 98, NULL, NULL),
+(911, 18, 10, 1, NULL, 45, 86, NULL, NULL),
+(912, 18, 11, 1, NULL, 59, 75, NULL, NULL),
+(913, 18, 12, 1, NULL, 42, 85, NULL, NULL),
+(914, 18, 13, 1, NULL, 57, 99, NULL, NULL),
+(915, 18, 14, 1, NULL, 37, 97, NULL, NULL),
+(916, 18, 15, 1, NULL, 38, 94, NULL, NULL),
+(917, 18, 16, 1, NULL, 28, 75, NULL, NULL),
+(918, 18, 17, 1, NULL, 26, 78, NULL, NULL),
+(919, 18, 18, 1, NULL, 12, 70, NULL, NULL),
+(920, 18, 19, 1, NULL, 31, 82, NULL, NULL),
+(921, 18, 20, 1, NULL, 29, 95, NULL, NULL),
+(922, 18, 21, 1, NULL, 27, 89, NULL, NULL),
+(923, 18, 22, 1, NULL, 28, 91, NULL, NULL),
+(924, 18, 23, 1, NULL, 24, 87, NULL, NULL),
+(925, 18, 24, 1, NULL, 32, 71, NULL, NULL),
+(926, 18, 25, 1, NULL, 32, 84, NULL, NULL),
+(927, 18, 26, 1, NULL, 46, 74, NULL, NULL),
+(928, 18, 27, 1, NULL, 57, 76, NULL, NULL),
+(929, 18, 28, 1, NULL, 56, 85, NULL, NULL),
+(930, 18, 29, 1, NULL, 56, 90, NULL, NULL),
+(931, 18, 30, 1, NULL, 51, 97, NULL, NULL),
+(932, 18, 31, 1, NULL, 48, 82, NULL, NULL),
+(933, 18, 32, 1, NULL, 31, 75, NULL, NULL),
+(934, 18, 33, 1, NULL, 38, 56, NULL, NULL),
+(935, 18, 34, 1, NULL, 27, 71, NULL, NULL),
+(936, 18, 35, 1, NULL, 44, 55, NULL, NULL),
+(937, 18, 36, 1, NULL, 43, 72, NULL, NULL),
+(938, 18, 37, 1, NULL, 39, 63, NULL, NULL),
+(939, 18, 38, 1, NULL, 51, 68, NULL, NULL),
+(940, 18, 39, 1, NULL, 48, 68, NULL, NULL),
+(941, 18, 40, 1, NULL, 42, 80, NULL, NULL),
+(942, 18, 41, 1, NULL, 39, 64, NULL, NULL),
+(943, 18, 42, 1, NULL, 33, 54, NULL, NULL),
+(944, 18, 43, 1, NULL, 20, 35, NULL, NULL),
+(945, 18, 44, 1, NULL, 31, 16, NULL, NULL),
+(946, 18, 45, 1, NULL, 44, 18, NULL, NULL),
+(947, 18, 46, 1, NULL, 32, 36, NULL, NULL),
+(948, 18, 47, 1, NULL, 36, 20, NULL, NULL),
+(949, 18, 48, 1, NULL, 44, 40, NULL, NULL),
+(950, 18, 49, 1, NULL, 63, 25, NULL, NULL),
+(951, 19, 0, 1, NULL, 33, 75, NULL, NULL),
+(952, 19, 1, 1, NULL, 35, 93, NULL, NULL),
+(953, 19, 2, 1, NULL, 30, 75, NULL, NULL),
+(954, 19, 3, 1, NULL, 11, 56, NULL, NULL),
+(955, 19, 4, 1, NULL, 28, 67, NULL, NULL),
+(956, 19, 5, 1, NULL, 23, 62, NULL, NULL),
+(957, 19, 6, 1, NULL, 43, 75, NULL, NULL),
+(958, 19, 7, 1, NULL, 24, 73, NULL, NULL),
+(959, 19, 8, 1, NULL, 29, 93, NULL, NULL),
+(960, 19, 9, 1, NULL, 26, 78, NULL, NULL),
+(961, 19, 10, 1, NULL, 29, 72, NULL, NULL),
+(962, 19, 11, 1, NULL, 45, 69, NULL, NULL),
+(963, 19, 12, 1, NULL, 46, 68, NULL, NULL),
+(964, 19, 13, 1, NULL, 44, 85, NULL, NULL),
+(965, 19, 14, 1, NULL, 35, 93, NULL, NULL),
+(966, 19, 15, 1, NULL, 42, 95, NULL, NULL),
+(967, 19, 16, 1, NULL, 41, 93, NULL, NULL),
+(968, 19, 17, 1, NULL, 31, 81, NULL, NULL),
+(969, 19, 18, 1, NULL, 28, 73, NULL, NULL),
+(970, 19, 19, 1, NULL, 31, 63, NULL, NULL),
+(971, 19, 20, 1, NULL, 22, 79, NULL, NULL),
+(972, 19, 21, 1, NULL, 15, 74, NULL, NULL),
+(973, 19, 22, 1, NULL, 24, 80, NULL, NULL),
+(974, 19, 23, 1, NULL, 15, 88, NULL, NULL),
+(975, 19, 24, 1, NULL, 28, 91, NULL, NULL),
+(976, 19, 25, 1, NULL, 23, 100, NULL, NULL),
+(977, 19, 26, 1, NULL, 32, 88, NULL, NULL),
+(978, 19, 27, 1, NULL, 44, 78, NULL, NULL),
+(979, 19, 28, 1, NULL, 60, 73, NULL, NULL),
+(980, 19, 29, 1, NULL, 36, 67, NULL, NULL),
+(981, 19, 30, 1, NULL, 47, 83, NULL, NULL),
+(982, 19, 31, 1, NULL, 45, 82, NULL, NULL),
+(983, 19, 32, 1, NULL, 36, 84, NULL, NULL),
+(984, 19, 33, 1, NULL, 42, 65, NULL, NULL),
+(985, 19, 34, 1, NULL, 26, 76, NULL, NULL),
+(986, 19, 35, 1, NULL, 25, 69, NULL, NULL),
+(987, 19, 36, 1, NULL, 35, 84, NULL, NULL),
+(988, 19, 37, 1, NULL, 42, 69, NULL, NULL),
+(989, 19, 38, 1, NULL, 62, 64, NULL, NULL),
+(990, 19, 39, 1, NULL, 52, 72, NULL, NULL),
+(991, 19, 40, 1, NULL, 55, 74, NULL, NULL),
+(992, 19, 41, 1, NULL, 52, 74, NULL, NULL),
+(993, 19, 42, 1, NULL, 49, 71, NULL, NULL),
+(994, 19, 43, 1, NULL, 29, 53, NULL, NULL),
+(995, 19, 44, 1, NULL, 11, 35, NULL, NULL),
+(996, 19, 45, 1, NULL, 24, 33, NULL, NULL),
+(997, 19, 46, 1, NULL, 25, 45, NULL, NULL),
+(998, 19, 47, 1, NULL, 26, 34, NULL, NULL),
+(999, 19, 48, 1, NULL, 34, 20, NULL, NULL),
+(1000, 19, 49, 1, NULL, 54, 40, NULL, NULL),
+(1001, 20, 0, 1, NULL, 23, 73, NULL, NULL),
+(1002, 20, 1, 1, NULL, 30, 73, NULL, NULL),
+(1003, 20, 2, 1, NULL, 36, 88, NULL, NULL),
+(1004, 20, 3, 1, NULL, 32, 93, NULL, NULL),
+(1005, 20, 4, 1, NULL, 39, 86, NULL, NULL),
+(1006, 20, 5, 1, NULL, 29, 80, NULL, NULL),
+(1007, 20, 6, 1, NULL, 43, 76, NULL, NULL),
+(1008, 20, 7, 1, NULL, 41, 88, NULL, NULL),
+(1009, 20, 8, 1, NULL, 39, 80, NULL, NULL),
+(1010, 20, 9, 1, NULL, 20, 82, NULL, NULL),
+(1011, 20, 10, 1, NULL, 37, 76, NULL, NULL),
+(1012, 20, 11, 1, NULL, 29, 72, NULL, NULL),
+(1013, 20, 12, 1, NULL, 41, 69, NULL, NULL),
+(1014, 20, 13, 1, NULL, 34, 66, NULL, NULL),
+(1015, 20, 14, 1, NULL, 23, 85, NULL, NULL),
+(1016, 20, 15, 1, NULL, 43, 92, NULL, NULL),
+(1017, 20, 16, 1, NULL, 55, 75, NULL, NULL),
+(1018, 20, 17, 1, NULL, 40, 90, NULL, NULL),
+(1019, 20, 18, 1, NULL, 23, 81, NULL, NULL),
+(1020, 20, 19, 1, NULL, 13, 76, NULL, NULL),
+(1021, 20, 20, 1, NULL, 18, 60, NULL, NULL),
+(1022, 20, 21, 1, NULL, 18, 73, NULL, NULL),
+(1023, 20, 22, 1, NULL, 25, 79, NULL, NULL),
+(1024, 20, 23, 1, NULL, 16, 97, NULL, NULL),
+(1025, 20, 24, 1, NULL, 9, 89, NULL, NULL),
+(1026, 20, 25, 1, NULL, 3, 90, NULL, NULL),
+(1027, 20, 26, 1, NULL, 17, 76, NULL, NULL),
+(1028, 20, 27, 1, NULL, 36, 95, NULL, NULL),
+(1029, 20, 28, 1, NULL, 45, 75, NULL, NULL),
+(1030, 20, 29, 1, NULL, 41, 68, NULL, NULL),
+(1031, 20, 30, 1, NULL, 40, 63, NULL, NULL),
+(1032, 20, 31, 1, NULL, 47, 72, NULL, NULL),
+(1033, 20, 32, 1, NULL, 55, 72, NULL, NULL),
+(1034, 20, 33, 1, NULL, 45, 56, NULL, NULL),
+(1035, 20, 34, 1, NULL, 46, 69, NULL, NULL),
+(1036, 20, 35, 1, NULL, 31, 65, NULL, NULL),
+(1037, 20, 36, 1, NULL, 28, 78, NULL, NULL),
+(1038, 20, 37, 1, NULL, 23, 84, NULL, NULL),
+(1039, 20, 38, 1, NULL, 43, 65, NULL, NULL),
+(1040, 20, 39, 1, NULL, 46, 84, NULL, NULL),
+(1041, 20, 40, 1, NULL, 37, 76, NULL, NULL),
+(1042, 20, 41, 1, NULL, 46, 83, NULL, NULL),
+(1043, 20, 42, 1, NULL, 42, 79, NULL, NULL),
+(1044, 20, 43, 1, NULL, 38, 63, NULL, NULL),
+(1045, 20, 44, 1, NULL, 22, 49, NULL, NULL),
+(1046, 20, 45, 1, NULL, 23, 31, NULL, NULL),
+(1047, 20, 46, 1, NULL, 19, 43, NULL, NULL),
+(1048, 20, 47, 1, NULL, 17, 34, NULL, NULL),
+(1049, 20, 48, 1, NULL, 25, 38, NULL, NULL),
+(1050, 20, 49, 1, NULL, 44, 42, NULL, NULL),
+(1051, 21, 0, 1, NULL, 26, 85, NULL, NULL),
+(1052, 21, 1, 1, NULL, 13, 87, NULL, NULL),
+(1053, 21, 2, 1, NULL, 21, 77, NULL, NULL),
+(1054, 21, 3, 1, NULL, 14, 93, NULL, NULL),
+(1055, 21, 4, 1, NULL, 34, 87, NULL, NULL),
+(1056, 21, 5, 1, NULL, 24, 95, NULL, NULL),
+(1057, 21, 6, 1, NULL, 40, 81, NULL, NULL),
+(1058, 21, 7, 1, NULL, 49, 70, NULL, NULL),
+(1059, 21, 8, 1, NULL, 53, 68, NULL, NULL),
+(1060, 21, 9, 1, NULL, 36, 78, NULL, NULL),
+(1061, 21, 10, 1, NULL, 37, 89, NULL, NULL),
+(1062, 21, 11, 1, NULL, 36, 70, NULL, NULL),
+(1063, 21, 12, 1, NULL, 41, 57, NULL, NULL),
+(1064, 21, 13, 1, NULL, 39, 66, NULL, NULL),
+(1065, 21, 14, 1, NULL, 30, 71, NULL, NULL),
+(1066, 21, 15, 1, NULL, 25, 91, NULL, NULL),
+(1067, 21, 16, 1, NULL, 38, 86, NULL, NULL),
+(1068, 21, 17, 1, NULL, 41, 70, NULL, NULL),
+(1069, 21, 18, 1, NULL, 37, 71, NULL, NULL),
+(1070, 21, 19, 1, NULL, 32, 69, NULL, NULL),
+(1071, 21, 20, 1, NULL, 13, 63, NULL, NULL),
+(1072, 21, 21, 1, NULL, 18, 59, NULL, NULL),
+(1073, 21, 22, 1, NULL, 22, 71, NULL, NULL),
+(1074, 21, 23, 1, NULL, 29, 89, NULL, NULL),
+(1075, 21, 24, 1, NULL, 9, 98, NULL, NULL),
+(1076, 21, 25, 1, NULL, 5, 86, NULL, NULL),
+(1077, 21, 26, 1, NULL, 6, 68, NULL, NULL),
+(1078, 21, 27, 1, NULL, 26, 84, NULL, NULL),
+(1079, 21, 28, 1, NULL, 35, 69, NULL, NULL),
+(1080, 21, 29, 1, NULL, 26, 61, NULL, NULL),
+(1081, 21, 30, 1, NULL, 24, 44, NULL, NULL),
+(1082, 21, 31, 1, NULL, 34, 55, NULL, NULL),
+(1083, 21, 32, 1, NULL, 40, 65, NULL, NULL),
+(1084, 21, 33, 1, NULL, 56, 45, NULL, NULL),
+(1085, 21, 34, 1, NULL, 50, 63, NULL, NULL),
+(1086, 21, 35, 1, NULL, 42, 45, NULL, NULL),
+(1087, 21, 36, 1, NULL, 35, 55, NULL, NULL),
+(1088, 21, 37, 1, NULL, 31, 50, NULL, NULL),
+(1089, 21, 38, 1, NULL, 50, 62, NULL, NULL),
+(1090, 21, 39, 1, NULL, 37, 69, NULL, NULL),
+(1091, 21, 40, 1, NULL, 39, 82, NULL, NULL),
+(1092, 21, 41, 1, NULL, 39, 98, NULL, NULL),
+(1093, 21, 42, 1, NULL, 32, 89, NULL, NULL),
+(1094, 21, 43, 1, NULL, 25, 75, NULL, NULL),
+(1095, 21, 44, 1, NULL, 37, 68, NULL, NULL),
+(1096, 21, 45, 1, NULL, 32, 49, NULL, NULL),
+(1097, 21, 46, 1, NULL, 20, 61, NULL, NULL),
+(1098, 21, 47, 1, NULL, 36, 52, NULL, NULL),
+(1099, 21, 48, 1, NULL, 26, 58, NULL, NULL),
+(1100, 21, 49, 1, NULL, 44, 52, NULL, NULL),
+(1101, 22, 0, 1, NULL, 12, 69, NULL, NULL),
+(1102, 22, 1, 1, NULL, 26, 79, NULL, NULL),
+(1103, 22, 2, 1, NULL, 18, 91, NULL, NULL),
+(1104, 22, 3, 1, NULL, 12, 76, NULL, NULL),
+(1105, 22, 4, 1, NULL, 23, 88, NULL, NULL),
+(1106, 22, 5, 1, NULL, 5, 95, NULL, NULL),
+(1107, 22, 6, 1, NULL, 22, 75, NULL, NULL),
+(1108, 22, 7, 1, NULL, 31, 75, NULL, NULL),
+(1109, 22, 8, 1, NULL, 36, 88, NULL, NULL),
+(1110, 22, 9, 1, NULL, 46, 90, NULL, NULL),
+(1111, 22, 10, 1, NULL, 49, 74, NULL, NULL),
+(1112, 22, 11, 1, NULL, 42, 57, NULL, NULL),
+(1113, 22, 12, 1, NULL, 35, 56, NULL, NULL),
+(1114, 22, 13, 1, NULL, 54, 75, NULL, NULL),
+(1115, 22, 14, 1, NULL, 37, 71, NULL, NULL),
+(1116, 22, 15, 1, NULL, 26, 89, NULL, NULL),
+(1117, 22, 16, 1, NULL, 25, 70, NULL, NULL),
+(1118, 22, 17, 1, NULL, 37, 73, NULL, NULL),
+(1119, 22, 18, 1, NULL, 41, 60, NULL, NULL),
+(1120, 22, 19, 1, NULL, 33, 71, NULL, NULL),
+(1121, 22, 20, 1, NULL, 17, 56, NULL, NULL),
+(1122, 22, 21, 1, NULL, 11, 74, NULL, NULL),
+(1123, 22, 22, 1, NULL, 16, 71, NULL, NULL),
+(1124, 22, 23, 1, NULL, 12, 69, NULL, NULL),
+(1125, 22, 24, 1, NULL, 28, 78, NULL, NULL),
+(1126, 22, 25, 1, NULL, 21, 93, NULL, NULL),
+(1127, 22, 26, 1, NULL, 24, 79, NULL, NULL),
+(1128, 22, 27, 1, NULL, 32, 85, NULL, NULL),
+(1129, 22, 28, 1, NULL, 20, 67, NULL, NULL),
+(1130, 22, 29, 1, NULL, 36, 50, NULL, NULL),
+(1131, 22, 30, 1, NULL, 36, 53, NULL, NULL),
+(1132, 22, 31, 1, NULL, 44, 37, NULL, NULL),
+(1133, 22, 32, 1, NULL, 54, 56, NULL, NULL),
+(1134, 22, 33, 1, NULL, 49, 50, NULL, NULL),
+(1135, 22, 34, 1, NULL, 57, 53, NULL, NULL),
+(1136, 22, 35, 1, NULL, 56, 43, NULL, NULL),
+(1137, 22, 36, 1, NULL, 50, 63, NULL, NULL),
+(1138, 22, 37, 1, NULL, 38, 44, NULL, NULL),
+(1139, 22, 38, 1, NULL, 37, 48, NULL, NULL),
+(1140, 22, 39, 1, NULL, 31, 58, NULL, NULL),
+(1141, 22, 40, 1, NULL, 34, 62, NULL, NULL),
+(1142, 22, 41, 1, NULL, 34, 79, NULL, NULL),
+(1143, 22, 42, 1, NULL, 17, 96, NULL, NULL),
+(1144, 22, 43, 1, NULL, 7, 76, NULL, NULL),
+(1145, 22, 44, 1, NULL, 24, 58, NULL, NULL),
+(1146, 22, 45, 1, NULL, 37, 38, NULL, NULL),
+(1147, 22, 46, 1, NULL, 39, 55, NULL, NULL),
+(1148, 22, 47, 1, NULL, 50, 52, NULL, NULL),
+(1149, 22, 48, 1, NULL, 36, 48, NULL, NULL),
+(1150, 22, 49, 1, NULL, 33, 54, NULL, NULL),
+(1151, 23, 0, 1, NULL, 3, 80, NULL, NULL),
+(1152, 23, 1, 1, NULL, 12, 71, NULL, NULL),
+(1153, 23, 2, 1, NULL, 32, 72, NULL, NULL),
+(1154, 23, 3, 1, NULL, 30, 91, NULL, NULL),
+(1155, 23, 4, 1, NULL, 33, 75, NULL, NULL),
+(1156, 23, 5, 1, NULL, 16, 86, NULL, NULL),
+(1157, 23, 6, 1, NULL, 23, 85, NULL, NULL),
+(1158, 23, 7, 1, NULL, 18, 93, NULL, NULL),
+(1159, 23, 8, 1, NULL, 27, 94, NULL, NULL),
+(1160, 23, 9, 1, NULL, 29, 85, NULL, NULL),
+(1161, 23, 10, 1, NULL, 45, 71, NULL, NULL),
+(1162, 23, 11, 1, NULL, 55, 52, NULL, NULL),
+(1163, 23, 12, 1, NULL, 35, 65, NULL, NULL),
+(1164, 23, 13, 1, NULL, 38, 85, NULL, NULL),
+(1165, 23, 14, 1, NULL, 19, 88, NULL, NULL),
+(1166, 23, 15, 1, NULL, 18, 84, NULL, NULL),
+(1167, 23, 16, 1, NULL, 10, 64, NULL, NULL),
+(1168, 23, 17, 1, NULL, 21, 76, NULL, NULL),
+(1169, 23, 18, 1, NULL, 23, 77, NULL, NULL),
+(1170, 23, 19, 1, NULL, 14, 75, NULL, NULL),
+(1171, 23, 20, 1, NULL, 8, 68, NULL, NULL),
+(1172, 23, 21, 1, NULL, 8, 55, NULL, NULL),
+(1173, 23, 22, 1, NULL, 24, 55, NULL, NULL),
+(1174, 23, 23, 1, NULL, 9, 52, NULL, NULL),
+(1175, 23, 24, 1, NULL, 29, 61, NULL, NULL),
+(1176, 23, 25, 1, NULL, 18, 78, NULL, NULL),
+(1177, 23, 26, 1, NULL, 37, 90, NULL, NULL),
+(1178, 23, 27, 1, NULL, 20, 94, NULL, NULL),
+(1179, 23, 28, 1, NULL, 30, 79, NULL, NULL),
+(1180, 23, 29, 1, NULL, 27, 65, NULL, NULL),
+(1181, 23, 30, 1, NULL, 20, 69, NULL, NULL),
+(1182, 23, 31, 1, NULL, 28, 56, NULL, NULL),
+(1183, 23, 32, 1, NULL, 37, 57, NULL, NULL),
+(1184, 23, 33, 1, NULL, 56, 70, NULL, NULL),
+(1185, 23, 34, 1, NULL, 57, 66, NULL, NULL),
+(1186, 23, 35, 1, NULL, 48, 48, NULL, NULL),
+(1187, 23, 36, 1, NULL, 61, 50, NULL, NULL),
+(1188, 23, 37, 1, NULL, 50, 40, NULL, NULL),
+(1189, 23, 38, 1, NULL, 36, 44, NULL, NULL),
+(1190, 23, 39, 1, NULL, 47, 46, NULL, NULL),
+(1191, 23, 40, 1, NULL, 49, 47, NULL, NULL),
+(1192, 23, 41, 1, NULL, 36, 65, NULL, NULL),
+(1193, 23, 42, 1, NULL, 24, 83, NULL, NULL),
+(1194, 23, 43, 1, NULL, 14, 63, NULL, NULL),
+(1195, 23, 44, 1, NULL, 16, 44, NULL, NULL),
+(1196, 23, 45, 1, NULL, 35, 30, NULL, NULL),
+(1197, 23, 46, 1, NULL, 51, 42, NULL, NULL),
+(1198, 23, 47, 1, NULL, 65, 57, NULL, NULL),
+(1199, 23, 48, 1, NULL, 46, 44, NULL, NULL),
+(1200, 23, 49, 1, NULL, 38, 53, NULL, NULL),
+(1201, 24, 0, 1, NULL, 0, 64, NULL, NULL),
+(1202, 24, 1, 1, NULL, 6, 84, NULL, NULL),
+(1203, 24, 2, 1, NULL, 16, 90, NULL, NULL),
+(1204, 24, 3, 1, NULL, 22, 95, NULL, NULL);
+INSERT INTO `Tiles` (`id`, `x`, `y`, `sprite_id`, `isEmpty`, `humidite`, `fertilite`, `isVisible`, `user_id`) VALUES
+(1205, 24, 4, 1, NULL, 24, 93, NULL, NULL),
+(1206, 24, 5, 1, NULL, 12, 92, NULL, NULL),
+(1207, 24, 6, 1, NULL, 28, 75, NULL, NULL),
+(1208, 24, 7, 1, NULL, 20, 81, NULL, NULL),
+(1209, 24, 8, 1, NULL, 20, 78, NULL, NULL),
+(1210, 24, 9, 1, NULL, 12, 75, NULL, NULL),
+(1211, 24, 10, 1, NULL, 27, 74, NULL, NULL),
+(1212, 24, 11, 1, NULL, 38, 57, NULL, NULL),
+(1213, 24, 12, 1, NULL, 36, 49, NULL, NULL),
+(1214, 24, 13, 1, NULL, 30, 69, NULL, NULL),
+(1215, 24, 14, 1, NULL, 11, 78, NULL, NULL),
+(1216, 24, 15, 1, NULL, 16, 66, NULL, NULL),
+(1217, 24, 16, 1, NULL, 5, 65, NULL, NULL),
+(1218, 24, 17, 1, NULL, 22, 68, NULL, NULL),
+(1219, 24, 18, 1, NULL, 14, 69, NULL, NULL),
+(1220, 24, 19, 1, NULL, 6, 78, NULL, NULL),
+(1221, 24, 20, 1, NULL, 13, 71, NULL, NULL),
+(1222, 24, 21, 1, NULL, 18, 68, NULL, NULL),
+(1223, 24, 22, 1, NULL, 9, 56, NULL, NULL),
+(1224, 24, 23, 1, NULL, 14, 50, NULL, NULL),
+(1225, 24, 24, 1, NULL, 33, 64, NULL, NULL),
+(1226, 24, 25, 1, NULL, 27, 61, NULL, NULL),
+(1227, 24, 26, 1, NULL, 43, 79, NULL, NULL),
+(1228, 24, 27, 1, NULL, 29, 93, NULL, NULL),
+(1229, 24, 28, 1, NULL, 22, 89, NULL, NULL),
+(1230, 24, 29, 1, NULL, 40, 74, NULL, NULL),
+(1231, 24, 30, 1, NULL, 37, 83, NULL, NULL),
+(1232, 24, 31, 1, NULL, 37, 65, NULL, NULL),
+(1233, 24, 32, 1, NULL, 31, 52, NULL, NULL),
+(1234, 24, 33, 1, NULL, 42, 54, NULL, NULL),
+(1235, 24, 34, 1, NULL, 52, 59, NULL, NULL),
+(1236, 24, 35, 1, NULL, 50, 55, NULL, NULL),
+(1237, 24, 36, 1, NULL, 65, 47, NULL, NULL),
+(1238, 24, 37, 1, NULL, 59, 38, NULL, NULL),
+(1239, 24, 38, 1, NULL, 40, 46, NULL, NULL),
+(1240, 24, 39, 1, NULL, 27, 46, NULL, NULL),
+(1241, 24, 40, 1, NULL, 31, 63, NULL, NULL),
+(1242, 24, 41, 1, NULL, 35, 70, NULL, NULL),
+(1243, 24, 42, 1, NULL, 21, 78, NULL, NULL),
+(1244, 24, 43, 1, NULL, 28, 69, NULL, NULL),
+(1245, 24, 44, 1, NULL, 35, 49, NULL, NULL),
+(1246, 24, 45, 1, NULL, 35, 33, NULL, NULL),
+(1247, 24, 46, 1, NULL, 34, 36, NULL, NULL),
+(1248, 24, 47, 1, NULL, 46, 37, NULL, NULL),
+(1249, 24, 48, 1, NULL, 45, 35, NULL, NULL),
+(1250, 24, 49, 1, NULL, 38, 34, NULL, NULL),
+(1251, 25, 0, 1, NULL, 13, 65, NULL, NULL),
+(1252, 25, 1, 1, NULL, 5, 70, NULL, NULL),
+(1253, 25, 2, 1, NULL, 15, 71, NULL, NULL),
+(1254, 25, 3, 1, NULL, 34, 77, NULL, NULL),
+(1255, 25, 4, 1, NULL, 21, 81, NULL, NULL),
+(1256, 25, 5, 1, NULL, 21, 89, NULL, NULL),
+(1257, 25, 6, 1, NULL, 24, 90, NULL, NULL),
+(1258, 25, 7, 1, NULL, 6, 100, NULL, NULL),
+(1259, 25, 8, 1, NULL, 19, 86, NULL, NULL),
+(1260, 25, 9, 1, NULL, 15, 82, NULL, NULL),
+(1261, 25, 10, 1, NULL, 35, 69, NULL, NULL),
+(1262, 25, 11, 1, NULL, 42, 65, NULL, NULL),
+(1263, 25, 12, 1, NULL, 25, 50, NULL, NULL),
+(1264, 25, 13, 1, NULL, 25, 63, NULL, NULL),
+(1265, 25, 14, 1, NULL, 9, 64, NULL, NULL),
+(1266, 25, 15, 1, NULL, 1, 48, NULL, NULL),
+(1267, 25, 16, 1, NULL, 10, 51, NULL, NULL),
+(1268, 25, 17, 1, NULL, 28, 62, NULL, NULL),
+(1269, 25, 18, 1, NULL, 29, 50, NULL, NULL),
+(1270, 25, 19, 1, NULL, 16, 59, NULL, NULL),
+(1271, 25, 20, 1, NULL, 9, 52, NULL, NULL),
+(1272, 25, 21, 1, NULL, 8, 68, NULL, NULL),
+(1273, 25, 22, 1, NULL, 19, 75, NULL, NULL),
+(1274, 25, 23, 1, NULL, 17, 67, NULL, NULL),
+(1275, 25, 24, 1, NULL, 30, 84, NULL, NULL),
+(1276, 25, 25, 1, NULL, 18, 71, NULL, NULL),
+(1277, 25, 26, 1, NULL, 35, 82, NULL, NULL),
+(1278, 25, 27, 1, NULL, 31, 94, NULL, NULL),
+(1279, 25, 28, 1, NULL, 33, 86, NULL, NULL),
+(1280, 25, 29, 1, NULL, 32, 93, NULL, NULL),
+(1281, 25, 30, 1, NULL, 45, 84, NULL, NULL),
+(1282, 25, 31, 1, NULL, 44, 67, NULL, NULL),
+(1283, 25, 32, 1, NULL, 29, 68, NULL, NULL),
+(1284, 25, 33, 1, NULL, 34, 63, NULL, NULL),
+(1285, 25, 34, 1, NULL, 45, 79, NULL, NULL),
+(1286, 25, 35, 1, NULL, 62, 70, NULL, NULL),
+(1287, 25, 36, 1, NULL, 71, 53, NULL, NULL),
+(1288, 25, 37, 1, NULL, 72, 58, NULL, NULL),
+(1289, 25, 38, 1, NULL, 59, 45, NULL, NULL),
+(1290, 25, 39, 1, NULL, 41, 48, NULL, NULL),
+(1291, 25, 40, 1, NULL, 49, 64, NULL, NULL),
+(1292, 25, 41, 1, NULL, 54, 69, NULL, NULL),
+(1293, 25, 42, 1, NULL, 37, 63, NULL, NULL),
+(1294, 25, 43, 1, NULL, 32, 74, NULL, NULL),
+(1295, 25, 44, 1, NULL, 22, 59, NULL, NULL),
+(1296, 25, 45, 1, NULL, 27, 43, NULL, NULL),
+(1297, 25, 46, 1, NULL, 42, 33, NULL, NULL),
+(1298, 25, 47, 1, NULL, 39, 34, NULL, NULL),
+(1299, 25, 48, 1, NULL, 33, 42, NULL, NULL),
+(1300, 25, 49, 1, NULL, 20, 54, NULL, NULL),
+(1301, 26, 0, 1, NULL, 1, 71, NULL, NULL),
+(1302, 26, 1, 1, NULL, 16, 73, NULL, NULL),
+(1303, 26, 2, 1, NULL, 19, 83, NULL, NULL),
+(1304, 26, 3, 1, NULL, 28, 69, NULL, NULL),
+(1305, 26, 4, 1, NULL, 10, 67, NULL, NULL),
+(1306, 26, 5, 1, NULL, 22, 75, NULL, NULL),
+(1307, 26, 6, 1, NULL, 26, 76, NULL, NULL),
+(1308, 26, 7, 1, NULL, 13, 89, NULL, NULL),
+(1309, 26, 8, 1, NULL, 16, 82, NULL, NULL),
+(1310, 26, 9, 1, NULL, 12, 76, NULL, NULL),
+(1311, 26, 10, 1, NULL, 23, 79, NULL, NULL),
+(1312, 26, 11, 1, NULL, 25, 71, NULL, NULL),
+(1313, 26, 12, 1, NULL, 28, 66, NULL, NULL),
+(1314, 26, 13, 1, NULL, 17, 66, NULL, NULL),
+(1315, 26, 14, 1, NULL, 20, 79, NULL, NULL),
+(1316, 26, 15, 1, NULL, 13, 67, NULL, NULL),
+(1317, 26, 16, 1, NULL, 21, 50, NULL, NULL),
+(1318, 26, 17, 1, NULL, 20, 64, NULL, NULL),
+(1319, 26, 18, 1, NULL, 29, 64, NULL, NULL),
+(1320, 26, 19, 1, NULL, 29, 72, NULL, NULL),
+(1321, 26, 20, 1, NULL, 30, 74, NULL, NULL),
+(1322, 26, 21, 1, NULL, 11, 54, NULL, NULL),
+(1323, 26, 22, 1, NULL, 28, 71, NULL, NULL),
+(1324, 26, 23, 1, NULL, 14, 56, NULL, NULL),
+(1325, 26, 24, 1, NULL, 21, 65, NULL, NULL),
+(1326, 26, 25, 1, NULL, 30, 52, NULL, NULL),
+(1327, 26, 26, 1, NULL, 25, 66, NULL, NULL),
+(1328, 26, 27, 1, NULL, 21, 80, NULL, NULL),
+(1329, 26, 28, 1, NULL, 16, 92, NULL, NULL),
+(1330, 26, 29, 1, NULL, 17, 92, NULL, NULL),
+(1331, 26, 30, 1, NULL, 29, 100, NULL, NULL),
+(1332, 26, 31, 1, NULL, 42, 85, NULL, NULL),
+(1333, 26, 32, 1, NULL, 22, 83, NULL, NULL),
+(1334, 26, 33, 1, NULL, 34, 67, NULL, NULL),
+(1335, 26, 34, 1, NULL, 51, 85, NULL, NULL),
+(1336, 26, 35, 1, NULL, 50, 72, NULL, NULL),
+(1337, 26, 36, 1, NULL, 64, 68, NULL, NULL),
+(1338, 26, 37, 1, NULL, 84, 59, NULL, NULL),
+(1339, 26, 38, 1, NULL, 75, 40, NULL, NULL),
+(1340, 26, 39, 1, NULL, 59, 50, NULL, NULL),
+(1341, 26, 40, 1, NULL, 46, 60, NULL, NULL),
+(1342, 26, 41, 1, NULL, 58, 62, NULL, NULL),
+(1343, 26, 42, 1, NULL, 41, 59, NULL, NULL),
+(1344, 26, 43, 1, NULL, 29, 65, NULL, NULL),
+(1345, 26, 44, 1, NULL, 33, 56, NULL, NULL),
+(1346, 26, 45, 1, NULL, 17, 45, NULL, NULL),
+(1347, 26, 46, 1, NULL, 23, 35, NULL, NULL),
+(1348, 26, 47, 1, NULL, 34, 45, NULL, NULL),
+(1349, 26, 48, 1, NULL, 37, 30, NULL, NULL),
+(1350, 26, 49, 1, NULL, 20, 45, NULL, NULL),
+(1351, 27, 0, 1, NULL, 0, 82, NULL, NULL),
+(1352, 27, 1, 1, NULL, 2, 71, NULL, NULL),
+(1353, 27, 2, 1, NULL, 1, 82, NULL, NULL),
+(1354, 27, 3, 1, NULL, 16, 74, NULL, NULL),
+(1355, 27, 4, 1, NULL, 1, 62, NULL, NULL),
+(1356, 27, 5, 1, NULL, 7, 72, NULL, NULL),
+(1357, 27, 6, 1, NULL, 8, 79, NULL, NULL),
+(1358, 27, 7, 1, NULL, 2, 82, NULL, NULL),
+(1359, 27, 8, 1, NULL, 0, 76, NULL, NULL),
+(1360, 27, 9, 1, NULL, 9, 72, NULL, NULL),
+(1361, 27, 10, 1, NULL, 27, 69, NULL, NULL),
+(1362, 27, 11, 1, NULL, 13, 74, NULL, NULL),
+(1363, 27, 12, 1, NULL, 13, 80, NULL, NULL),
+(1364, 27, 13, 1, NULL, 8, 85, NULL, NULL),
+(1365, 27, 14, 1, NULL, 9, 82, NULL, NULL),
+(1366, 27, 15, 1, NULL, 4, 66, NULL, NULL),
+(1367, 27, 16, 1, NULL, 5, 46, NULL, NULL),
+(1368, 27, 17, 1, NULL, 11, 44, NULL, NULL),
+(1369, 27, 18, 1, NULL, 24, 63, NULL, NULL),
+(1370, 27, 19, 1, NULL, 37, 56, NULL, NULL),
+(1371, 27, 20, 1, NULL, 17, 58, NULL, NULL),
+(1372, 27, 21, 1, NULL, 6, 68, NULL, NULL),
+(1373, 27, 22, 1, NULL, 14, 71, NULL, NULL),
+(1374, 27, 23, 1, NULL, 4, 71, NULL, NULL),
+(1375, 27, 24, 1, NULL, 18, 85, NULL, NULL),
+(1376, 27, 25, 1, NULL, 24, 71, NULL, NULL),
+(1377, 27, 26, 1, NULL, 41, 60, NULL, NULL),
+(1378, 27, 27, 1, NULL, 36, 67, NULL, NULL),
+(1379, 27, 28, 1, NULL, 26, 78, NULL, NULL),
+(1380, 27, 29, 1, NULL, 36, 88, NULL, NULL),
+(1381, 27, 30, 1, NULL, 41, 98, NULL, NULL),
+(1382, 27, 31, 1, NULL, 39, 78, NULL, NULL),
+(1383, 27, 32, 1, NULL, 36, 86, NULL, NULL),
+(1384, 27, 33, 1, NULL, 41, 67, NULL, NULL),
+(1385, 27, 34, 1, NULL, 45, 81, NULL, NULL),
+(1386, 27, 35, 1, NULL, 34, 69, NULL, NULL),
+(1387, 27, 36, 1, NULL, 50, 86, NULL, NULL),
+(1388, 27, 37, 1, NULL, 65, 78, NULL, NULL),
+(1389, 27, 38, 1, NULL, 70, 58, NULL, NULL),
+(1390, 27, 39, 1, NULL, 52, 51, NULL, NULL),
+(1391, 27, 40, 1, NULL, 36, 62, NULL, NULL),
+(1392, 27, 41, 1, NULL, 46, 66, NULL, NULL),
+(1393, 27, 42, 1, NULL, 35, 75, NULL, NULL),
+(1394, 27, 43, 1, NULL, 29, 72, NULL, NULL),
+(1395, 27, 44, 1, NULL, 34, 67, NULL, NULL),
+(1396, 27, 45, 1, NULL, 18, 65, NULL, NULL),
+(1397, 27, 46, 1, NULL, 13, 46, NULL, NULL),
+(1398, 27, 47, 1, NULL, 19, 51, NULL, NULL),
+(1399, 27, 48, 1, NULL, 18, 47, NULL, NULL),
+(1400, 27, 49, 1, NULL, 20, 29, NULL, NULL),
+(1401, 28, 0, 1, NULL, 0, 62, NULL, NULL),
+(1402, 28, 1, 1, NULL, 16, 61, NULL, NULL),
+(1403, 28, 2, 1, NULL, 8, 63, NULL, NULL),
+(1404, 28, 3, 1, NULL, 17, 74, NULL, NULL),
+(1405, 28, 4, 1, NULL, 5, 58, NULL, NULL),
+(1406, 28, 5, 1, NULL, 16, 52, NULL, NULL),
+(1407, 28, 6, 1, NULL, 24, 60, NULL, NULL),
+(1408, 28, 7, 1, NULL, 20, 70, NULL, NULL),
+(1409, 28, 8, 1, NULL, 9, 89, NULL, NULL),
+(1410, 28, 9, 1, NULL, 12, 88, NULL, NULL),
+(1411, 28, 10, 1, NULL, 11, 70, NULL, NULL),
+(1412, 28, 11, 1, NULL, 28, 84, NULL, NULL),
+(1413, 28, 12, 1, NULL, 21, 67, NULL, NULL),
+(1414, 28, 13, 1, NULL, 9, 75, NULL, NULL),
+(1415, 28, 14, 1, NULL, 14, 75, NULL, NULL),
+(1416, 28, 15, 1, NULL, 16, 70, NULL, NULL),
+(1417, 28, 16, 1, NULL, 24, 57, NULL, NULL),
+(1418, 28, 17, 1, NULL, 18, 43, NULL, NULL),
+(1419, 28, 18, 1, NULL, 17, 50, NULL, NULL),
+(1420, 28, 19, 1, NULL, 23, 49, NULL, NULL),
+(1421, 28, 20, 1, NULL, 27, 46, NULL, NULL),
+(1422, 28, 21, 1, NULL, 10, 49, NULL, NULL),
+(1423, 28, 22, 1, NULL, 23, 52, NULL, NULL),
+(1424, 28, 23, 1, NULL, 10, 62, NULL, NULL),
+(1425, 28, 24, 1, NULL, 30, 76, NULL, NULL),
+(1426, 28, 25, 1, NULL, 41, 77, NULL, NULL),
+(1427, 28, 26, 1, NULL, 51, 78, NULL, NULL),
+(1428, 28, 27, 1, NULL, 53, 59, NULL, NULL),
+(1429, 28, 28, 1, NULL, 39, 59, NULL, NULL),
+(1430, 28, 29, 1, NULL, 40, 69, NULL, NULL),
+(1431, 28, 30, 1, NULL, 43, 86, NULL, NULL),
+(1432, 28, 31, 1, NULL, 27, 79, NULL, NULL),
+(1433, 28, 32, 1, NULL, 32, 84, NULL, NULL),
+(1434, 28, 33, 1, NULL, 29, 74, NULL, NULL),
+(1435, 28, 34, 1, NULL, 37, 93, NULL, NULL),
+(1436, 28, 35, 1, NULL, 40, 77, NULL, NULL),
+(1437, 28, 36, 1, NULL, 54, 74, NULL, NULL),
+(1438, 28, 37, 1, NULL, 60, 83, NULL, NULL),
+(1439, 28, 38, 1, NULL, 63, 71, NULL, NULL),
+(1440, 28, 39, 1, NULL, 47, 58, NULL, NULL),
+(1441, 28, 40, 1, NULL, 39, 53, NULL, NULL),
+(1442, 28, 41, 1, NULL, 49, 50, NULL, NULL),
+(1443, 28, 42, 1, NULL, 42, 59, NULL, NULL),
+(1444, 28, 43, 1, NULL, 29, 75, NULL, NULL),
+(1445, 28, 44, 1, NULL, 24, 64, NULL, NULL),
+(1446, 28, 45, 1, NULL, 6, 50, NULL, NULL),
+(1447, 28, 46, 1, NULL, 6, 34, NULL, NULL),
+(1448, 28, 47, 1, NULL, 11, 32, NULL, NULL),
+(1449, 28, 48, 1, NULL, 25, 30, NULL, NULL),
+(1450, 28, 49, 1, NULL, 30, 49, NULL, NULL),
+(1451, 29, 0, 1, NULL, 11, 51, NULL, NULL),
+(1452, 29, 1, 1, NULL, 17, 57, NULL, NULL),
+(1453, 29, 2, 1, NULL, 10, 56, NULL, NULL),
+(1454, 29, 3, 1, NULL, 26, 64, NULL, NULL),
+(1455, 29, 4, 1, NULL, 7, 55, NULL, NULL),
+(1456, 29, 5, 1, NULL, 13, 64, NULL, NULL),
+(1457, 29, 6, 1, NULL, 5, 44, NULL, NULL),
+(1458, 29, 7, 1, NULL, 19, 55, NULL, NULL),
+(1459, 29, 8, 1, NULL, 18, 74, NULL, NULL),
+(1460, 29, 9, 1, NULL, 19, 89, NULL, NULL),
+(1461, 29, 10, 1, NULL, 0, 70, NULL, NULL),
+(1462, 29, 11, 1, NULL, 9, 90, NULL, NULL),
+(1463, 29, 12, 1, NULL, 1, 79, NULL, NULL),
+(1464, 29, 13, 1, NULL, 17, 78, NULL, NULL),
+(1465, 29, 14, 1, NULL, 23, 77, NULL, NULL),
+(1466, 29, 15, 1, NULL, 6, 69, NULL, NULL),
+(1467, 29, 16, 1, NULL, 5, 50, NULL, NULL),
+(1468, 29, 17, 1, NULL, 5, 36, NULL, NULL),
+(1469, 29, 18, 1, NULL, 19, 55, NULL, NULL),
+(1470, 29, 19, 1, NULL, 35, 51, NULL, NULL),
+(1471, 29, 20, 1, NULL, 35, 49, NULL, NULL),
+(1472, 29, 21, 1, NULL, 22, 40, NULL, NULL),
+(1473, 29, 22, 1, NULL, 5, 50, NULL, NULL),
+(1474, 29, 23, 1, NULL, 4, 59, NULL, NULL),
+(1475, 29, 24, 1, NULL, 15, 61, NULL, NULL),
+(1476, 29, 25, 1, NULL, 28, 77, NULL, NULL),
+(1477, 29, 26, 1, NULL, 45, 86, NULL, NULL),
+(1478, 29, 27, 1, NULL, 45, 74, NULL, NULL),
+(1479, 29, 28, 1, NULL, 42, 55, NULL, NULL),
+(1480, 29, 29, 1, NULL, 59, 56, NULL, NULL),
+(1481, 29, 30, 1, NULL, 62, 76, NULL, NULL),
+(1482, 29, 31, 1, NULL, 43, 78, NULL, NULL),
+(1483, 29, 32, 1, NULL, 24, 68, NULL, NULL),
+(1484, 29, 33, 1, NULL, 22, 56, NULL, NULL),
+(1485, 29, 34, 1, NULL, 22, 75, NULL, NULL),
+(1486, 29, 35, 1, NULL, 29, 88, NULL, NULL),
+(1487, 29, 36, 1, NULL, 49, 74, NULL, NULL),
+(1488, 29, 37, 1, NULL, 59, 67, NULL, NULL),
+(1489, 29, 38, 1, NULL, 58, 54, NULL, NULL),
+(1490, 29, 39, 1, NULL, 40, 43, NULL, NULL),
+(1491, 29, 40, 1, NULL, 33, 51, NULL, NULL),
+(1492, 29, 41, 1, NULL, 44, 35, NULL, NULL),
+(1493, 29, 42, 1, NULL, 40, 47, NULL, NULL),
+(1494, 29, 43, 1, NULL, 42, 65, NULL, NULL),
+(1495, 29, 44, 1, NULL, 28, 83, NULL, NULL),
+(1496, 29, 45, 1, NULL, 23, 66, NULL, NULL),
+(1497, 29, 46, 1, NULL, 3, 50, NULL, NULL),
+(1498, 29, 47, 1, NULL, 18, 37, NULL, NULL),
+(1499, 29, 48, 1, NULL, 17, 18, NULL, NULL),
+(1500, 29, 49, 1, NULL, 30, 36, NULL, NULL),
+(1501, 30, 0, 1, NULL, 3, 64, NULL, NULL),
+(1502, 30, 1, 1, NULL, 17, 77, NULL, NULL),
+(1503, 30, 2, 1, NULL, 19, 65, NULL, NULL),
+(1504, 30, 3, 1, NULL, 26, 51, NULL, NULL),
+(1505, 30, 4, 1, NULL, 13, 51, NULL, NULL),
+(1506, 30, 5, 1, NULL, 11, 63, NULL, NULL),
+(1507, 30, 6, 1, NULL, 6, 58, NULL, NULL),
+(1508, 30, 7, 1, NULL, 2, 59, NULL, NULL),
+(1509, 30, 8, 1, NULL, 2, 67, NULL, NULL),
+(1510, 30, 9, 1, NULL, 7, 81, NULL, NULL),
+(1511, 30, 10, 1, NULL, 14, 66, NULL, NULL),
+(1512, 30, 11, 1, NULL, 28, 74, NULL, NULL),
+(1513, 30, 12, 1, NULL, 19, 61, NULL, NULL),
+(1514, 30, 13, 1, NULL, 9, 59, NULL, NULL),
+(1515, 30, 14, 1, NULL, 13, 77, NULL, NULL),
+(1516, 30, 15, 1, NULL, 1, 57, NULL, NULL),
+(1517, 30, 16, 1, NULL, 18, 44, NULL, NULL),
+(1518, 30, 17, 1, NULL, 22, 30, NULL, NULL),
+(1519, 30, 18, 1, NULL, 5, 37, NULL, NULL),
+(1520, 30, 19, 1, NULL, 21, 47, NULL, NULL),
+(1521, 30, 20, 1, NULL, 20, 35, NULL, NULL),
+(1522, 30, 21, 1, NULL, 9, 30, NULL, NULL),
+(1523, 30, 22, 1, NULL, 24, 40, NULL, NULL),
+(1524, 30, 23, 1, NULL, 24, 47, NULL, NULL),
+(1525, 30, 24, 1, NULL, 7, 53, NULL, NULL),
+(1526, 30, 25, 1, NULL, 15, 57, NULL, NULL),
+(1527, 30, 26, 1, NULL, 35, 71, NULL, NULL),
+(1528, 30, 27, 1, NULL, 37, 61, NULL, NULL),
+(1529, 30, 28, 1, NULL, 51, 67, NULL, NULL),
+(1530, 30, 29, 1, NULL, 55, 71, NULL, NULL),
+(1531, 30, 30, 1, NULL, 54, 59, NULL, NULL),
+(1532, 30, 31, 1, NULL, 50, 68, NULL, NULL),
+(1533, 30, 32, 1, NULL, 36, 70, NULL, NULL),
+(1534, 30, 33, 1, NULL, 23, 69, NULL, NULL),
+(1535, 30, 34, 1, NULL, 28, 73, NULL, NULL),
+(1536, 30, 35, 1, NULL, 22, 72, NULL, NULL),
+(1537, 30, 36, 1, NULL, 42, 56, NULL, NULL),
+(1538, 30, 37, 1, NULL, 46, 51, NULL, NULL),
+(1539, 30, 38, 1, NULL, 47, 51, NULL, NULL),
+(1540, 30, 39, 1, NULL, 40, 56, NULL, NULL),
+(1541, 30, 40, 1, NULL, 22, 59, NULL, NULL),
+(1542, 30, 41, 1, NULL, 25, 54, NULL, NULL),
+(1543, 30, 42, 1, NULL, 43, 49, NULL, NULL),
+(1544, 30, 43, 1, NULL, 36, 55, NULL, NULL),
+(1545, 30, 44, 1, NULL, 41, 68, NULL, NULL),
+(1546, 30, 45, 1, NULL, 22, 77, NULL, NULL),
+(1547, 30, 46, 1, NULL, 21, 58, NULL, NULL),
+(1548, 30, 47, 1, NULL, 25, 54, NULL, NULL),
+(1549, 30, 48, 1, NULL, 11, 38, NULL, NULL),
+(1550, 30, 49, 1, NULL, 14, 43, NULL, NULL),
+(1551, 31, 0, 1, NULL, 22, 83, NULL, NULL),
+(1552, 31, 1, 1, NULL, 31, 77, NULL, NULL),
+(1553, 31, 2, 1, NULL, 14, 71, NULL, NULL),
+(1554, 31, 3, 1, NULL, 22, 69, NULL, NULL),
+(1555, 31, 4, 1, NULL, 4, 58, NULL, NULL),
+(1556, 31, 5, 1, NULL, 14, 61, NULL, NULL),
+(1557, 31, 6, 1, NULL, 8, 49, NULL, NULL),
+(1558, 31, 7, 1, NULL, 21, 65, NULL, NULL),
+(1559, 31, 8, 1, NULL, 8, 57, NULL, NULL),
+(1560, 31, 9, 1, NULL, 3, 66, NULL, NULL),
+(1561, 31, 10, 1, NULL, 3, 75, NULL, NULL),
+(1562, 31, 11, 1, NULL, 20, 53, NULL, NULL),
+(1563, 31, 12, 1, NULL, 4, 74, NULL, NULL),
+(1564, 31, 13, 1, NULL, 0, 66, NULL, NULL),
+(1565, 31, 14, 1, NULL, 1, 72, NULL, NULL),
+(1566, 31, 15, 1, NULL, 10, 61, NULL, NULL),
+(1567, 31, 16, 1, NULL, 23, 45, NULL, NULL),
+(1568, 31, 17, 1, NULL, 21, 35, NULL, NULL),
+(1569, 31, 18, 1, NULL, 14, 32, NULL, NULL),
+(1570, 31, 19, 1, NULL, 22, 35, NULL, NULL),
+(1571, 31, 20, 1, NULL, 19, 25, NULL, NULL),
+(1572, 31, 21, 1, NULL, 10, 23, NULL, NULL),
+(1573, 31, 22, 1, NULL, 25, 29, NULL, NULL),
+(1574, 31, 23, 1, NULL, 22, 38, NULL, NULL),
+(1575, 31, 24, 1, NULL, 16, 44, NULL, NULL),
+(1576, 31, 25, 1, NULL, 0, 61, NULL, NULL),
+(1577, 31, 26, 1, NULL, 16, 56, NULL, NULL),
+(1578, 31, 27, 1, NULL, 25, 42, NULL, NULL),
+(1579, 31, 28, 1, NULL, 40, 56, NULL, NULL),
+(1580, 31, 29, 1, NULL, 49, 68, NULL, NULL),
+(1581, 31, 30, 1, NULL, 41, 68, NULL, NULL),
+(1582, 31, 31, 1, NULL, 35, 75, NULL, NULL),
+(1583, 31, 32, 1, NULL, 32, 65, NULL, NULL),
+(1584, 31, 33, 1, NULL, 27, 62, NULL, NULL),
+(1585, 31, 34, 1, NULL, 30, 69, NULL, NULL),
+(1586, 31, 35, 1, NULL, 19, 52, NULL, NULL),
+(1587, 31, 36, 1, NULL, 35, 50, NULL, NULL),
+(1588, 31, 37, 1, NULL, 39, 59, NULL, NULL),
+(1589, 31, 38, 1, NULL, 51, 45, NULL, NULL),
+(1590, 31, 39, 1, NULL, 60, 43, NULL, NULL),
+(1591, 31, 40, 1, NULL, 41, 61, NULL, NULL),
+(1592, 31, 41, 1, NULL, 33, 68, NULL, NULL),
+(1593, 31, 42, 1, NULL, 33, 55, NULL, NULL),
+(1594, 31, 43, 1, NULL, 46, 59, NULL, NULL),
+(1595, 31, 44, 1, NULL, 60, 62, NULL, NULL),
+(1596, 31, 45, 1, NULL, 40, 79, NULL, NULL),
+(1597, 31, 46, 1, NULL, 21, 78, NULL, NULL),
+(1598, 31, 47, 1, NULL, 26, 72, NULL, NULL),
+(1599, 31, 48, 1, NULL, 20, 54, NULL, NULL),
+(1600, 31, 49, 1, NULL, 3, 48, NULL, NULL),
+(1601, 32, 0, 1, NULL, 23, 78, NULL, NULL),
+(1602, 32, 1, 1, NULL, 14, 81, NULL, NULL),
+(1603, 32, 2, 1, NULL, 19, 85, NULL, NULL),
+(1604, 32, 3, 1, NULL, 4, 78, NULL, NULL),
+(1605, 32, 4, 1, NULL, 11, 58, NULL, NULL),
+(1606, 32, 5, 1, NULL, 19, 49, NULL, NULL),
+(1607, 32, 6, 1, NULL, 16, 54, NULL, NULL),
+(1608, 32, 7, 1, NULL, 4, 63, NULL, NULL),
+(1609, 32, 8, 1, NULL, 21, 55, NULL, NULL),
+(1610, 32, 9, 1, NULL, 4, 53, NULL, NULL),
+(1611, 32, 10, 1, NULL, 2, 68, NULL, NULL),
+(1612, 32, 11, 1, NULL, 8, 67, NULL, NULL),
+(1613, 32, 12, 1, NULL, 9, 72, NULL, NULL),
+(1614, 32, 13, 1, NULL, 16, 75, NULL, NULL),
+(1615, 32, 14, 1, NULL, 7, 72, NULL, NULL),
+(1616, 32, 15, 1, NULL, 26, 77, NULL, NULL),
+(1617, 32, 16, 1, NULL, 8, 57, NULL, NULL),
+(1618, 32, 17, 1, NULL, 24, 45, NULL, NULL),
+(1619, 32, 18, 1, NULL, 13, 31, NULL, NULL),
+(1620, 32, 19, 1, NULL, 11, 37, NULL, NULL),
+(1621, 32, 20, 1, NULL, 22, 43, NULL, NULL),
+(1622, 32, 21, 1, NULL, 19, 26, NULL, NULL),
+(1623, 32, 22, 1, NULL, 31, 30, NULL, NULL),
+(1624, 32, 23, 1, NULL, 23, 37, NULL, NULL),
+(1625, 32, 24, 1, NULL, 27, 28, NULL, NULL),
+(1626, 32, 25, 1, NULL, 9, 41, NULL, NULL),
+(1627, 32, 26, 1, NULL, 2, 36, NULL, NULL),
+(1628, 32, 27, 1, NULL, 11, 50, NULL, NULL),
+(1629, 32, 28, 1, NULL, 25, 57, NULL, NULL),
+(1630, 32, 29, 1, NULL, 38, 57, NULL, NULL),
+(1631, 32, 30, 1, NULL, 27, 50, NULL, NULL),
+(1632, 32, 31, 1, NULL, 17, 64, NULL, NULL),
+(1633, 32, 32, 1, NULL, 20, 82, NULL, NULL),
+(1634, 32, 33, 1, NULL, 15, 80, NULL, NULL),
+(1635, 32, 34, 1, NULL, 35, 71, NULL, NULL),
+(1636, 32, 35, 1, NULL, 39, 51, NULL, NULL),
+(1637, 32, 36, 1, NULL, 51, 69, NULL, NULL),
+(1638, 32, 37, 1, NULL, 45, 64, NULL, NULL),
+(1639, 32, 38, 1, NULL, 39, 54, NULL, NULL),
+(1640, 32, 39, 1, NULL, 49, 62, NULL, NULL),
+(1641, 32, 40, 1, NULL, 38, 63, NULL, NULL),
+(1642, 32, 41, 1, NULL, 40, 54, NULL, NULL),
+(1643, 32, 42, 1, NULL, 32, 49, NULL, NULL),
+(1644, 32, 43, 1, NULL, 34, 59, NULL, NULL),
+(1645, 32, 44, 1, NULL, 45, 75, NULL, NULL),
+(1646, 32, 45, 1, NULL, 26, 69, NULL, NULL),
+(1647, 32, 46, 1, NULL, 20, 71, NULL, NULL),
+(1648, 32, 47, 1, NULL, 6, 83, NULL, NULL),
+(1649, 32, 48, 1, NULL, 18, 64, NULL, NULL),
+(1650, 32, 49, 1, NULL, 11, 50, NULL, NULL),
+(1651, 33, 0, 1, NULL, 29, 75, NULL, NULL),
+(1652, 33, 1, 1, NULL, 29, 73, NULL, NULL),
+(1653, 33, 2, 1, NULL, 37, 72, NULL, NULL),
+(1654, 33, 3, 1, NULL, 17, 63, NULL, NULL),
+(1655, 33, 4, 1, NULL, 15, 62, NULL, NULL),
+(1656, 33, 5, 1, NULL, 22, 45, NULL, NULL),
+(1657, 33, 6, 1, NULL, 19, 49, NULL, NULL),
+(1658, 33, 7, 1, NULL, 1, 55, NULL, NULL),
+(1659, 33, 8, 1, NULL, 14, 56, NULL, NULL),
+(1660, 33, 9, 1, NULL, 21, 61, NULL, NULL),
+(1661, 33, 10, 1, NULL, 5, 49, NULL, NULL),
+(1662, 33, 11, 1, NULL, 3, 47, NULL, NULL),
+(1663, 33, 12, 1, NULL, 23, 52, NULL, NULL),
+(1664, 33, 13, 1, NULL, 17, 71, NULL, NULL),
+(1665, 33, 14, 1, NULL, 17, 58, NULL, NULL),
+(1666, 33, 15, 1, NULL, 8, 75, NULL, NULL),
+(1667, 33, 16, 1, NULL, 9, 58, NULL, NULL),
+(1668, 33, 17, 1, NULL, 12, 64, NULL, NULL),
+(1669, 33, 18, 1, NULL, 8, 46, NULL, NULL),
+(1670, 33, 19, 1, NULL, 28, 47, NULL, NULL),
+(1671, 33, 20, 1, NULL, 29, 57, NULL, NULL),
+(1672, 33, 21, 1, NULL, 23, 46, NULL, NULL),
+(1673, 33, 22, 1, NULL, 32, 42, NULL, NULL),
+(1674, 33, 23, 1, NULL, 41, 44, NULL, NULL),
+(1675, 33, 24, 1, NULL, 43, 29, NULL, NULL),
+(1676, 33, 25, 1, NULL, 29, 47, NULL, NULL),
+(1677, 33, 26, 1, NULL, 20, 48, NULL, NULL),
+(1678, 33, 27, 1, NULL, 15, 58, NULL, NULL),
+(1679, 33, 28, 1, NULL, 21, 54, NULL, NULL),
+(1680, 33, 29, 1, NULL, 28, 56, NULL, NULL),
+(1681, 33, 30, 1, NULL, 44, 37, NULL, NULL),
+(1682, 33, 31, 1, NULL, 27, 57, NULL, NULL),
+(1683, 33, 32, 1, NULL, 39, 74, NULL, NULL),
+(1684, 33, 33, 1, NULL, 27, 77, NULL, NULL),
+(1685, 33, 34, 1, NULL, 37, 87, NULL, NULL),
+(1686, 33, 35, 1, NULL, 39, 68, NULL, NULL),
+(1687, 33, 36, 1, NULL, 48, 87, NULL, NULL),
+(1688, 33, 37, 1, NULL, 61, 83, NULL, NULL),
+(1689, 33, 38, 1, NULL, 41, 68, NULL, NULL),
+(1690, 33, 39, 1, NULL, 52, 59, NULL, NULL),
+(1691, 33, 40, 1, NULL, 43, 49, NULL, NULL),
+(1692, 33, 41, 1, NULL, 34, 61, NULL, NULL),
+(1693, 33, 42, 1, NULL, 22, 51, NULL, NULL),
+(1694, 33, 43, 1, NULL, 41, 58, NULL, NULL),
+(1695, 33, 44, 1, NULL, 39, 76, NULL, NULL),
+(1696, 33, 45, 1, NULL, 33, 64, NULL, NULL),
+(1697, 33, 46, 1, NULL, 19, 71, NULL, NULL),
+(1698, 33, 47, 1, NULL, 26, 67, NULL, NULL),
+(1699, 33, 48, 1, NULL, 33, 51, NULL, NULL),
+(1700, 33, 49, 1, NULL, 21, 65, NULL, NULL),
+(1701, 34, 0, 1, NULL, 24, 68, NULL, NULL),
+(1702, 34, 1, 1, NULL, 23, 61, NULL, NULL),
+(1703, 34, 2, 1, NULL, 34, 66, NULL, NULL),
+(1704, 34, 3, 1, NULL, 14, 54, NULL, NULL),
+(1705, 34, 4, 1, NULL, 29, 63, NULL, NULL),
+(1706, 34, 5, 1, NULL, 29, 55, NULL, NULL),
+(1707, 34, 6, 1, NULL, 11, 45, NULL, NULL),
+(1708, 34, 7, 1, NULL, 5, 63, NULL, NULL),
+(1709, 34, 8, 1, NULL, 10, 58, NULL, NULL),
+(1710, 34, 9, 1, NULL, 27, 49, NULL, NULL),
+(1711, 34, 10, 1, NULL, 24, 49, NULL, NULL),
+(1712, 34, 11, 1, NULL, 5, 67, NULL, NULL),
+(1713, 34, 12, 1, NULL, 21, 68, NULL, NULL),
+(1714, 34, 13, 1, NULL, 9, 59, NULL, NULL),
+(1715, 34, 14, 1, NULL, 29, 46, NULL, NULL),
+(1716, 34, 15, 1, NULL, 26, 64, NULL, NULL),
+(1717, 34, 16, 1, NULL, 19, 48, NULL, NULL),
+(1718, 34, 17, 1, NULL, 9, 48, NULL, NULL),
+(1719, 34, 18, 1, NULL, 8, 57, NULL, NULL),
+(1720, 34, 19, 1, NULL, 26, 67, NULL, NULL),
+(1721, 34, 20, 1, NULL, 27, 55, NULL, NULL),
+(1722, 34, 21, 1, NULL, 26, 65, NULL, NULL),
+(1723, 34, 22, 1, NULL, 37, 51, NULL, NULL),
+(1724, 34, 23, 1, NULL, 57, 46, NULL, NULL),
+(1725, 34, 24, 1, NULL, 46, 48, NULL, NULL),
+(1726, 34, 25, 1, NULL, 43, 45, NULL, NULL),
+(1727, 34, 26, 1, NULL, 25, 32, NULL, NULL),
+(1728, 34, 27, 1, NULL, 13, 39, NULL, NULL),
+(1729, 34, 28, 1, NULL, 29, 50, NULL, NULL),
+(1730, 34, 29, 1, NULL, 45, 70, NULL, NULL),
+(1731, 34, 30, 1, NULL, 34, 50, NULL, NULL),
+(1732, 34, 31, 1, NULL, 37, 38, NULL, NULL),
+(1733, 34, 32, 1, NULL, 33, 58, NULL, NULL),
+(1734, 34, 33, 1, NULL, 43, 72, NULL, NULL),
+(1735, 34, 34, 1, NULL, 39, 85, NULL, NULL),
+(1736, 34, 35, 1, NULL, 33, 73, NULL, NULL),
+(1737, 34, 36, 1, NULL, 30, 85, NULL, NULL),
+(1738, 34, 37, 1, NULL, 44, 99, NULL, NULL),
+(1739, 34, 38, 1, NULL, 49, 87, NULL, NULL),
+(1740, 34, 39, 1, NULL, 44, 71, NULL, NULL),
+(1741, 34, 40, 1, NULL, 62, 57, NULL, NULL),
+(1742, 34, 41, 1, NULL, 47, 48, NULL, NULL),
+(1743, 34, 42, 1, NULL, 33, 45, NULL, NULL),
+(1744, 34, 43, 1, NULL, 51, 40, NULL, NULL),
+(1745, 34, 44, 1, NULL, 59, 60, NULL, NULL),
+(1746, 34, 45, 1, NULL, 45, 48, NULL, NULL),
+(1747, 34, 46, 1, NULL, 29, 60, NULL, NULL),
+(1748, 34, 47, 1, NULL, 15, 72, NULL, NULL),
+(1749, 34, 48, 1, NULL, 33, 55, NULL, NULL),
+(1750, 34, 49, 1, NULL, 40, 58, NULL, NULL),
+(1751, 35, 0, 1, NULL, 17, 81, NULL, NULL),
+(1752, 35, 1, 1, NULL, 5, 74, NULL, NULL),
+(1753, 35, 2, 1, NULL, 20, 55, NULL, NULL),
+(1754, 35, 3, 1, NULL, 8, 63, NULL, NULL),
+(1755, 35, 4, 1, NULL, 19, 63, NULL, NULL),
+(1756, 35, 5, 1, NULL, 17, 45, NULL, NULL),
+(1757, 35, 6, 1, NULL, 13, 44, NULL, NULL),
+(1758, 35, 7, 1, NULL, 14, 62, NULL, NULL),
+(1759, 35, 8, 1, NULL, 2, 75, NULL, NULL),
+(1760, 35, 9, 1, NULL, 8, 67, NULL, NULL),
+(1761, 35, 10, 1, NULL, 22, 65, NULL, NULL),
+(1762, 35, 11, 1, NULL, 12, 70, NULL, NULL),
+(1763, 35, 12, 1, NULL, 18, 56, NULL, NULL),
+(1764, 35, 13, 1, NULL, 19, 64, NULL, NULL),
+(1765, 35, 14, 1, NULL, 33, 57, NULL, NULL),
+(1766, 35, 15, 1, NULL, 17, 54, NULL, NULL),
+(1767, 35, 16, 1, NULL, 29, 54, NULL, NULL),
+(1768, 35, 17, 1, NULL, 27, 58, NULL, NULL),
+(1769, 35, 18, 1, NULL, 25, 38, NULL, NULL),
+(1770, 35, 19, 1, NULL, 34, 49, NULL, NULL),
+(1771, 35, 20, 1, NULL, 16, 68, NULL, NULL),
+(1772, 35, 21, 1, NULL, 15, 67, NULL, NULL),
+(1773, 35, 22, 1, NULL, 19, 55, NULL, NULL),
+(1774, 35, 23, 1, NULL, 37, 42, NULL, NULL),
+(1775, 35, 24, 1, NULL, 34, 56, NULL, NULL),
+(1776, 35, 25, 1, NULL, 53, 44, NULL, NULL),
+(1777, 35, 26, 1, NULL, 42, 31, NULL, NULL),
+(1778, 35, 27, 1, NULL, 31, 21, NULL, NULL),
+(1779, 35, 28, 1, NULL, 17, 41, NULL, NULL),
+(1780, 35, 29, 1, NULL, 32, 53, NULL, NULL),
+(1781, 35, 30, 1, NULL, 35, 56, NULL, NULL),
+(1782, 35, 31, 1, NULL, 40, 48, NULL, NULL),
+(1783, 35, 32, 1, NULL, 23, 38, NULL, NULL),
+(1784, 35, 33, 1, NULL, 25, 53, NULL, NULL),
+(1785, 35, 34, 1, NULL, 35, 66, NULL, NULL),
+(1786, 35, 35, 1, NULL, 44, 77, NULL, NULL),
+(1787, 35, 36, 1, NULL, 35, 67, NULL, NULL),
+(1788, 35, 37, 1, NULL, 29, 83, NULL, NULL),
+(1789, 35, 38, 1, NULL, 29, 96, NULL, NULL),
+(1790, 35, 39, 1, NULL, 31, 86, NULL, NULL),
+(1791, 35, 40, 1, NULL, 49, 73, NULL, NULL),
+(1792, 35, 41, 1, NULL, 54, 58, NULL, NULL),
+(1793, 35, 42, 1, NULL, 40, 64, NULL, NULL),
+(1794, 35, 43, 1, NULL, 43, 51, NULL, NULL),
+(1795, 35, 44, 1, NULL, 53, 68, NULL, NULL),
+(1796, 35, 45, 1, NULL, 39, 48, NULL, NULL),
+(1797, 35, 46, 1, NULL, 32, 54, NULL, NULL),
+(1798, 35, 47, 1, NULL, 34, 60, NULL, NULL),
+(1799, 35, 48, 1, NULL, 39, 73, NULL, NULL),
+(1800, 35, 49, 1, NULL, 48, 54, NULL, NULL),
+(1801, 36, 0, 1, NULL, 13, 70, NULL, NULL),
+(1802, 36, 1, 1, NULL, 16, 89, NULL, NULL),
+(1803, 36, 2, 1, NULL, 29, 71, NULL, NULL),
+(1804, 36, 3, 1, NULL, 18, 71, NULL, NULL),
+(1805, 36, 4, 1, NULL, 6, 66, NULL, NULL),
+(1806, 36, 5, 1, NULL, 17, 65, NULL, NULL),
+(1807, 36, 6, 1, NULL, 2, 55, NULL, NULL),
+(1808, 36, 7, 1, NULL, 9, 60, NULL, NULL),
+(1809, 36, 8, 1, NULL, 18, 64, NULL, NULL),
+(1810, 36, 9, 1, NULL, 22, 65, NULL, NULL),
+(1811, 36, 10, 1, NULL, 30, 75, NULL, NULL),
+(1812, 36, 11, 1, NULL, 32, 73, NULL, NULL),
+(1813, 36, 12, 1, NULL, 22, 65, NULL, NULL),
+(1814, 36, 13, 1, NULL, 23, 82, NULL, NULL),
+(1815, 36, 14, 1, NULL, 15, 65, NULL, NULL),
+(1816, 36, 15, 1, NULL, 12, 69, NULL, NULL),
+(1817, 36, 16, 1, NULL, 28, 63, NULL, NULL),
+(1818, 36, 17, 1, NULL, 19, 71, NULL, NULL),
+(1819, 36, 18, 1, NULL, 39, 58, NULL, NULL),
+(1820, 36, 19, 1, NULL, 30, 47, NULL, NULL),
+(1821, 36, 20, 1, NULL, 32, 63, NULL, NULL),
+(1822, 36, 21, 1, NULL, 33, 78, NULL, NULL),
+(1823, 36, 22, 1, NULL, 30, 64, NULL, NULL),
+(1824, 36, 23, 1, NULL, 19, 44, NULL, NULL),
+(1825, 36, 24, 1, NULL, 35, 57, NULL, NULL),
+(1826, 36, 25, 1, NULL, 38, 43, NULL, NULL),
+(1827, 36, 26, 1, NULL, 22, 30, NULL, NULL),
+(1828, 36, 27, 1, NULL, 23, 33, NULL, NULL),
+(1829, 36, 28, 1, NULL, 10, 23, NULL, NULL),
+(1830, 36, 29, 1, NULL, 13, 42, NULL, NULL),
+(1831, 36, 30, 1, NULL, 15, 36, NULL, NULL),
+(1832, 36, 31, 1, NULL, 32, 44, NULL, NULL),
+(1833, 36, 32, 1, NULL, 37, 36, NULL, NULL),
+(1834, 36, 33, 1, NULL, 36, 37, NULL, NULL),
+(1835, 36, 34, 1, NULL, 44, 48, NULL, NULL),
+(1836, 36, 35, 1, NULL, 39, 59, NULL, NULL),
+(1837, 36, 36, 1, NULL, 30, 79, NULL, NULL),
+(1838, 36, 37, 1, NULL, 18, 72, NULL, NULL),
+(1839, 36, 38, 1, NULL, 17, 79, NULL, NULL),
+(1840, 36, 39, 1, NULL, 25, 86, NULL, NULL),
+(1841, 36, 40, 1, NULL, 33, 92, NULL, NULL),
+(1842, 36, 41, 1, NULL, 40, 77, NULL, NULL),
+(1843, 36, 42, 1, NULL, 42, 75, NULL, NULL),
+(1844, 36, 43, 1, NULL, 23, 56, NULL, NULL),
+(1845, 36, 44, 1, NULL, 36, 71, NULL, NULL),
+(1846, 36, 45, 1, NULL, 43, 52, NULL, NULL),
+(1847, 36, 46, 1, NULL, 45, 54, NULL, NULL),
+(1848, 36, 47, 1, NULL, 43, 68, NULL, NULL),
+(1849, 36, 48, 1, NULL, 38, 76, NULL, NULL),
+(1850, 36, 49, 1, NULL, 33, 63, NULL, NULL),
+(1851, 37, 0, 1, NULL, 28, 68, NULL, NULL),
+(1852, 37, 1, 1, NULL, 17, 76, NULL, NULL),
+(1853, 37, 2, 1, NULL, 30, 56, NULL, NULL),
+(1854, 37, 3, 1, NULL, 13, 52, NULL, NULL),
+(1855, 37, 4, 1, NULL, 24, 57, NULL, NULL),
+(1856, 37, 5, 1, NULL, 9, 65, NULL, NULL),
+(1857, 37, 6, 1, NULL, 2, 55, NULL, NULL),
+(1858, 37, 7, 1, NULL, 14, 62, NULL, NULL),
+(1859, 37, 8, 1, NULL, 22, 59, NULL, NULL),
+(1860, 37, 9, 1, NULL, 2, 76, NULL, NULL),
+(1861, 37, 10, 1, NULL, 17, 88, NULL, NULL),
+(1862, 37, 11, 1, NULL, 26, 84, NULL, NULL),
+(1863, 37, 12, 1, NULL, 37, 66, NULL, NULL),
+(1864, 37, 13, 1, NULL, 42, 78, NULL, NULL),
+(1865, 37, 14, 1, NULL, 26, 70, NULL, NULL),
+(1866, 37, 15, 1, NULL, 14, 72, NULL, NULL),
+(1867, 37, 16, 1, NULL, 25, 72, NULL, NULL),
+(1868, 37, 17, 1, NULL, 12, 70, NULL, NULL),
+(1869, 37, 18, 1, NULL, 31, 56, NULL, NULL),
+(1870, 37, 19, 1, NULL, 50, 43, NULL, NULL),
+(1871, 37, 20, 1, NULL, 50, 55, NULL, NULL),
+(1872, 37, 21, 1, NULL, 32, 59, NULL, NULL),
+(1873, 37, 22, 1, NULL, 37, 78, NULL, NULL),
+(1874, 37, 23, 1, NULL, 31, 60, NULL, NULL),
+(1875, 37, 24, 1, NULL, 38, 53, NULL, NULL),
+(1876, 37, 25, 1, NULL, 39, 52, NULL, NULL),
+(1877, 37, 26, 1, NULL, 38, 42, NULL, NULL),
+(1878, 37, 27, 1, NULL, 36, 45, NULL, NULL),
+(1879, 37, 28, 1, NULL, 22, 35, NULL, NULL),
+(1880, 37, 29, 1, NULL, 10, 37, NULL, NULL),
+(1881, 37, 30, 1, NULL, 28, 32, NULL, NULL),
+(1882, 37, 31, 1, NULL, 19, 32, NULL, NULL),
+(1883, 37, 32, 1, NULL, 23, 24, NULL, NULL),
+(1884, 37, 33, 1, NULL, 42, 39, NULL, NULL),
+(1885, 37, 34, 1, NULL, 56, 36, NULL, NULL),
+(1886, 37, 35, 1, NULL, 55, 51, NULL, NULL),
+(1887, 37, 36, 1, NULL, 43, 65, NULL, NULL),
+(1888, 37, 37, 1, NULL, 23, 80, NULL, NULL),
+(1889, 37, 38, 1, NULL, 26, 71, NULL, NULL),
+(1890, 37, 39, 1, NULL, 43, 81, NULL, NULL),
+(1891, 37, 40, 1, NULL, 36, 96, NULL, NULL),
+(1892, 37, 41, 1, NULL, 42, 81, NULL, NULL),
+(1893, 37, 42, 1, NULL, 46, 88, NULL, NULL),
+(1894, 37, 43, 1, NULL, 26, 74, NULL, NULL),
+(1895, 37, 44, 1, NULL, 20, 55, NULL, NULL),
+(1896, 37, 45, 1, NULL, 31, 54, NULL, NULL),
+(1897, 37, 46, 1, NULL, 46, 51, NULL, NULL),
+(1898, 37, 47, 1, NULL, 39, 69, NULL, NULL),
+(1899, 37, 48, 1, NULL, 47, 79, NULL, NULL),
+(1900, 37, 49, 1, NULL, 52, 73, NULL, NULL),
+(1901, 38, 0, 1, NULL, 47, 53, NULL, NULL),
+(1902, 38, 1, 1, NULL, 36, 57, NULL, NULL),
+(1903, 38, 2, 1, NULL, 34, 58, NULL, NULL),
+(1904, 38, 3, 1, NULL, 33, 46, NULL, NULL),
+(1905, 38, 4, 1, NULL, 42, 37, NULL, NULL),
+(1906, 38, 5, 1, NULL, 22, 57, NULL, NULL),
+(1907, 38, 6, 1, NULL, 5, 65, NULL, NULL),
+(1908, 38, 7, 1, NULL, 14, 57, NULL, NULL),
+(1909, 38, 8, 1, NULL, 12, 58, NULL, NULL),
+(1910, 38, 9, 1, NULL, 17, 73, NULL, NULL),
+(1911, 38, 10, 1, NULL, 11, 68, NULL, NULL),
+(1912, 38, 11, 1, NULL, 25, 87, NULL, NULL),
+(1913, 38, 12, 1, NULL, 43, 85, NULL, NULL),
+(1914, 38, 13, 1, NULL, 55, 81, NULL, NULL),
+(1915, 38, 14, 1, NULL, 38, 87, NULL, NULL),
+(1916, 38, 15, 1, NULL, 21, 71, NULL, NULL),
+(1917, 38, 16, 1, NULL, 29, 83, NULL, NULL),
+(1918, 38, 17, 1, NULL, 9, 75, NULL, NULL),
+(1919, 38, 18, 1, NULL, 27, 67, NULL, NULL),
+(1920, 38, 19, 1, NULL, 44, 61, NULL, NULL),
+(1921, 38, 20, 1, NULL, 36, 46, NULL, NULL),
+(1922, 38, 21, 1, NULL, 22, 43, NULL, NULL),
+(1923, 38, 22, 1, NULL, 24, 58, NULL, NULL),
+(1924, 38, 23, 1, NULL, 42, 72, NULL, NULL),
+(1925, 38, 24, 1, NULL, 57, 53, NULL, NULL),
+(1926, 38, 25, 1, NULL, 55, 54, NULL, NULL),
+(1927, 38, 26, 1, NULL, 38, 44, NULL, NULL),
+(1928, 38, 27, 1, NULL, 37, 33, NULL, NULL),
+(1929, 38, 28, 1, NULL, 31, 52, NULL, NULL),
+(1930, 38, 29, 1, NULL, 22, 38, NULL, NULL),
+(1931, 38, 30, 1, NULL, 22, 31, NULL, NULL),
+(1932, 38, 31, 1, NULL, 7, 50, NULL, NULL),
+(1933, 38, 32, 1, NULL, 17, 42, NULL, NULL),
+(1934, 38, 33, 1, NULL, 24, 49, NULL, NULL),
+(1935, 38, 34, 1, NULL, 37, 34, NULL, NULL),
+(1936, 38, 35, 1, NULL, 43, 33, NULL, NULL),
+(1937, 38, 36, 1, NULL, 41, 50, NULL, NULL),
+(1938, 38, 37, 1, NULL, 42, 64, NULL, NULL),
+(1939, 38, 38, 1, NULL, 35, 65, NULL, NULL),
+(1940, 38, 39, 1, NULL, 38, 72, NULL, NULL),
+(1941, 38, 40, 1, NULL, 24, 87, NULL, NULL),
+(1942, 38, 41, 1, NULL, 27, 74, NULL, NULL),
+(1943, 38, 42, 1, NULL, 40, 70, NULL, NULL),
+(1944, 38, 43, 1, NULL, 37, 56, NULL, NULL),
+(1945, 38, 44, 1, NULL, 25, 72, NULL, NULL),
+(1946, 38, 45, 1, NULL, 30, 72, NULL, NULL),
+(1947, 38, 46, 1, NULL, 31, 59, NULL, NULL),
+(1948, 38, 47, 1, NULL, 35, 72, NULL, NULL),
+(1949, 38, 48, 1, NULL, 50, 76, NULL, NULL),
+(1950, 38, 49, 1, NULL, 50, 78, NULL, NULL),
+(1951, 39, 0, 1, NULL, 61, 46, NULL, NULL),
+(1952, 39, 1, 1, NULL, 41, 41, NULL, NULL),
+(1953, 39, 2, 1, NULL, 35, 47, NULL, NULL),
+(1954, 39, 3, 1, NULL, 27, 54, NULL, NULL),
+(1955, 39, 4, 1, NULL, 25, 49, NULL, NULL),
+(1956, 39, 5, 1, NULL, 32, 49, NULL, NULL),
+(1957, 39, 6, 1, NULL, 13, 47, NULL, NULL),
+(1958, 39, 7, 1, NULL, 7, 61, NULL, NULL),
+(1959, 39, 8, 1, NULL, 11, 61, NULL, NULL),
+(1960, 39, 9, 1, NULL, 11, 74, NULL, NULL),
+(1961, 39, 10, 1, NULL, 4, 85, NULL, NULL),
+(1962, 39, 11, 1, NULL, 17, 79, NULL, NULL),
+(1963, 39, 12, 1, NULL, 26, 84, NULL, NULL),
+(1964, 39, 13, 1, NULL, 43, 96, NULL, NULL),
+(1965, 39, 14, 1, NULL, 52, 89, NULL, NULL),
+(1966, 39, 15, 1, NULL, 33, 84, NULL, NULL),
+(1967, 39, 16, 1, NULL, 30, 97, NULL, NULL),
+(1968, 39, 17, 1, NULL, 13, 78, NULL, NULL),
+(1969, 39, 18, 1, NULL, 31, 77, NULL, NULL),
+(1970, 39, 19, 1, NULL, 34, 71, NULL, NULL),
+(1971, 39, 20, 1, NULL, 27, 53, NULL, NULL),
+(1972, 39, 21, 1, NULL, 37, 44, NULL, NULL),
+(1973, 39, 22, 1, NULL, 37, 64, NULL, NULL),
+(1974, 39, 23, 1, NULL, 26, 56, NULL, NULL),
+(1975, 39, 24, 1, NULL, 38, 47, NULL, NULL),
+(1976, 39, 25, 1, NULL, 39, 55, NULL, NULL),
+(1977, 39, 26, 1, NULL, 20, 60, NULL, NULL),
+(1978, 39, 27, 1, NULL, 22, 50, NULL, NULL),
+(1979, 39, 28, 1, NULL, 38, 43, NULL, NULL),
+(1980, 39, 29, 1, NULL, 39, 35, NULL, NULL),
+(1981, 39, 30, 1, NULL, 25, 46, NULL, NULL),
+(1982, 39, 31, 1, NULL, 12, 56, NULL, NULL),
+(1983, 39, 32, 1, NULL, 20, 56, NULL, NULL),
+(1984, 39, 33, 1, NULL, 17, 61, NULL, NULL),
+(1985, 39, 34, 1, NULL, 26, 54, NULL, NULL),
+(1986, 39, 35, 1, NULL, 39, 34, NULL, NULL),
+(1987, 39, 36, 1, NULL, 54, 46, NULL, NULL),
+(1988, 39, 37, 1, NULL, 58, 44, NULL, NULL),
+(1989, 39, 38, 1, NULL, 49, 64, NULL, NULL),
+(1990, 39, 39, 1, NULL, 43, 84, NULL, NULL),
+(1991, 39, 40, 1, NULL, 26, 86, NULL, NULL),
+(1992, 39, 41, 1, NULL, 28, 74, NULL, NULL),
+(1993, 39, 42, 1, NULL, 29, 67, NULL, NULL),
+(1994, 39, 43, 1, NULL, 24, 64, NULL, NULL),
+(1995, 39, 44, 1, NULL, 44, 76, NULL, NULL),
+(1996, 39, 45, 1, NULL, 35, 61, NULL, NULL),
+(1997, 39, 46, 1, NULL, 49, 73, NULL, NULL),
+(1998, 39, 47, 1, NULL, 47, 75, NULL, NULL),
+(1999, 39, 48, 1, NULL, 67, 59, NULL, NULL),
+(2000, 39, 49, 1, NULL, 49, 71, NULL, NULL),
+(2001, 40, 0, 1, NULL, 56, 65, NULL, NULL),
+(2002, 40, 1, 1, NULL, 49, 48, NULL, NULL),
+(2003, 40, 2, 1, NULL, 42, 32, NULL, NULL),
+(2004, 40, 3, 1, NULL, 35, 49, NULL, NULL),
+(2005, 40, 4, 1, NULL, 37, 39, NULL, NULL),
+(2006, 40, 5, 1, NULL, 29, 42, NULL, NULL),
+(2007, 40, 6, 1, NULL, 16, 44, NULL, NULL),
+(2008, 40, 7, 1, NULL, 11, 60, NULL, NULL),
+(2009, 40, 8, 1, NULL, 15, 56, NULL, NULL),
+(2010, 40, 9, 1, NULL, 11, 62, NULL, NULL),
+(2011, 40, 10, 1, NULL, 0, 43, NULL, NULL),
+(2012, 40, 11, 1, NULL, 9, 42, NULL, NULL),
+(2013, 40, 12, 1, NULL, 13, 63, NULL, NULL),
+(2014, 40, 13, 1, NULL, 26, 78, NULL, NULL),
+(2015, 40, 14, 1, NULL, 42, 85, NULL, NULL),
+(2016, 40, 15, 1, NULL, 24, 86, NULL, NULL),
+(2017, 40, 16, 1, NULL, 29, 79, NULL, NULL),
+(2018, 40, 17, 1, NULL, 11, 76, NULL, NULL),
+(2019, 40, 18, 1, NULL, 23, 86, NULL, NULL),
+(2020, 40, 19, 1, NULL, 22, 66, NULL, NULL),
+(2021, 40, 20, 1, NULL, 29, 58, NULL, NULL),
+(2022, 40, 21, 1, NULL, 35, 45, NULL, NULL),
+(2023, 40, 22, 1, NULL, 48, 44, NULL, NULL),
+(2024, 40, 23, 1, NULL, 38, 53, NULL, NULL),
+(2025, 40, 24, 1, NULL, 42, 52, NULL, NULL),
+(2026, 40, 25, 1, NULL, 22, 66, NULL, NULL),
+(2027, 40, 26, 1, NULL, 29, 74, NULL, NULL),
+(2028, 40, 27, 1, NULL, 35, 60, NULL, NULL),
+(2029, 40, 28, 1, NULL, 40, 62, NULL, NULL),
+(2030, 40, 29, 1, NULL, 41, 45, NULL, NULL),
+(2031, 40, 30, 1, NULL, 29, 35, NULL, NULL),
+(2032, 40, 31, 1, NULL, 11, 39, NULL, NULL),
+(2033, 40, 32, 1, NULL, 18, 41, NULL, NULL),
+(2034, 40, 33, 1, NULL, 28, 60, NULL, NULL),
+(2035, 40, 34, 1, NULL, 17, 71, NULL, NULL),
+(2036, 40, 35, 1, NULL, 35, 51, NULL, NULL),
+(2037, 40, 36, 1, NULL, 38, 62, NULL, NULL),
+(2038, 40, 37, 1, NULL, 54, 51, NULL, NULL),
+(2039, 40, 38, 1, NULL, 63, 67, NULL, NULL),
+(2040, 40, 39, 1, NULL, 45, 74, NULL, NULL),
+(2041, 40, 40, 1, NULL, 39, 93, NULL, NULL),
+(2042, 40, 41, 1, NULL, 27, 91, NULL, NULL),
+(2043, 40, 42, 1, NULL, 45, 86, NULL, NULL),
+(2044, 40, 43, 1, NULL, 34, 73, NULL, NULL),
+(2045, 40, 44, 1, NULL, 44, 59, NULL, NULL),
+(2046, 40, 45, 1, NULL, 33, 68, NULL, NULL),
+(2047, 40, 46, 1, NULL, 30, 53, NULL, NULL),
+(2048, 40, 47, 1, NULL, 31, 64, NULL, NULL),
+(2049, 40, 48, 1, NULL, 51, 47, NULL, NULL),
+(2050, 40, 49, 1, NULL, 59, 62, NULL, NULL),
+(2051, 41, 0, 1, NULL, 52, 69, NULL, NULL),
+(2052, 41, 1, 1, NULL, 44, 64, NULL, NULL),
+(2053, 41, 2, 1, NULL, 33, 46, NULL, NULL),
+(2054, 41, 3, 1, NULL, 53, 31, NULL, NULL),
+(2055, 41, 4, 1, NULL, 41, 44, NULL, NULL),
+(2056, 41, 5, 1, NULL, 48, 40, NULL, NULL),
+(2057, 41, 6, 1, NULL, 30, 59, NULL, NULL),
+(2058, 41, 7, 1, NULL, 12, 58, NULL, NULL),
+(2059, 41, 8, 1, NULL, 21, 52, NULL, NULL),
+(2060, 41, 9, 1, NULL, 15, 46, NULL, NULL),
+(2061, 41, 10, 1, NULL, 9, 50, NULL, NULL),
+(2062, 41, 11, 1, NULL, 12, 46, NULL, NULL),
+(2063, 41, 12, 1, NULL, 16, 60, NULL, NULL),
+(2064, 41, 13, 1, NULL, 28, 72, NULL, NULL),
+(2065, 41, 14, 1, NULL, 28, 77, NULL, NULL),
+(2066, 41, 15, 1, NULL, 11, 75, NULL, NULL),
+(2067, 41, 16, 1, NULL, 17, 66, NULL, NULL),
+(2068, 41, 17, 1, NULL, 3, 58, NULL, NULL),
+(2069, 41, 18, 1, NULL, 21, 66, NULL, NULL),
+(2070, 41, 19, 1, NULL, 31, 62, NULL, NULL),
+(2071, 41, 20, 1, NULL, 38, 61, NULL, NULL),
+(2072, 41, 21, 1, NULL, 23, 49, NULL, NULL),
+(2073, 41, 22, 1, NULL, 41, 36, NULL, NULL),
+(2074, 41, 23, 1, NULL, 33, 46, NULL, NULL),
+(2075, 41, 24, 1, NULL, 27, 34, NULL, NULL),
+(2076, 41, 25, 1, NULL, 7, 49, NULL, NULL),
+(2077, 41, 26, 1, NULL, 21, 66, NULL, NULL),
+(2078, 41, 27, 1, NULL, 18, 65, NULL, NULL),
+(2079, 41, 28, 1, NULL, 34, 57, NULL, NULL),
+(2080, 41, 29, 1, NULL, 45, 64, NULL, NULL),
+(2081, 41, 30, 1, NULL, 48, 45, NULL, NULL),
+(2082, 41, 31, 1, NULL, 29, 49, NULL, NULL),
+(2083, 41, 32, 1, NULL, 33, 36, NULL, NULL),
+(2084, 41, 33, 1, NULL, 46, 56, NULL, NULL),
+(2085, 41, 34, 1, NULL, 37, 67, NULL, NULL),
+(2086, 41, 35, 1, NULL, 54, 63, NULL, NULL),
+(2087, 41, 36, 1, NULL, 52, 60, NULL, NULL),
+(2088, 41, 37, 1, NULL, 49, 46, NULL, NULL),
+(2089, 41, 38, 1, NULL, 43, 52, NULL, NULL),
+(2090, 41, 39, 1, NULL, 37, 56, NULL, NULL),
+(2091, 41, 40, 1, NULL, 20, 75, NULL, NULL),
+(2092, 41, 41, 1, NULL, 29, 95, NULL, NULL),
+(2093, 41, 42, 1, NULL, 42, 80, NULL, NULL),
+(2094, 41, 43, 1, NULL, 35, 69, NULL, NULL),
+(2095, 41, 44, 1, NULL, 44, 56, NULL, NULL),
+(2096, 41, 45, 1, NULL, 50, 72, NULL, NULL),
+(2097, 41, 46, 1, NULL, 41, 73, NULL, NULL),
+(2098, 41, 47, 1, NULL, 21, 79, NULL, NULL),
+(2099, 41, 48, 1, NULL, 31, 62, NULL, NULL),
+(2100, 41, 49, 1, NULL, 51, 67, NULL, NULL),
+(2101, 42, 0, 1, NULL, 60, 74, NULL, NULL),
+(2102, 42, 1, 1, NULL, 40, 72, NULL, NULL),
+(2103, 42, 2, 1, NULL, 33, 60, NULL, NULL),
+(2104, 42, 3, 1, NULL, 41, 43, NULL, NULL),
+(2105, 42, 4, 1, NULL, 37, 37, NULL, NULL),
+(2106, 42, 5, 1, NULL, 33, 39, NULL, NULL),
+(2107, 42, 6, 1, NULL, 37, 44, NULL, NULL),
+(2108, 42, 7, 1, NULL, 30, 56, NULL, NULL),
+(2109, 42, 8, 1, NULL, 23, 61, NULL, NULL),
+(2110, 42, 9, 1, NULL, 18, 66, NULL, NULL),
+(2111, 42, 10, 1, NULL, 15, 48, NULL, NULL),
+(2112, 42, 11, 1, NULL, 2, 53, NULL, NULL),
+(2113, 42, 12, 1, NULL, 21, 43, NULL, NULL),
+(2114, 42, 13, 1, NULL, 21, 62, NULL, NULL),
+(2115, 42, 14, 1, NULL, 35, 58, NULL, NULL),
+(2116, 42, 15, 1, NULL, 31, 60, NULL, NULL),
+(2117, 42, 16, 1, NULL, 20, 47, NULL, NULL),
+(2118, 42, 17, 1, NULL, 11, 44, NULL, NULL),
+(2119, 42, 18, 1, NULL, 24, 51, NULL, NULL),
+(2120, 42, 19, 1, NULL, 23, 49, NULL, NULL),
+(2121, 42, 20, 1, NULL, 18, 63, NULL, NULL),
+(2122, 42, 21, 1, NULL, 9, 60, NULL, NULL),
+(2123, 42, 22, 1, NULL, 28, 40, NULL, NULL),
+(2124, 42, 23, 1, NULL, 35, 54, NULL, NULL),
+(2125, 42, 24, 1, NULL, 19, 39, NULL, NULL),
+(2126, 42, 25, 1, NULL, 16, 45, NULL, NULL),
+(2127, 42, 26, 1, NULL, 7, 64, NULL, NULL),
+(2128, 42, 27, 1, NULL, 13, 49, NULL, NULL),
+(2129, 42, 28, 1, NULL, 16, 58, NULL, NULL),
+(2130, 42, 29, 1, NULL, 28, 78, NULL, NULL),
+(2131, 42, 30, 1, NULL, 28, 63, NULL, NULL),
+(2132, 42, 31, 1, NULL, 45, 57, NULL, NULL),
+(2133, 42, 32, 1, NULL, 50, 51, NULL, NULL),
+(2134, 42, 33, 1, NULL, 38, 41, NULL, NULL),
+(2135, 42, 34, 1, NULL, 46, 51, NULL, NULL),
+(2136, 42, 35, 1, NULL, 40, 69, NULL, NULL),
+(2137, 42, 36, 1, NULL, 49, 69, NULL, NULL),
+(2138, 42, 37, 1, NULL, 53, 64, NULL, NULL),
+(2139, 42, 38, 1, NULL, 59, 60, NULL, NULL),
+(2140, 42, 39, 1, NULL, 53, 52, NULL, NULL),
+(2141, 42, 40, 1, NULL, 33, 61, NULL, NULL),
+(2142, 42, 41, 1, NULL, 44, 81, NULL, NULL),
+(2143, 42, 42, 1, NULL, 49, 73, NULL, NULL),
+(2144, 42, 43, 1, NULL, 30, 74, NULL, NULL),
+(2145, 42, 44, 1, NULL, 24, 68, NULL, NULL),
+(2146, 42, 45, 1, NULL, 39, 84, NULL, NULL),
+(2147, 42, 46, 1, NULL, 33, 85, NULL, NULL),
+(2148, 42, 47, 1, NULL, 33, 65, NULL, NULL),
+(2149, 42, 48, 1, NULL, 43, 68, NULL, NULL),
+(2150, 42, 49, 1, NULL, 47, 56, NULL, NULL),
+(2151, 43, 0, 1, NULL, 54, 84, NULL, NULL),
+(2152, 43, 1, 1, NULL, 45, 89, NULL, NULL),
+(2153, 43, 2, 1, NULL, 27, 76, NULL, NULL),
+(2154, 43, 3, 1, NULL, 24, 61, NULL, NULL),
+(2155, 43, 4, 1, NULL, 44, 52, NULL, NULL),
+(2156, 43, 5, 1, NULL, 50, 54, NULL, NULL),
+(2157, 43, 6, 1, NULL, 35, 63, NULL, NULL),
+(2158, 43, 7, 1, NULL, 44, 45, NULL, NULL),
+(2159, 43, 8, 1, NULL, 25, 63, NULL, NULL),
+(2160, 43, 9, 1, NULL, 11, 80, NULL, NULL),
+(2161, 43, 10, 1, NULL, 18, 67, NULL, NULL),
+(2162, 43, 11, 1, NULL, 17, 72, NULL, NULL),
+(2163, 43, 12, 1, NULL, 15, 62, NULL, NULL),
+(2164, 43, 13, 1, NULL, 1, 72, NULL, NULL),
+(2165, 43, 14, 1, NULL, 16, 69, NULL, NULL),
+(2166, 43, 15, 1, NULL, 19, 60, NULL, NULL),
+(2167, 43, 16, 1, NULL, 12, 44, NULL, NULL),
+(2168, 43, 17, 1, NULL, 2, 51, NULL, NULL),
+(2169, 43, 18, 1, NULL, 9, 61, NULL, NULL),
+(2170, 43, 19, 1, NULL, 27, 43, NULL, NULL),
+(2171, 43, 20, 1, NULL, 25, 63, NULL, NULL),
+(2172, 43, 21, 1, NULL, 19, 73, NULL, NULL),
+(2173, 43, 22, 1, NULL, 34, 54, NULL, NULL),
+(2174, 43, 23, 1, NULL, 26, 62, NULL, NULL),
+(2175, 43, 24, 1, NULL, 17, 42, NULL, NULL),
+(2176, 43, 25, 1, NULL, 24, 44, NULL, NULL),
+(2177, 43, 26, 1, NULL, 24, 45, NULL, NULL),
+(2178, 43, 27, 1, NULL, 10, 55, NULL, NULL),
+(2179, 43, 28, 1, NULL, 10, 62, NULL, NULL),
+(2180, 43, 29, 1, NULL, 16, 63, NULL, NULL),
+(2181, 43, 30, 1, NULL, 28, 73, NULL, NULL),
+(2182, 43, 31, 1, NULL, 37, 70, NULL, NULL),
+(2183, 43, 32, 1, NULL, 44, 53, NULL, NULL),
+(2184, 43, 33, 1, NULL, 46, 47, NULL, NULL),
+(2185, 43, 34, 1, NULL, 46, 44, NULL, NULL),
+(2186, 43, 35, 1, NULL, 59, 55, NULL, NULL),
+(2187, 43, 36, 1, NULL, 66, 73, NULL, NULL),
+(2188, 43, 37, 1, NULL, 72, 69, NULL, NULL),
+(2189, 43, 38, 1, NULL, 70, 55, NULL, NULL),
+(2190, 43, 39, 1, NULL, 59, 47, NULL, NULL),
+(2191, 43, 40, 1, NULL, 48, 64, NULL, NULL),
+(2192, 43, 41, 1, NULL, 29, 83, NULL, NULL),
+(2193, 43, 42, 1, NULL, 31, 66, NULL, NULL),
+(2194, 43, 43, 1, NULL, 15, 62, NULL, NULL),
+(2195, 43, 44, 1, NULL, 20, 81, NULL, NULL),
+(2196, 43, 45, 1, NULL, 40, 86, NULL, NULL),
+(2197, 43, 46, 1, NULL, 53, 83, NULL, NULL),
+(2198, 43, 47, 1, NULL, 34, 83, NULL, NULL),
+(2199, 43, 48, 1, NULL, 37, 69, NULL, NULL),
+(2200, 43, 49, 1, NULL, 36, 73, NULL, NULL),
+(2201, 44, 0, 1, NULL, 35, 97, NULL, NULL),
+(2202, 44, 1, 1, NULL, 32, 99, NULL, NULL),
+(2203, 44, 2, 1, NULL, 41, 90, NULL, NULL),
+(2204, 44, 3, 1, NULL, 21, 81, NULL, NULL),
+(2205, 44, 4, 1, NULL, 40, 67, NULL, NULL),
+(2206, 44, 5, 1, NULL, 52, 59, NULL, NULL),
+(2207, 44, 6, 1, NULL, 55, 55, NULL, NULL),
+(2208, 44, 7, 1, NULL, 43, 39, NULL, NULL),
+(2209, 44, 8, 1, NULL, 34, 59, NULL, NULL),
+(2210, 44, 9, 1, NULL, 17, 61, NULL, NULL),
+(2211, 44, 10, 1, NULL, 18, 70, NULL, NULL),
+(2212, 44, 11, 1, NULL, 26, 82, NULL, NULL),
+(2213, 44, 12, 1, NULL, 13, 76, NULL, NULL),
+(2214, 44, 13, 1, NULL, 13, 68, NULL, NULL),
+(2215, 44, 14, 1, NULL, 31, 64, NULL, NULL),
+(2216, 44, 15, 1, NULL, 29, 57, NULL, NULL),
+(2217, 44, 16, 1, NULL, 20, 37, NULL, NULL),
+(2218, 44, 17, 1, NULL, 20, 55, NULL, NULL),
+(2219, 44, 18, 1, NULL, 17, 44, NULL, NULL),
+(2220, 44, 19, 1, NULL, 36, 56, NULL, NULL),
+(2221, 44, 20, 1, NULL, 32, 50, NULL, NULL),
+(2222, 44, 21, 1, NULL, 25, 61, NULL, NULL),
+(2223, 44, 22, 1, NULL, 44, 48, NULL, NULL),
+(2224, 44, 23, 1, NULL, 32, 53, NULL, NULL),
+(2225, 44, 24, 1, NULL, 30, 48, NULL, NULL),
+(2226, 44, 25, 1, NULL, 37, 40, NULL, NULL),
+(2227, 44, 26, 1, NULL, 41, 45, NULL, NULL),
+(2228, 44, 27, 1, NULL, 24, 49, NULL, NULL),
+(2229, 44, 28, 1, NULL, 25, 56, NULL, NULL),
+(2230, 44, 29, 1, NULL, 31, 70, NULL, NULL),
+(2231, 44, 30, 1, NULL, 23, 60, NULL, NULL),
+(2232, 44, 31, 1, NULL, 42, 59, NULL, NULL),
+(2233, 44, 32, 1, NULL, 59, 62, NULL, NULL),
+(2234, 44, 33, 1, NULL, 47, 57, NULL, NULL),
+(2235, 44, 34, 1, NULL, 61, 50, NULL, NULL),
+(2236, 44, 35, 1, NULL, 51, 40, NULL, NULL),
+(2237, 44, 36, 1, NULL, 56, 57, NULL, NULL),
+(2238, 44, 37, 1, NULL, 56, 59, NULL, NULL),
+(2239, 44, 38, 1, NULL, 75, 54, NULL, NULL),
+(2240, 44, 39, 1, NULL, 74, 56, NULL, NULL),
+(2241, 44, 40, 1, NULL, 62, 74, NULL, NULL),
+(2242, 44, 41, 1, NULL, 45, 78, NULL, NULL),
+(2243, 44, 42, 1, NULL, 34, 76, NULL, NULL),
+(2244, 44, 43, 1, NULL, 33, 68, NULL, NULL),
+(2245, 44, 44, 1, NULL, 36, 85, NULL, NULL),
+(2246, 44, 45, 1, NULL, 23, 77, NULL, NULL),
+(2247, 44, 46, 1, NULL, 39, 91, NULL, NULL),
+(2248, 44, 47, 1, NULL, 40, 87, NULL, NULL),
+(2249, 44, 48, 1, NULL, 29, 71, NULL, NULL),
+(2250, 44, 49, 1, NULL, 31, 77, NULL, NULL),
+(2251, 45, 0, 1, NULL, 29, 88, NULL, NULL),
+(2252, 45, 1, 1, NULL, 17, 90, NULL, NULL),
+(2253, 45, 2, 1, NULL, 25, 84, NULL, NULL),
+(2254, 45, 3, 1, NULL, 40, 93, NULL, NULL),
+(2255, 45, 4, 1, NULL, 39, 82, NULL, NULL),
+(2256, 45, 5, 1, NULL, 39, 79, NULL, NULL),
+(2257, 45, 6, 1, NULL, 53, 67, NULL, NULL),
+(2258, 45, 7, 1, NULL, 34, 51, NULL, NULL),
+(2259, 45, 8, 1, NULL, 33, 44, NULL, NULL),
+(2260, 45, 9, 1, NULL, 31, 60, NULL, NULL),
+(2261, 45, 10, 1, NULL, 35, 55, NULL, NULL),
+(2262, 45, 11, 1, NULL, 25, 63, NULL, NULL),
+(2263, 45, 12, 1, NULL, 22, 61, NULL, NULL),
+(2264, 45, 13, 1, NULL, 28, 50, NULL, NULL),
+(2265, 45, 14, 1, NULL, 22, 68, NULL, NULL),
+(2266, 45, 15, 1, NULL, 28, 73, NULL, NULL),
+(2267, 45, 16, 1, NULL, 22, 55, NULL, NULL),
+(2268, 45, 17, 1, NULL, 10, 56, NULL, NULL),
+(2269, 45, 18, 1, NULL, 13, 51, NULL, NULL),
+(2270, 45, 19, 1, NULL, 32, 38, NULL, NULL),
+(2271, 45, 20, 1, NULL, 33, 45, NULL, NULL),
+(2272, 45, 21, 1, NULL, 34, 45, NULL, NULL),
+(2273, 45, 22, 1, NULL, 51, 53, NULL, NULL),
+(2274, 45, 23, 1, NULL, 40, 63, NULL, NULL),
+(2275, 45, 24, 1, NULL, 29, 47, NULL, NULL),
+(2276, 45, 25, 1, NULL, 34, 42, NULL, NULL),
+(2277, 45, 26, 1, NULL, 47, 45, NULL, NULL),
+(2278, 45, 27, 1, NULL, 40, 54, NULL, NULL),
+(2279, 45, 28, 1, NULL, 21, 36, NULL, NULL),
+(2280, 45, 29, 1, NULL, 22, 53, NULL, NULL),
+(2281, 45, 30, 1, NULL, 41, 42, NULL, NULL),
+(2282, 45, 31, 1, NULL, 42, 47, NULL, NULL),
+(2283, 45, 32, 1, NULL, 62, 59, NULL, NULL),
+(2284, 45, 33, 1, NULL, 47, 55, NULL, NULL),
+(2285, 45, 34, 1, NULL, 51, 70, NULL, NULL),
+(2286, 45, 35, 1, NULL, 58, 51, NULL, NULL),
+(2287, 45, 36, 1, NULL, 42, 64, NULL, NULL),
+(2288, 45, 37, 1, NULL, 53, 65, NULL, NULL),
+(2289, 45, 38, 1, NULL, 62, 52, NULL, NULL),
+(2290, 45, 39, 1, NULL, 61, 55, NULL, NULL),
+(2291, 45, 40, 1, NULL, 62, 54, NULL, NULL),
+(2292, 45, 41, 1, NULL, 44, 73, NULL, NULL),
+(2293, 45, 42, 1, NULL, 28, 60, NULL, NULL),
+(2294, 45, 43, 1, NULL, 15, 78, NULL, NULL),
+(2295, 45, 44, 1, NULL, 33, 94, NULL, NULL),
+(2296, 45, 45, 1, NULL, 28, 94, NULL, NULL),
+(2297, 45, 46, 1, NULL, 43, 80, NULL, NULL),
+(2298, 45, 47, 1, NULL, 40, 89, NULL, NULL),
+(2299, 45, 48, 1, NULL, 26, 84, NULL, NULL),
+(2300, 45, 49, 1, NULL, 34, 82, NULL, NULL),
+(2301, 46, 0, 1, NULL, 17, 91, NULL, NULL),
+(2302, 46, 1, 1, NULL, 21, 74, NULL, NULL),
+(2303, 46, 2, 1, NULL, 13, 78, NULL, NULL),
+(2304, 46, 3, 1, NULL, 29, 77, NULL, NULL),
+(2305, 46, 4, 1, NULL, 36, 67, NULL, NULL),
+(2306, 46, 5, 1, NULL, 53, 60, NULL, NULL),
+(2307, 46, 6, 1, NULL, 58, 69, NULL, NULL),
+(2308, 46, 7, 1, NULL, 52, 61, NULL, NULL),
+(2309, 46, 8, 1, NULL, 49, 50, NULL, NULL),
+(2310, 46, 9, 1, NULL, 44, 52, NULL, NULL),
+(2311, 46, 10, 1, NULL, 41, 45, NULL, NULL),
+(2312, 46, 11, 1, NULL, 37, 51, NULL, NULL),
+(2313, 46, 12, 1, NULL, 33, 71, NULL, NULL),
+(2314, 46, 13, 1, NULL, 20, 58, NULL, NULL),
+(2315, 46, 14, 1, NULL, 36, 60, NULL, NULL),
+(2316, 46, 15, 1, NULL, 42, 60, NULL, NULL),
+(2317, 46, 16, 1, NULL, 25, 59, NULL, NULL),
+(2318, 46, 17, 1, NULL, 14, 43, NULL, NULL),
+(2319, 46, 18, 1, NULL, 12, 57, NULL, NULL),
+(2320, 46, 19, 1, NULL, 26, 57, NULL, NULL),
+(2321, 46, 20, 1, NULL, 13, 61, NULL, NULL),
+(2322, 46, 21, 1, NULL, 18, 60, NULL, NULL),
+(2323, 46, 22, 1, NULL, 36, 71, NULL, NULL),
+(2324, 46, 23, 1, NULL, 52, 73, NULL, NULL),
+(2325, 46, 24, 1, NULL, 44, 61, NULL, NULL),
+(2326, 46, 25, 1, NULL, 29, 50, NULL, NULL),
+(2327, 46, 26, 1, NULL, 38, 63, NULL, NULL),
+(2328, 46, 27, 1, NULL, 45, 54, NULL, NULL),
+(2329, 46, 28, 1, NULL, 32, 38, NULL, NULL),
+(2330, 46, 29, 1, NULL, 22, 38, NULL, NULL),
+(2331, 46, 30, 1, NULL, 28, 47, NULL, NULL),
+(2332, 46, 31, 1, NULL, 25, 48, NULL, NULL),
+(2333, 46, 32, 1, NULL, 45, 64, NULL, NULL),
+(2334, 46, 33, 1, NULL, 36, 58, NULL, NULL),
+(2335, 46, 34, 1, NULL, 52, 68, NULL, NULL),
+(2336, 46, 35, 1, NULL, 55, 71, NULL, NULL),
+(2337, 46, 36, 1, NULL, 50, 77, NULL, NULL),
+(2338, 46, 37, 1, NULL, 37, 57, NULL, NULL),
+(2339, 46, 38, 1, NULL, 42, 68, NULL, NULL),
+(2340, 46, 39, 1, NULL, 43, 74, NULL, NULL),
+(2341, 46, 40, 1, NULL, 62, 58, NULL, NULL),
+(2342, 46, 41, 1, NULL, 44, 63, NULL, NULL),
+(2343, 46, 42, 1, NULL, 34, 50, NULL, NULL),
+(2344, 46, 43, 1, NULL, 23, 66, NULL, NULL),
+(2345, 46, 44, 1, NULL, 39, 86, NULL, NULL),
+(2346, 46, 45, 1, NULL, 19, 95, NULL, NULL),
+(2347, 46, 46, 1, NULL, 35, 82, NULL, NULL),
+(2348, 46, 47, 1, NULL, 38, 97, NULL, NULL),
+(2349, 46, 48, 1, NULL, 32, 78, NULL, NULL),
+(2350, 46, 49, 1, NULL, 49, 98, NULL, NULL),
+(2351, 47, 0, 1, NULL, 20, 80, NULL, NULL),
+(2352, 47, 1, 1, NULL, 22, 89, NULL, NULL),
+(2353, 47, 2, 1, NULL, 16, 74, NULL, NULL),
+(2354, 47, 3, 1, NULL, 26, 82, NULL, NULL),
+(2355, 47, 4, 1, NULL, 38, 81, NULL, NULL),
+(2356, 47, 5, 1, NULL, 43, 74, NULL, NULL),
+(2357, 47, 6, 1, NULL, 45, 73, NULL, NULL),
+(2358, 47, 7, 1, NULL, 37, 62, NULL, NULL),
+(2359, 47, 8, 1, NULL, 33, 52, NULL, NULL),
+(2360, 47, 9, 1, NULL, 28, 57, NULL, NULL),
+(2361, 47, 10, 1, NULL, 29, 53, NULL, NULL),
+(2362, 47, 11, 1, NULL, 47, 65, NULL, NULL),
+(2363, 47, 12, 1, NULL, 40, 74, NULL, NULL),
+(2364, 47, 13, 1, NULL, 33, 62, NULL, NULL),
+(2365, 47, 14, 1, NULL, 35, 79, NULL, NULL),
+(2366, 47, 15, 1, NULL, 41, 76, NULL, NULL),
+(2367, 47, 16, 1, NULL, 28, 65, NULL, NULL),
+(2368, 47, 17, 1, NULL, 31, 62, NULL, NULL),
+(2369, 47, 18, 1, NULL, 25, 49, NULL, NULL),
+(2370, 47, 19, 1, NULL, 43, 55, NULL, NULL),
+(2371, 47, 20, 1, NULL, 32, 51, NULL, NULL),
+(2372, 47, 21, 1, NULL, 18, 60, NULL, NULL);
+INSERT INTO `Tiles` (`id`, `x`, `y`, `sprite_id`, `isEmpty`, `humidite`, `fertilite`, `isVisible`, `user_id`) VALUES
+(2373, 47, 22, 1, NULL, 36, 75, NULL, NULL),
+(2374, 47, 23, 1, NULL, 43, 76, NULL, NULL),
+(2375, 47, 24, 1, NULL, 44, 78, NULL, NULL),
+(2376, 47, 25, 1, NULL, 40, 62, NULL, NULL),
+(2377, 47, 26, 1, NULL, 46, 75, NULL, NULL),
+(2378, 47, 27, 1, NULL, 29, 65, NULL, NULL),
+(2379, 47, 28, 1, NULL, 17, 58, NULL, NULL),
+(2380, 47, 29, 1, NULL, 31, 48, NULL, NULL),
+(2381, 47, 30, 1, NULL, 25, 43, NULL, NULL),
+(2382, 47, 31, 1, NULL, 35, 53, NULL, NULL),
+(2383, 47, 32, 1, NULL, 47, 70, NULL, NULL),
+(2384, 47, 33, 1, NULL, 55, 62, NULL, NULL),
+(2385, 47, 34, 1, NULL, 48, 58, NULL, NULL),
+(2386, 47, 35, 1, NULL, 51, 51, NULL, NULL),
+(2387, 47, 36, 1, NULL, 41, 58, NULL, NULL),
+(2388, 47, 37, 1, NULL, 26, 47, NULL, NULL),
+(2389, 47, 38, 1, NULL, 39, 53, NULL, NULL),
+(2390, 47, 39, 1, NULL, 54, 56, NULL, NULL),
+(2391, 47, 40, 1, NULL, 59, 70, NULL, NULL),
+(2392, 47, 41, 1, NULL, 50, 72, NULL, NULL),
+(2393, 47, 42, 1, NULL, 35, 54, NULL, NULL),
+(2394, 47, 43, 1, NULL, 22, 73, NULL, NULL),
+(2395, 47, 44, 1, NULL, 25, 91, NULL, NULL),
+(2396, 47, 45, 1, NULL, 39, 84, NULL, NULL),
+(2397, 47, 46, 1, NULL, 46, 89, NULL, NULL),
+(2398, 47, 47, 1, NULL, 41, 85, NULL, NULL),
+(2399, 47, 48, 1, NULL, 31, 70, NULL, NULL),
+(2400, 47, 49, 1, NULL, 45, 85, NULL, NULL),
+(2401, 48, 0, 1, NULL, 26, 68, NULL, NULL),
+(2402, 48, 1, 1, NULL, 39, 88, NULL, NULL),
+(2403, 48, 2, 1, NULL, 19, 93, NULL, NULL),
+(2404, 48, 3, 1, NULL, 33, 96, NULL, NULL),
+(2405, 48, 4, 1, NULL, 48, 99, NULL, NULL),
+(2406, 48, 5, 1, NULL, 52, 85, NULL, NULL),
+(2407, 48, 6, 1, NULL, 65, 78, NULL, NULL),
+(2408, 48, 7, 1, NULL, 56, 79, NULL, NULL),
+(2409, 48, 8, 1, NULL, 42, 62, NULL, NULL),
+(2410, 48, 9, 1, NULL, 44, 71, NULL, NULL),
+(2411, 48, 10, 1, NULL, 46, 71, NULL, NULL),
+(2412, 48, 11, 1, NULL, 47, 71, NULL, NULL),
+(2413, 48, 12, 1, NULL, 45, 76, NULL, NULL),
+(2414, 48, 13, 1, NULL, 33, 71, NULL, NULL),
+(2415, 48, 14, 1, NULL, 45, 82, NULL, NULL),
+(2416, 48, 15, 1, NULL, 48, 79, NULL, NULL),
+(2417, 48, 16, 1, NULL, 42, 63, NULL, NULL),
+(2418, 48, 17, 1, NULL, 49, 45, NULL, NULL),
+(2419, 48, 18, 1, NULL, 44, 55, NULL, NULL),
+(2420, 48, 19, 1, NULL, 25, 56, NULL, NULL),
+(2421, 48, 20, 1, NULL, 41, 45, NULL, NULL),
+(2422, 48, 21, 1, NULL, 38, 59, NULL, NULL),
+(2423, 48, 22, 1, NULL, 19, 74, NULL, NULL),
+(2424, 48, 23, 1, NULL, 28, 92, NULL, NULL),
+(2425, 48, 24, 1, NULL, 43, 79, NULL, NULL),
+(2426, 48, 25, 1, NULL, 29, 81, NULL, NULL),
+(2427, 48, 26, 1, NULL, 49, 82, NULL, NULL),
+(2428, 48, 27, 1, NULL, 37, 78, NULL, NULL),
+(2429, 48, 28, 1, NULL, 18, 78, NULL, NULL),
+(2430, 48, 29, 1, NULL, 18, 59, NULL, NULL),
+(2431, 48, 30, 1, NULL, 11, 47, NULL, NULL),
+(2432, 48, 31, 1, NULL, 26, 60, NULL, NULL),
+(2433, 48, 32, 1, NULL, 41, 53, NULL, NULL),
+(2434, 48, 33, 1, NULL, 56, 53, NULL, NULL),
+(2435, 48, 34, 1, NULL, 60, 60, NULL, NULL),
+(2436, 48, 35, 1, NULL, 49, 51, NULL, NULL),
+(2437, 48, 36, 1, NULL, 50, 56, NULL, NULL),
+(2438, 48, 37, 1, NULL, 36, 37, NULL, NULL),
+(2439, 48, 38, 1, NULL, 34, 36, NULL, NULL),
+(2440, 48, 39, 1, NULL, 46, 55, NULL, NULL),
+(2441, 48, 40, 1, NULL, 65, 73, NULL, NULL),
+(2442, 48, 41, 1, NULL, 62, 65, NULL, NULL),
+(2443, 48, 42, 1, NULL, 55, 71, NULL, NULL),
+(2444, 48, 43, 1, NULL, 36, 61, NULL, NULL),
+(2445, 48, 44, 1, NULL, 25, 75, NULL, NULL),
+(2446, 48, 45, 1, NULL, 36, 78, NULL, NULL),
+(2447, 48, 46, 1, NULL, 37, 70, NULL, NULL),
+(2448, 48, 47, 1, NULL, 23, 87, NULL, NULL),
+(2449, 48, 48, 1, NULL, 15, 76, NULL, NULL),
+(2450, 48, 49, 1, NULL, 33, 74, NULL, NULL),
+(2451, 49, 0, 1, NULL, 6, 80, NULL, NULL),
+(2452, 49, 1, 1, NULL, 20, 88, NULL, NULL),
+(2453, 49, 2, 1, NULL, 3, 98, NULL, NULL),
+(2454, 49, 3, 1, NULL, 16, 93, NULL, NULL),
+(2455, 49, 4, 1, NULL, 31, 87, NULL, NULL),
+(2456, 49, 5, 1, NULL, 48, 91, NULL, NULL),
+(2457, 49, 6, 1, NULL, 45, 77, NULL, NULL),
+(2458, 49, 7, 1, NULL, 43, 92, NULL, NULL),
+(2459, 49, 8, 1, NULL, 39, 78, NULL, NULL),
+(2460, 49, 9, 1, NULL, 30, 72, NULL, NULL),
+(2461, 49, 10, 1, NULL, 32, 83, NULL, NULL),
+(2462, 49, 11, 1, NULL, 35, 84, NULL, NULL),
+(2463, 49, 12, 1, NULL, 36, 81, NULL, NULL),
+(2464, 49, 13, 1, NULL, 44, 68, NULL, NULL),
+(2465, 49, 14, 1, NULL, 31, 90, NULL, NULL),
+(2466, 49, 15, 1, NULL, 44, 93, NULL, NULL),
+(2467, 49, 16, 1, NULL, 45, 71, NULL, NULL),
+(2468, 49, 17, 1, NULL, 54, 83, NULL, NULL),
+(2469, 49, 18, 1, NULL, 54, 72, NULL, NULL),
+(2470, 49, 19, 1, NULL, 48, 76, NULL, NULL),
+(2471, 49, 20, 1, NULL, 37, 77, NULL, NULL),
+(2472, 49, 21, 1, NULL, 37, 70, NULL, NULL),
+(2473, 49, 22, 1, NULL, 38, 78, NULL, NULL),
+(2474, 49, 23, 1, NULL, 39, 79, NULL, NULL),
+(2475, 49, 24, 1, NULL, 49, 95, NULL, NULL),
+(2476, 49, 25, 1, NULL, 28, 78, NULL, NULL),
+(2477, 49, 26, 1, NULL, 35, 83, NULL, NULL),
+(2478, 49, 27, 1, NULL, 45, 95, NULL, NULL),
+(2479, 49, 28, 1, NULL, 38, 88, NULL, NULL),
+(2480, 49, 29, 1, NULL, 35, 78, NULL, NULL),
+(2481, 49, 30, 1, NULL, 26, 65, NULL, NULL),
+(2482, 49, 31, 1, NULL, 27, 75, NULL, NULL),
+(2483, 49, 32, 1, NULL, 40, 67, NULL, NULL),
+(2484, 49, 33, 1, NULL, 59, 73, NULL, NULL),
+(2485, 49, 34, 1, NULL, 63, 74, NULL, NULL),
+(2486, 49, 35, 1, NULL, 52, 67, NULL, NULL),
+(2487, 49, 36, 1, NULL, 50, 76, NULL, NULL),
+(2488, 49, 37, 1, NULL, 32, 56, NULL, NULL),
+(2489, 49, 38, 1, NULL, 45, 36, NULL, NULL),
+(2490, 49, 39, 1, NULL, 52, 51, NULL, NULL),
+(2491, 49, 40, 1, NULL, 45, 67, NULL, NULL),
+(2492, 49, 41, 1, NULL, 52, 59, NULL, NULL),
+(2493, 49, 42, 1, NULL, 49, 63, NULL, NULL),
+(2494, 49, 43, 1, NULL, 53, 81, NULL, NULL),
+(2495, 49, 44, 1, NULL, 39, 76, NULL, NULL),
+(2496, 49, 45, 1, NULL, 33, 90, NULL, NULL),
+(2497, 49, 46, 1, NULL, 49, 78, NULL, NULL),
+(2498, 49, 47, 1, NULL, 37, 80, NULL, NULL),
+(2499, 49, 48, 1, NULL, 20, 86, NULL, NULL),
+(2500, 49, 49, 1, NULL, 34, 69, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Tornade`
+--
+
+CREATE TABLE IF NOT EXISTS `Tornade` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isActive` tinyint(4) DEFAULT NULL,
+  `origin_tile_id` int(11) DEFAULT NULL,
+  `vectorX` int(11) DEFAULT NULL,
+  `vexctorY` int(11) DEFAULT NULL,
+  `longueur` int(11) DEFAULT NULL,
+  `largeur` int(11) DEFAULT NULL,
+  `duree` int(11) DEFAULT NULL,
+  `x` int(11) DEFAULT NULL,
+  `y` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `origin_tile_id_idx` (`origin_tile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Users`
+--
+
+CREATE TABLE IF NOT EXISTS `Users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pseudo` varchar(45) DEFAULT NULL,
+  `password` text NOT NULL,
+  `mail` varchar(45) DEFAULT NULL,
+  `status` tinyint(4) DEFAULT NULL,
+  `ip` varchar(45) DEFAULT NULL,
+  `nb_fertilisants` int(11) DEFAULT NULL,
+  `energies` int(11) DEFAULT NULL,
+  `energies_max` int(11) DEFAULT NULL,
+  `niveau` int(11) DEFAULT NULL,
+  `alliance_id` int(11) DEFAULT NULL,
+  `argent` int(11) DEFAULT NULL,
+  `experience` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `users_to_alliances_idx` (`alliance_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Contenu de la table `Users`
+--
+
+INSERT INTO `Users` (`id`, `pseudo`, `password`, `mail`, `status`, `ip`, `nb_fertilisants`, `energies`, `energies_max`, `niveau`, `alliance_id`, `argent`, `experience`) VALUES
+(1, 'cbrunel', 'petitponey', 'constant.95@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 'troll', 'toor', 'troll@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Users_Connected`
+--
+
+CREATE TABLE IF NOT EXISTS `Users_Connected` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `isConnected` int(11) NOT NULL DEFAULT '1',
+  `afk` int(11) NOT NULL DEFAULT '0',
+  `connection` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+
+--
+-- Contenu de la table `Users_Connected`
+--
+
+INSERT INTO `Users_Connected` (`id`, `user_id`, `isConnected`, `afk`, `connection`) VALUES
+(10, 1, 1, 0, '2013-06-04 19:14:31'),
+(11, 2, 0, 0, '2013-06-04 19:22:13');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Users_level_spec`
+--
+
+CREATE TABLE IF NOT EXISTS `Users_level_spec` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tile_next_level` int(11) DEFAULT NULL,
+  `conquete_timer` int(11) DEFAULT NULL,
+  `wait_conquetes_timer` int(11) DEFAULT NULL,
+  `resistance` int(11) DEFAULT NULL,
+  `victory_timer` int(11) DEFAULT NULL,
+  `win_regen` int(11) DEFAULT NULL,
+  `lose_regen` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Contraintes pour les tables exportées
+--
+
+--
+-- Contraintes pour la table `Achats`
+--
+ALTER TABLE `Achats`
+  ADD CONSTRAINT `achats_to_spec` FOREIGN KEY (`graines_spec_id`) REFERENCES `Graines_spec` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Alliances`
+--
+ALTER TABLE `Alliances`
+  ADD CONSTRAINT `master` FOREIGN KEY (`master_user_id`) REFERENCES `Users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Armes`
+--
+ALTER TABLE `Armes`
+  ADD CONSTRAINT `armes_to_spec` FOREIGN KEY (`armes_spec_id`) REFERENCES `Armes_spec` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `armes_to_user` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Arrosoirs`
+--
+ALTER TABLE `Arrosoirs`
+  ADD CONSTRAINT `arrosoirs_to_spec` FOREIGN KEY (`arrosoirs_spec_id`) REFERENCES `Arrosoirs_spec` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `arrosoirs_to_user` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Energies`
+--
+ALTER TABLE `Energies`
+  ADD CONSTRAINT `Energies_ibfk_2` FOREIGN KEY (`tile_id`) REFERENCES `Tiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `energies_to_spec` FOREIGN KEY (`energies_spec_id`) REFERENCES `Energies_spec` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `energies_to_user` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Fruits`
+--
+ALTER TABLE `Fruits`
+  ADD CONSTRAINT `fruits_to_spec` FOREIGN KEY (`fruits_spec_id`) REFERENCES `Fruits_spec` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fruits_to_user` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Graines`
+--
+ALTER TABLE `Graines`
+  ADD CONSTRAINT `graines_to_spec` FOREIGN KEY (`graines_spec_id`) REFERENCES `Graines_spec` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `graines_to_user` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Maisons`
+--
+ALTER TABLE `Maisons`
+  ADD CONSTRAINT `Maisons_ibfk_2` FOREIGN KEY (`tile_id`) REFERENCES `Tiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `maisons_to_users` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Meteor`
+--
+ALTER TABLE `Meteor`
+  ADD CONSTRAINT `Meteor_ibfk_2` FOREIGN KEY (`origin_tile_id`) REFERENCES `Tiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Plantes`
+--
+ALTER TABLE `Plantes`
+  ADD CONSTRAINT `Plantes_ibfk_2` FOREIGN KEY (`tile_id`) REFERENCES `Tiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `plantes_to_spec` FOREIGN KEY (`graines_spec_id`) REFERENCES `Graines_spec` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `plantes_to_user` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Pluie`
+--
+ALTER TABLE `Pluie`
+  ADD CONSTRAINT `Pluie_ibfk_2` FOREIGN KEY (`origin_tile_id`) REFERENCES `Tiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Sauterelles`
+--
+ALTER TABLE `Sauterelles`
+  ADD CONSTRAINT `Sauterelles_ibfk_2` FOREIGN KEY (`origin_tile_id`) REFERENCES `Tiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Stockages`
+--
+ALTER TABLE `Stockages`
+  ADD CONSTRAINT `Stockages_ibfk_2` FOREIGN KEY (`tile_id`) REFERENCES `Tiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `stockages_to_spec` FOREIGN KEY (`stockages_spec_id`) REFERENCES `Stockages_spec` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `stockages_to_user` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Tornade`
+--
+ALTER TABLE `Tornade`
+  ADD CONSTRAINT `Tornade_ibfk_2` FOREIGN KEY (`origin_tile_id`) REFERENCES `Tiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Users`
+--
+ALTER TABLE `Users`
+  ADD CONSTRAINT `users_to_alliances` FOREIGN KEY (`alliance_id`) REFERENCES `Alliances` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Users_Connected`
+--
+ALTER TABLE `Users_Connected`
+  ADD CONSTRAINT `Users_Connected_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

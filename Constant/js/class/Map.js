@@ -197,13 +197,18 @@ var Map = (function() {
     {
         var connection = _DB.connection();
         var data = {
-            'x': 0,
-            'y': 0           
+            'x': 1,
+            'y': 1           
         }
         connection.query('SELECT * FROM Tiles WHERE user_id = ' + id, function(err,rows,fields){
             if(err) throw err;
-            data.x = rows[0].x;
-            data.y = rows[0].y;
+
+            if(rows.length > 0)
+            {
+                data.x = rows[0].x;
+                data.y = rows[0].y;               
+            }
+
             callback(data);
         });
     }
@@ -229,7 +234,6 @@ var Map = (function() {
         var connection = _DB.connection();
         var xleft = j-1;
         var yup = i-1;
-        var async = require('async');
 
         tileLeft = recupTileLeft(xleft, i, function (tileLEFT){
             var tL = tileLEFT;
