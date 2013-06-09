@@ -10,6 +10,7 @@
 		isAttacking : false,
 		isWatering : false,
 		isFertilizing : false,
+		isHarvesting : false,
 		own_tile : {},
 		enemi_tile : {}
 	};
@@ -362,6 +363,24 @@
 
 	});
 
+	$("#menu_recolte_plantes").click(function(){
+
+		if(User.isHarvesting){
+			User.isFertilizing = false;
+			$(this).val('Fertiliser une plante');
+			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
+		}
+		else{
+			User.isBuilding = false;
+			User.isPlanting = false;
+			User.isWatering = false;
+			User.isFertilizing = true;
+			$(this).val('Arreter de fertiliser');
+			ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',64,0);
+		}
+
+	});
+
 	$(".button_menu_plantes").click(function(){
 		User.isPlanting = true;
 		User.isBuilding = false;
@@ -392,15 +411,5 @@
 		ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		$(this).parent().toggle('fast');
 	});
-
-	var count = 0;
-	$("#s_1_1").hover(
-		function () {
-			alert('plop');
-		},
-		function (){
-
-		}
-	);
 
 })(jQuery);
