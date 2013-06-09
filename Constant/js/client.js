@@ -278,22 +278,35 @@
 		
 	});
 	$("#menu_arrosage_plantes").click(function(){
-		User.isBuilding = false;
-		User.isPlanting = false;
-		User.isWatering = true;
-		User.isFertilizing = false;
-
-		ppmap.changeCursor('images/arrosoir.jpg','images/cursor-off.png',64,0);
-
+		if(User.isWatering){
+			User.isWatering =false;
+			$(this).val('Arroser une plante');
+			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);		
+		}else{
+			User.isBuilding = false;
+			User.isPlanting = false;
+			User.isWatering = true;
+			User.isFertilizing = false;
+			$(this).val('Arreter d\'arroser');
+			ppmap.changeCursor('images/arrosoir.jpg','images/cursor-off.png',64,0);
+		}
 	});
 
 	$("#menu_fertilise_plantes").click(function(){
-		User.isBuilding = false;
-		User.isPlanting = false;
-		User.isWatering = false;
-		User.isFertilizing = true;
 
-		ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',64,0);
+		if(User.isFertilizing){
+			User.isFertilizing = false;
+			$(this).val('Fertiliser une plante');
+			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
+		}
+		else{
+			User.isBuilding = false;
+			User.isPlanting = false;
+			User.isWatering = false;
+			User.isFertilizing = true;
+			$(this).val('Arreter de fertiliser');
+			ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',64,0);
+		}
 
 	});
 
