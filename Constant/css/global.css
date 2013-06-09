@@ -183,6 +183,15 @@ opacity: 0;
 	float: left;
 }
 
+#backRegister {
+position: absolute;
+top: 538px;
+left: 29px;
+height: 44px;
+width: 105px;
+opacity: 0;
+
+}
 
 
 /* Creation d'une partie */

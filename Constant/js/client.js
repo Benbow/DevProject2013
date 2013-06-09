@@ -53,6 +53,14 @@
 
 		
 	});
+
+	$("#backRegister").click(function(){
+		$("#div_login").slideUp('fast');	
+		$("#div_register").fadeIn('fast');
+
+		
+	});
+
 	//Lorsque l'on veut s'enregistrer'
 	$('#registerform').submit(function(event)
 	{
