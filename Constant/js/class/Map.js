@@ -229,6 +229,22 @@ var Map = (function() {
         });
     }
 
+    
+
+	Map.prototype.canAttack = function(tile_id, user_id, callback)
+	{
+		var connection = _DB.connection();
+
+		connection.query('SELECT * FROM Tiles WHERE owner = ' + user_id + ' AND id = ' + tile_id, function(err,rows,fields){
+			if(err) throw err;
+
+			if(rows.length > 0)
+				callback(false);
+			else
+				callback(true);
+		});
+	}
+
     function makeTilesPropertyByLeft(value){
         var plusOuMoins = Math.floor((Math.random()*2)+1);
         var val = Math.floor((Math.random()*20)+1);

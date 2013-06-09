@@ -56,14 +56,6 @@ io.sockets.on('connection', function(socket){
                     socket.emit('connected', {
                     	'pseudo': user.getPseudo()
                     });
-                    map.getUserTile(user.getId(),function(user_tile){
-	                    socket.broadcast.emit('new_user_connected',{
-	                    	'pseudo' : socket_user[0],
-	                    	'id'     : socket_user[3],
-	                    	'x'      : user_tile.x,
-	                    	'y'		 : user_tile.y
-	                    });
-                    });
                     if(socket_user[4]){
                     	if(socket_user[4] == 2){
                     		socket.emit('isAdmin');

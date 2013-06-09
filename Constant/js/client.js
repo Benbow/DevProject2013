@@ -37,11 +37,11 @@
 		sprite : {
 			tomates : {
 				id : 1,
-				sprite_id : 2
+				sprite_id : 50
 			},
 			mais : {
 				id : 2,
-				sprite_id : 13
+				sprite_id : 60
 			}
 		}
 	}
@@ -208,8 +208,7 @@
 
 		if(User.isPlanting)
 		{
-			ppmap.addObject(x, y, 'images/'+Plantes.name + '.png', 0, 0);
-			ppmap.changeOneMap(x,y,Plantes.sprite[Plantes.name].sprite_id);
+			ppmap.addObject(x, y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
 			socket.emit('newCrops', {
 				x: x,
 				y: y,
@@ -318,7 +317,7 @@
 		User.isFertilizing = false;
 		var type = $(this).attr('id').substr(20,$(this).attr('id').length);
 		Plantes.name = type;
-		ppmap.changeCursor('images/'+Plantes.sprite[Plantes.name].sprite_id+'.png','images/cursor-off.png',0,0);
+		ppmap.changeCursor('images/5.png','images/cursor-off.png',0,0);
 	});
 
 	$(".button_menu_batiments").click(function(){
