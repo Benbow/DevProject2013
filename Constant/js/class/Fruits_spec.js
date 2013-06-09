@@ -1,3 +1,10 @@
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'toor',
+    database : 'farmDB',
+});
 //Classe qui enregistre les Fruits_spec
 
 var Fruits_spec = (function() {
@@ -9,6 +16,23 @@ var Fruits_spec = (function() {
 
     function Fruits_spec(){
         
+    };
+
+    Fruits_spec.prototype.getFruitSpec = function(id, callback){
+        var query = 'SELECT * FROM Fruits_spec WHERE id ='+id+' ;';
+        connection.query(query,function(err, row, fields) {
+            if (err) throw err;
+            if( typeof(row[0]) != "undefined"){
+                callback({
+                    ok: true,
+                    fruits_spec : row[0]
+                });
+            }else{
+                callback({
+                    ok: false
+                })
+            }
+        });
     };
 
     //Getters
@@ -50,7 +74,4 @@ var Fruits_spec = (function() {
     return Fruits_spec;
 })();
 
-exports.Fruits_spec = function(){
-	var a = new Fruits_spec();
-	return a;
-}
+module.exports = Fruits_spec;

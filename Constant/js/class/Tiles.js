@@ -5,7 +5,6 @@ var connection = mysql.createConnection({
     password : 'toor',
     database : 'farmDB',
 });
-var $ = require('jquery');
 //Classe qui enregistre les Tiles de chaque user
 
 var Tiles = (function() {
@@ -97,7 +96,11 @@ var Tiles = (function() {
                                 query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
                                 connection.query(query,function(err, r, fields) {
                                     if (err) throw err;
-                                    callback(true);
+                                    callback({
+                                        ok: true,
+                                        nb: nb_fruits,
+                                        fruit: row[0].graines_spec_id
+                                    });
                                 });
                             });
                         }else{
@@ -108,7 +111,11 @@ var Tiles = (function() {
                                 query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
                                 connection.query(query,function(err, r, fields) {
                                     if (err) throw err;
-                                    callback(true);
+                                    callback({
+                                        ok: true,
+                                        nb: nb_fruits,
+                                        fruit: row[0].graines_spec_id
+                                    });
                                 });
                             });
                         }

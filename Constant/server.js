@@ -15,6 +15,7 @@ var Stockages  = require("./js/class/Stockages");
 var Plantes    = require("./js/class/Plantes");
 var User 	   = require("./js/class/User");
 var Tiles 	   = require("./js/class/Tiles");
+var Fruits_sp  = require("./js/class/Fruits_spec");
 
 var map = new Map();
 //map.initialiseMap();
@@ -165,17 +166,39 @@ io.sockets.on('connection', function(socket){
 		//TODO generate croissance and health
 		map.getIdTile(data.x,data.y,function(id){
 			tile.Harvesting(id, user.getId(), function(cb){
-				if(cb){
+				if(cb.ok){
 					socket.emit('valid', 'Harvesting Succesfull!!');
 					socket.emit('destroyCrops', {
 						x: data.x,
 						y: data.y
+					});
+					fruit_spec = new Fruits_sp;
+					fruit_spec.getFruitSpec(cb.fruit, function(c){
+						var p = c.fruits_spec.prix_vente * cb.nb;
+						var d = {
+							nom : c.fruits_spec.name,
+							nb : cb.nb,
+							prix : p
+						}
+						socket.emit('instantSell', d);
 					});
 				}else{
 					socket.emit('error', 'Not a Mature crop !');
 				}
 			});
 		});
+	});
+
+	socket.on('instantSellConfirm', function(data){
+		console.log(data);
+		u = new User();
+		u.SellCrop(user.getId(), data.prix, function(ok){
+			//here, update l'affichage de l'argent du player
+		});
+	});
+
+	socket.on('instantSellStack', function(data){
+
 	});
 
 	socket.on('error', function(msg){

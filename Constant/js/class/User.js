@@ -64,6 +64,24 @@ var User = (function() {
 
     };
 
+    User.prototype.SellCrop = function(id, prix, callback) {
+        var connection = _DB.connection();
+        var query = 'SELECT * FROM Users WHERE id = ' + id;
+        connection.query(query,function(err, rows, fields) {
+            if(err) throw err;
+            if(typeof (rows[0]) != "undefined"){
+                prix = rows[0].argent + prix;
+                var query = 'UPDATE Users SET argent = '+prix+' WHERE id = ' + id;
+                connection.query(query,function(err, rows, fields) {
+                    if(err) throw err;
+                    callback(true);
+                });
+            }else{
+                callback(false);
+            }
+        });
+    };
+
     User.prototype.getPseudo = function(){
         return this._pseudo;
     };

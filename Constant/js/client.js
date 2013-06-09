@@ -332,6 +332,13 @@
 		ppmap.changeOneMap(data.x, data.y, '2');
 	});
 
+	socket.on('instantSell', function(data){
+		$("#instantSell").css('display','block');
+		$("#nbFruits").text(data.nb);
+		$("#nameFruits").text(data.nom);
+		$("#prixFruits").text(data.prix);
+	});
+
 
 	$(".button_menu").click(function(){
 		var type = $(this).attr('id').substr(12,$(this).attr('id').length);
@@ -445,6 +452,30 @@
 		User.isHarvesting = false;
 		ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		$(this).parent().toggle('fast');
+	});
+
+	$("#Sell").click(function(){
+		var name = $("#nameFruits").text();
+		var n = $("#nbFruits").text();
+		var p = $("#prixFruits").text();
+		$("#instantSell").css('display','none');
+		socket.emit('instantSellConfirm', {
+			nom : parseInt(name),
+			nb : parseInt(n),
+			prix : parseInt(p)
+		});
+	});
+
+	$("#Stack").click(function(){
+		var name = $("#nameFruits").text();
+		var n = $("#nbFruits").text();
+		var p = $("#prixFruits").text();
+		$("#instantSell").css('display','none');
+		socket.emit('instantSellStack', {
+			nom : parseInt(name),
+			nb : parseInt(n),
+			prix : parseInt(p)
+		});
 	});
 
 })(jQuery);
