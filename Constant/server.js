@@ -15,7 +15,6 @@ var Stockages  = require("./js/class/Stockages");
 var Plantes    = require("./js/class/Plantes");
 var User 	   = require("./js/class/User");
 var Tiles 	   = require("./js/class/Tiles");
-var Fruits_sp  = require("./js/class/Fruits_spec");
 
 var map = new Map();
 //map.initialiseMap();
@@ -36,34 +35,33 @@ var io = require('socket.io').listen(server);
 // Action si un utilisateur arrive sur la page.
 io.sockets.on('connection', function(socket){
 	var user = new User();
-	//user.lvl();
 
 	// Action quand un utilisateur essaie de se connecter.
 	socket.on('login', function(datalogin){
 		//On va chercher en bdd si le mail existe.
 		user.loginUser(datalogin.mail,datalogin.password,function(socket_user){
 			if(socket_user[1] != null) // true si le mail existe
-			{
+            {
 				if(socket_user[2] == datalogin.password)// On check le password
 				{
 					user.setPseudo(socket_user[0]);
 					user.setId(socket_user[3]);
 					user.connected();
 					socket.emit('valid', 'Connected !');
-					socket.emit('connected', {
-						'pseudo': user.getPseudo()
-					});
-					if(socket_user[4]){
-						if(socket_user[4] == 2){
-							socket.emit('isAdmin');
-						}
-					}
+                    socket.emit('connected', {
+                    	'pseudo': user.getPseudo()
+                    });
+                    if(socket_user[4]){
+                    	if(socket_user[4] == 2){
+                    		socket.emit('isAdmin');
+                    	}
+                    }
 				}
 				else
-					socket.emit('error', 'Wrong password !');
-			}
-			else
-				socket.emit('error', 'Bad mail !');
+                    socket.emit('error', 'Wrong password !');
+            }
+            else
+                socket.emit('error', 'Bad mail !');
 		});
 	});
 		
@@ -112,45 +110,43 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+
+var saveTiles = new Array();
 	socket.on('userAttack',function(data){
-		map.getIdTile(data.x,data.y,function(id){
-			map.canAttack(id,user.getId(),function(result){
-				if(result)
-				{
-					user.attack(id);
-					newOptions = {
-						'type': 'attack',
-						'user_id': user.getId()
-					};
-					updateTile(data.x, data.y, newOptions);
-					socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
-				}
-				else
-					socket.emit('error', "Vous ne pouvez attaquer un terrain qui vous appartient !");
-			})
-		});
+		saveTiles.push([data.x,data.y]);
+		console.log(saveTiles);
+		setTimeout(function(){
+
+					saveTiles.forEach(function(element, index, array){
+					map.getIdTile(data.x,data.y,function(id){
+					map.canAttack(id,user.getId(),function(result){
+						if(result)
+						{
+							user.attack(id);
+							newOptions = {
+								'type': 'attack',
+								'user_id': user.getId()
+							};
+							updateTile(data.x, data.y, newOptions);
+							socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
+
+						}
+						else
+							socket.emit('error', "Vous ne pouvez attaquer un terrain qui vous appartient !");
+						saveTiles.splice(index, 1);
+					})
+				});
+			});
+
+		},1000);
+	
+		
 	});
 	socket.on('newCrops', function(data){
 		crops = new Plantes();
 		//TODO generate croissance and health
 		map.getIdTile(data.x,data.y,function(id){
-			map.getInfosTile(id,function(infos){
-				crops.Add_Plantes(50,user.getId(),data.id,infos.id,infos.humidite,infos.fertilite);
-				var options = {
-					'status' : 0,
-					'graine_id' : data.id,
-					'type' : 'update_status'
-				}
-				updateTile(data.x, data.y, options);
-				crops.updatePlante(function(status, graine_id){
-					var newOptions = {
-						'status' : status,
-						'graine_id' : graine_id,
-						'type' : 'update_status'
-					}
-					updateTile(data.x, data.y, newOptions);
-				});
-			});
+			crops.Add_Plantes(50,50,user.getId(),data.id,id);
 		});
 	});
 
@@ -182,59 +178,6 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
-	socket.on('harvesting', function(data){
-		tile = new Tiles();
-		//TODO generate croissance and health
-		map.getIdTile(data.x,data.y,function(id){
-			tile.Harvesting(id, user.getId(), function(cb){
-				if(cb.ok){
-					socket.emit('valid', 'Harvesting Succesfull!!');
-					socket.emit('destroyCrops', {
-						x: data.x,
-						y: data.y
-					});
-					fruit_spec = new Fruits_sp;
-					fruit_spec.getFruitSpec(cb.fruit, function(c){
-						var p = c.fruits_spec.prix_vente * cb.nb;
-						var d = {
-							nom : c.fruits_spec.name,
-							nb : cb.nb,
-							prix : p
-						}
-						socket.emit('instantSell', d);
-					});
-				}else{
-					socket.emit('error', 'Not a Mature crop !');
-				}
-			});
-		});
-	});
-
-	socket.on('instantSellConfirm', function(data){
-		u = new User();
-		u.SellCrop(user.getId(), data.prix, function(ok){
-			//here, update l'affichage de l'argent du player
-		});
-	});
-
-	socket.on('instantSellStack', function(data){
-		s = new Stockages();
-		s.GetMyStockages(user.getId(), data.nb, function(cb){
-			if(cb.ok){
-				socket.emit('chooseStorage', {
-					data : data,
-					stockages : cb.stock
-				});
-			}else{
-				u = new User();
-				u.SellCrop(user.getId(), data.prix, function(ok){
-					//here, update l'affichage de l'argent du player
-					socket.emit('error', 'Not Enough Storage ! You Sell it');
-				});
-			}
-		});
-	});
-
 	socket.on('error', function(msg){
 		socket.emit('error', msg);
 	});
@@ -243,7 +186,7 @@ io.sockets.on('connection', function(socket){
 		socket.emit('valid', msg);
 	});
 
-	socket.on('disconnect', function(id){
+	socket.on('disconnect', function(socket){
 		if(user.getId() != 0)
 		{
 			user.disconnect();			
@@ -323,35 +266,3 @@ io.sockets.on('connection', function(socket){
 
 
 });
-
-getTimeDb = function(){
-	var d = new Date();
-	var years   = d.getFullYear(),
-		month   = ((d.getMonth() + 1).toString().length > 1) ? (d.getMonth() + 1) : '0'+(d.getMonth() + 1),
-		day     = ((d.getDate()).toString().length > 1) ? d.getDate() : '0'+d.getDate(),
-		hours   = ((d.getHours()).toString().length > 1) ? d.getHours() : '0'+d.getHours(),
-		minute  = ((d.getMinutes()).toString().length > 1) ? d.getMinutes() : '0'+d.getMinutes(),
-		seconde = ((d.getSeconds()).toString().length > 1) ? d.getSeconds() : '0'+d.getSeconds();
-	var db_date = years+'-'+month+'-'+day+' '+hours+':'+minute+':'+seconde;
-
-	return db_date;
-};
-
-updateTile = function(x,y,options){
-	if(options.type == 'update_status'){
-		var sprite_id = options.graine_id+""+options.status;
-		Tiles.changeSprite(x,y,sprite_id);
-		io.sockets.emit('newTileSprite', {
-			'x':x,
-			'y':y,
-			'sprite_id': sprite_id
-		});
-	}
-	else if(options.type == 'attack'){
-		io.sockets.emit('newTileAttack', {
-			'x':x,
-			'y':y,
-			'user_id': options.user_id
-		});
-	}
-};
