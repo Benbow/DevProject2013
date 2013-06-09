@@ -46,6 +46,29 @@ var Tiles = (function() {
         }); 
     };
 
+    Tiles.prototype.Fertilizing = function(tile_id, user_id, callback){
+        var query = 'SELECT * FROM Plantes where tile_id ='+tile_id+';';
+        connection.query(query,function(err, row, fields) {
+            if (err) throw err;
+            if( typeof( row[0] ) != "undefined" ){
+                query = 'SELECT * FROM Tiles where id ='+tile_id+';';
+                connection.query(query,function(err, rows, fields) {
+                    if (err) throw err;
+                    var h = rows[0].fertilite +10;
+                    query = 'UPDATE Tiles SET fertilite = '+h+' WHERE id ='+tile_id+';';
+                    connection.query(query,function(err, rows, fields) {
+                        if (err) throw err;
+                        console.log('success Fertilizing');
+                        callback(true);
+                    });
+                });
+            }else{
+                callback(false);
+            }
+            
+        }); 
+    };
+
     //Getters
     Tiles.prototype.getId = function() {
         return _id;

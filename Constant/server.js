@@ -135,6 +135,20 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	socket.on('fertilizing', function(data){
+		tile = new Tiles();
+		//TODO generate croissance and health
+		map.getIdTile(data.x,data.y,function(id){
+			tile.Fertilizing(id, user.getId(), function(cb){
+				if(cb){
+					socket.emit('valid', 'Fertilizing Succesfull!!');
+				}else{
+					socket.emit('error', 'Fertilizing only Crops!');
+				}
+			});
+		});
+	});
+
 	socket.on('disconnect', function(socket){
 		if(user.getId() != 0)
 			user.disconnect();

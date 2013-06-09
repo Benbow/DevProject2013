@@ -6,7 +6,8 @@
 	var User = {
 		isPlanting : false,
 		isBuilding : false,
-		isWatering : false
+		isWatering : false,
+		isFertilizing : false
 	};
 	var Batiment = {
 		name : '',
@@ -224,8 +225,15 @@
 				y: y,
 				id: Batiment.sprite[Batiment.name].id
 			});
-		}else if(User.isWatering == true){
+		}
+		else if(User.isWatering == true){
 			socket.emit('watering', {
+				x: x,
+				y: y
+			});
+		}
+		else if(User.isFertilizing == true){
+			socket.emit('fertilizing', {
 				x: x,
 				y: y
 			});
@@ -243,8 +251,19 @@
 		User.isBuilding = false;
 		User.isPlanting = false;
 		User.isWatering = true;
+		User.isFertilizing = false;
 
 		ppmap.changeCursor('images/arrosoir.jpg','images/cursor-off.png',64,0);
+
+	});
+
+	$("#menu_fertilise_plantes").click(function(){
+		User.isBuilding = false;
+		User.isPlanting = false;
+		User.isWatering = false;
+		User.isFertilizing = true;
+
+		ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',64,0);
 
 	});
 
@@ -252,6 +271,7 @@
 		User.isPlanting = true;
 		User.isBuilding = false;
 		User.isWatering = false;
+		User.isFertilizing = false;
 		var type = $(this).attr('id').substr(20,$(this).attr('id').length);
 		Plantes.name = type;
 		ppmap.changeCursor('images/'+Plantes.sprite[Plantes.name].sprite_id+'.png','images/cursor-off.png',0,0);
@@ -261,6 +281,7 @@
 		User.isBuilding = true;
 		User.isPlanting = false;
 		User.isWatering = false;
+		User.isFertilizing = false;
 		var type = $(this).attr('id').substr(22,$(this).attr('id').length);
 		Batiment.name = type;
 		ppmap.changeCursor('images/'+type+'.png','images/cursor-off.png',Batiment.sprite[Batiment.name].decX,Batiment.sprite[Batiment.name].decY);
@@ -270,6 +291,7 @@
 		User.isBuilding = false;
 		User.isPlanting = false;
 		User.isWatering = false;
+		User.isFertilizing = false;
 		ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		$(this).parent().toggle('fast');
 	});
