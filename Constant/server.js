@@ -41,27 +41,27 @@ io.sockets.on('connection', function(socket){
 		//On va chercher en bdd si le mail existe.
 		user.loginUser(datalogin.mail,datalogin.password,function(socket_user){
 			if(socket_user[1] != null) // true si le mail existe
-            {
+			{
 				if(socket_user[2] == datalogin.password)// On check le password
 				{
 					user.setPseudo(socket_user[0]);
 					user.setId(socket_user[3]);
 					user.connected();
 					socket.emit('valid', 'Connected !');
-                    socket.emit('connected', {
-                    	'pseudo': user.getPseudo()
-                    });
-                    if(socket_user[4]){
-                    	if(socket_user[4] == 2){
-                    		socket.emit('isAdmin');
-                    	}
-                    }
+					socket.emit('connected', {
+						'pseudo': user.getPseudo()
+					});
+					if(socket_user[4]){
+						if(socket_user[4] == 2){
+							socket.emit('isAdmin');
+						}
+					}
 				}
 				else
-                    socket.emit('error', 'Wrong password !');
-            }
-            else
-                socket.emit('error', 'Bad mail !');
+					socket.emit('error', 'Wrong password !');
+			}
+			else
+				socket.emit('error', 'Bad mail !');
 		});
 	});
 		
@@ -128,6 +128,7 @@ io.sockets.on('connection', function(socket){
 		//TODO generate croissance and health
 		map.getIdTile(data.x,data.y,function(id){
 			crops.Add_Plantes(50,50,user.getId(),data.id,id);
+			crops.updatePlante();
 		});
 	});
 
@@ -266,18 +267,15 @@ io.sockets.on('connection', function(socket){
 
 });
 
-//boucle de jeu
-// setInterval(function(){
-// 	var d = new Date();
-// 	var years   = d.getFullYear(),
-// 		month   = (""+(d.getMonth() + 1)+"".length > 1) ? (d.getMonth() + 1) : '0'+(d.getMonth() + 1),
-// 		day     = ((d.getDate()).length > 1) ? d.getDate() : '0'+d.getDate(),
-// 		hours   = ((d.getHours()).length > 1) ? d.getHours() : '0'+d.getHours(),
-// 		minute  = ((d.getMinutes()).length > 1) ? d.getMinutes() : '0'+d.getMinutes(),
-// 		seconde = ((d.getSeconds()).length > 1) ? d.getSeconds() : '0'+d.getSeconds();
-// 	var db_date = years+'-'+month+'-'+day+' '+hours+':'+minute+':'+seconde;
+getTimeDb = function(){
+	var d = new Date();
+	var years   = d.getFullYear(),
+		month   = ((d.getMonth() + 1).toString().length > 1) ? (d.getMonth() + 1) : '0'+(d.getMonth() + 1),
+		day     = ((d.getDate()).toString().length > 1) ? d.getDate() : '0'+d.getDate(),
+		hours   = ((d.getHours()).toString().length > 1) ? d.getHours() : '0'+d.getHours(),
+		minute  = ((d.getMinutes()).toString().length > 1) ? d.getMinutes() : '0'+d.getMinutes(),
+		seconde = ((d.getSeconds()).toString().length > 1) ? d.getSeconds() : '0'+d.getSeconds();
+	var db_date = years+'-'+month+'-'+day+' '+hours+':'+minute+':'+seconde;
 
-// 	Plantes.checkTimer(db_date);
-
-// 	console.log(db_date);
-// }, 1000);
+	return db_date;
+}

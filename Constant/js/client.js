@@ -40,11 +40,11 @@
 		sprite : {
 			tomates : {
 				id : 1,
-				sprite_id : 50
+				sprite_id : 10
 			},
 			mais : {
 				id : 2,
-				sprite_id : 60
+				sprite_id : 20
 			}
 		}
 	}

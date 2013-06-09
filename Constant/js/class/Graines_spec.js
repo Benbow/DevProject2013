@@ -36,15 +36,6 @@ var Graines_spec = (function() {
             console.log("Graines_spec created");
         });
     };
-    /*Graines_spec.prototype.Add_Graines = function(names){
-        var query = 'INSERT INTO Graines_spec (name) VALUES ("'+names+'");'
-        console.log(query);
-        connection.query(query),function(err, rows, fields) {
-            if (err) throw err;
-
-            console.log("Graines_spec created");
-        };
-    };*/
     
     //Getters
     Graines_spec.prototype.getId = function() {
