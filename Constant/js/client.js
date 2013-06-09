@@ -9,7 +9,9 @@
 		isBuilding : false,
 		isAttacking : false,
 		isWatering : false,
-		isFertilizing : false
+		isFertilizing : false,
+		own_tile : {},
+		enemi_tile : {}
 	};
 	var Batiment = {
 		name : '',
@@ -157,6 +159,9 @@
 
 	socket.on('loadmap', function(map){
 		loadmap(map);
+		User.own_tile = map.own_tile;
+		User.enemi_tile = map.enemi_tile;
+		console.log(User);
 	});
 
 	var loadmap = function(map) {
@@ -216,21 +221,43 @@
 
 		if(User.isPlanting)
 		{
-			ppmap.addObject(x, y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
-			socket.emit('newCrops', {
-				x: x,
-				y: y,
-				id: Plantes.sprite[Plantes.name].id
+			var testTile = false;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = true;
 			});
+			if(testTile)
+			{
+				ppmap.addObject(x, y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
+				socket.emit('newCrops', {
+					x: x,
+					y: y,
+					id: Plantes.sprite[Plantes.name].id
+				});
+			}
+			else
+				console.log('Tu ne peux pas ! plant');
+			
 		}
 		else if(User.isBuilding)
 		{
-			ppmap.addBuilding(x, y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
-			socket.emit('newstorage', {
-				x: x,
-				y: y,
-				id: Batiment.sprite[Batiment.name].id
+			var testTile = true;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = false;
 			});
+			if(testTile)
+			{
+				ppmap.addBuilding(x, y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
+				socket.emit('newstorage', {
+					x: x,
+					y: y,
+					id: Batiment.sprite[Batiment.name].id
+				});
+			}
+			else
+				console.log('Tu ne peux pas ! bat');
+			
 		}
 		else if(User.isAttacking)
 		{

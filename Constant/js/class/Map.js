@@ -131,18 +131,33 @@ var Map = (function() {
 			'storage' : {},
             'crops' : {},
 			'user' : {},
-			'all_user' : {}
+			'all_user' : {},
+			'enemi_tile' : {},
+			'own_tile' : {}
 		};
 		connection.query('SELECT * FROM Tiles ORDER BY `Tiles`.`y` ASC', function(err,rows,fields){
 			if(err) throw err;
 			var check = 0;
+			var own_check = 0;
+			var enemi_check = 0;
 			for(var i = 0;i < rows.length;i++)
 			{
-				if(user_id == rows[i].owner)
+				if(user_id == rows[i].owner){
 					string_map.map += 2 + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
-				else if(user_id != rows[i].owner && rows[i].owner != null)
+					string_map.own_tile[own_check] = {
+						'x': rows[i].x,
+						'y': rows[i].y
+					};
+					own_check++;
+				}else if(user_id != rows[i].owner && rows[i].owner != null){
 					string_map.map += 3 + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
-				else
+					string_map.enemi_tile[enemi_check] = {
+						'x': rows[i].x,
+						'y': rows[i].y
+					};
+					enemi_check++;
+
+				}else
 					string_map.map += rows[i].sprite_id + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
 
 				if(check == 49)

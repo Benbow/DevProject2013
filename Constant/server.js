@@ -8,24 +8,19 @@ var http     = require('http'),
 	mysql    = require('mysql'),
 	url = require('url');
 
-//Connection a la base de donnees.
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'toor',
-  database : 'farmDB',
-});
 
-connection.connect();
-
-var Map  = require("./js/class/Map");
+var DB  	   = require("./js/class/DB");
+var Map 	   = require("./js/class/Map");
 var Stockages  = require("./js/class/Stockages");
-var Plantes  = require("./js/class/Plantes");
-var User = require("./js/class/User");
-var Tiles = require("./js/class/Tiles");
+var Plantes    = require("./js/class/Plantes");
+var User 	   = require("./js/class/User");
+var Tiles 	   = require("./js/class/Tiles");
 
 var map = new Map();
 //map.initialiseMap();
+
+var bdd = new DB();
+var connection = bdd.connection();
 
 //Timer
 var date = new Date();
