@@ -1,4 +1,5 @@
 var DB = require('./DB');
+var Graines_spec = require('./Graines_spec');
 
 //Classe qui enregistre les Plantes de chaque user
 
@@ -13,15 +14,28 @@ var Plantes = (function() {
 
     function Plantes(){
         _DB = new DB();
-        
     };
 
     Plantes.prototype.Add_Plantes = function(croissance, health, user_id, graines_spec_id, tile_id){
         var connection = _DB.connection();        
-        var query = 'INSERT INTO Plantes (croissance, health, user_id, graines_spec_id, tile_id) VALUES ('+croissance+', '+health+', '+user_id+', '+graines_spec_id+', '+tile_id+');';
+
+        var d = new Date();
+        var years   = d.getFullYear(),
+            month   = ((d.getMonth() + 1).toString().length > 1) ? (d.getMonth() + 1) : '0'+(d.getMonth() + 1),
+            day     = ((d.getDate()).toString().length > 1) ? d.getDate() : '0'+d.getDate(),
+            hours   = ((d.getHours()).toString().length > 1) ? d.getHours() : '0'+d.getHours(),
+            minute  = ((d.getMinutes()).toString().length > 1) ? d.getMinutes() : '0'+d.getMinutes(),
+            seconde = ((d.getSeconds()).toString().length > 1) ? d.getSeconds() : '0'+d.getSeconds();
+        var db_date = years+'-'+month+'-'+day+' '+hours+':'+minute+':'+seconde;
+
+        var query = 'INSERT INTO Plantes (croissance, health, user_id, graines_spec_id, tile_id, created_at, updated_at) VALUES ('+croissance+', '+health+', '+user_id+', '+graines_spec_id+', '+tile_id+', '+db_date+', '+db_date+');';
+
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
             console.log("Plantes created");
+            setTimeout(function(){
+                console.log('plante stade 2 !');
+            },10000);
         });
     };
 
