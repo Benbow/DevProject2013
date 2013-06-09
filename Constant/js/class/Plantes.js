@@ -1,10 +1,4 @@
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'toor',
-    database : 'farmDB',
-});
+var DB = require('./DB');
 
 //Classe qui enregistre les Plantes de chaque user
 
@@ -15,16 +9,28 @@ var Plantes = (function() {
     var _user_id;           //lien vers l'user a qui appartient la arme INT
     var _plantes_spec_id;   //lien vers le bon type de arme INT
     var _tile_id;           //lien ver la tile de la plante INT
+    var _DB;
 
     function Plantes(){
+        _DB = new DB();
         
     };
 
     Plantes.prototype.Add_Plantes = function(croissance, health, user_id, graines_spec_id, tile_id){
+        var connection = _DB.connection();        
         var query = 'INSERT INTO Plantes (croissance, health, user_id, graines_spec_id, tile_id) VALUES ('+croissance+', '+health+', '+user_id+', '+graines_spec_id+', '+tile_id+');';
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
             console.log("Plantes created");
+        });
+    };
+
+    Plantes.checkTimer = function(timer){
+        _DB = new DB();
+        var connection = _DB.connection();
+
+        connection.query('SELECT * FROM Plantes',function(err, rows, fields) {
+            if (err) throw err;
         });
     };
 

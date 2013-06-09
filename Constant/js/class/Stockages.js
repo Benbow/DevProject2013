@@ -1,10 +1,4 @@
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'toor',
-    database : 'farmDB',
-});
+var DB = require('./DB');
 
 //Classe qui enregistre les bâtiments de stockages de chaque user
 
@@ -17,14 +11,17 @@ var Stockages = (function() {
     var _user_id;           //relie un user à son bâtiment INT
     var _stockages_spec_id; //détermine le type du bâtiment INT
     var _tile_id;           //relie le bâtiment à la tile ou il est construit INT 
+    var _DB;
 
     //Constructeurs
     function Stockages(){
+        _DB = new DB();
         
     };
 
     //Methodes
     Stockages.prototype.Add_Stockages = function(stockage_state, isConstruct, user_id, stockages_spec_id, tile_id){
+        var connection = _DB.connection();
         var query = 'INSERT INTO Stockages (stockage_state, isConstruct, user_id, stockages_spec_id, tile_id) VALUES ('+stockage_state+', '+isConstruct+', '+user_id+', '+stockages_spec_id+', '+tile_id+');';
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
@@ -33,6 +30,7 @@ var Stockages = (function() {
     };
 
     Stockages.prototype.Delete_Stockages = function(id){
+        var connection = _DB.connection();
         var query = 'DELETE FROM Stockages WHERE id='+id;
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;

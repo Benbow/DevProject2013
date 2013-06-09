@@ -218,6 +218,14 @@
 		ppmap.addObject(data.x, data.y, 'images/avatar.png', 0, 0, '', data.pseudo, 'char_'+data.id);
 	});
 
+	socket.on('userMoveBroad', function(data){
+		ppmap.moveObject('char_'+data.id ,data.x, data.y, true, 500);
+	});
+
+	socket.on('userDisconnect', function(data){
+		ppmap.killObject('char_'+data.id);
+	});
+
 	var mouseClick = function(x, y) {
 
 		if(User.isPlanting)
