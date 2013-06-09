@@ -167,7 +167,7 @@ io.sockets.on('connection', function(socket){
 		socket.emit('valid', msg);
 	});
 
-	socket.on('disconnect', function(socket){
+	socket.on('disconnect', function(id){
 		if(user.getId() != 0)
 		{
 			user.disconnect();			
