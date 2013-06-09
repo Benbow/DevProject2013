@@ -5,6 +5,7 @@ var connection = mysql.createConnection({
     password : 'toor',
     database : 'farmDB',
 });
+var $ = require('jquery');
 //Classe qui enregistre les Tiles de chaque user
 
 var Tiles = (function() {
@@ -68,6 +69,42 @@ var Tiles = (function() {
                             callback(true);
                         });
                     });
+                });
+            }else{
+                callback(false);
+            }
+        }); 
+    };
+
+    Tiles.prototype.Harvesting = function(tile_id, user_id, callback){
+        var query = 'SELECT * FROM Plantes where tile_id ='+tile_id+' AND status >= 4;';
+        connection.query(query,function(err, row, fields) {
+            if (err) throw err;
+            if( typeof( row[0]) != "undefined"){
+                query = 'SELECT * FROM Graines_spec where id ='+row[0].graines_spec_id+';';
+                connection.query(query,function(err, rows, fields) {
+                    if (err) throw err;
+                    var f = rows[0].fertilite +10;
+                    nb_fruits = Math.ceil((row[0].health * rows[0].production)/100);
+                    query = 'SELECT * FROM Fruits WHERE user_id =  '+user_id+' AND fruits_spec_id = '+row[0].graines_spec_id+';';
+                    connection.query(query,function(err, ro, fields) {
+                        if (err) throw err;
+                        
+                        if( typeof( ro[0]) == "undefined"){
+                            query = 'INSERT INTO Fruits (nb,user_id,fruits_spec_id) VALUES("' + nb_fruits + '","' + user_id + '","' + row[0].graines_spec_id + '");';
+                            connection.query(query,function(err, ro, fields) {
+                                if (err) throw err;
+                                callback(true);
+                            });
+                        }else{
+                            var nb = ro[0].nb + nb_fruits;
+                            query = 'UPDATE Fruits SET nb = '+nb+' WHERE id ='+user_id+' AND fruits_spec_id = '+row[0].graines_spec_id+';';
+                            connection.query(query,function(err, ro, fields) {
+                                if (err) throw err;
+                                callback(true);
+                            });
+                        }
+                    });           
                 });
             }else{
                 callback(false);

@@ -247,3 +247,19 @@ io.sockets.on('connection', function(socket){
 
 
 });
+
+//boucle de jeu
+// setInterval(function(){
+// 	var d = new Date();
+// 	var years   = d.getFullYear(),
+// 		month   = (""+(d.getMonth() + 1)+"".length > 1) ? (d.getMonth() + 1) : '0'+(d.getMonth() + 1),
+// 		day     = ((d.getDate()).length > 1) ? d.getDate() : '0'+d.getDate(),
+// 		hours   = ((d.getHours()).length > 1) ? d.getHours() : '0'+d.getHours(),
+// 		minute  = ((d.getMinutes()).length > 1) ? d.getMinutes() : '0'+d.getMinutes(),
+// 		seconde = ((d.getSeconds()).length > 1) ? d.getSeconds() : '0'+d.getSeconds();
+// 	var db_date = years+'-'+month+'-'+day+' '+hours+':'+minute+':'+seconde;
+
+// 	Plantes.checkTimer(db_date);
+
+// 	console.log(db_date);
+// }, 1000);

@@ -305,11 +305,30 @@
 				socket.emit('error', 'Fertilizing only your tiles');
 			}
 		}
+		else if(User.isHarvesting == true){
+			var testTile = false;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = true;
+			});
+			if(testTile){
+				socket.emit('harvesting', {
+					x: x,
+					y: y
+				});
+			}else{
+				socket.emit('error', 'Fertilizing only your tiles');
+			}
+		}
 		socket.emit('userMove', {
 			x: x,
 			y: y
 		});
 	};
+
+	socket.on('destroyCrops', function(data){
+		ppmap.killObject('char_'+data.id);
+	});
 
 
 	$(".button_menu").click(function(){
@@ -348,6 +367,7 @@
 			User.isPlanting = false;
 			User.isWatering = true;
 			User.isFertilizing = false;
+			User.isHarvesting = false;
 			$(this).val('Arreter d\'arroser');
 			ppmap.changeCursor('images/arrosoir.jpg','images/cursor-off.png',64,0);
 		}
@@ -365,6 +385,7 @@
 			User.isPlanting = false;
 			User.isWatering = false;
 			User.isFertilizing = true;
+			User.isHarvesting = false;
 			$(this).val('Arreter de fertiliser');
 			ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',64,0);
 		}
@@ -374,17 +395,18 @@
 	$("#menu_recolte_plantes").click(function(){
 
 		if(User.isHarvesting){
-			User.isFertilizing = false;
-			$(this).val('Fertiliser une plante');
+			User.isHarvesting = false;
+			$(this).val('Récolter une plante');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
 			User.isBuilding = false;
 			User.isPlanting = false;
 			User.isWatering = false;
-			User.isFertilizing = true;
-			$(this).val('Arreter de fertiliser');
-			ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',64,0);
+			User.isFertilizing = false;
+			User.isHarvesting = true;
+			$(this).val('Arreter de Récolter');
+			ppmap.changeCursor('images/harvesting.png','images/cursor-off.png',64,0);
 		}
 
 	});
@@ -395,6 +417,7 @@
 		User.isAttacking = false;
 		User.isWatering = false;
 		User.isFertilizing = false;
+		User.isHarvesting = false;
 		var type = $(this).attr('id').substr(20,$(this).attr('id').length);
 		Plantes.name = type;
 		ppmap.changeCursor('images/5.png','images/cursor-off.png',0,0);
@@ -406,6 +429,7 @@
 		User.isAttacking = false;
 		User.isWatering = false;
 		User.isFertilizing = false;
+		User.isHarvesting = false;
 		var type = $(this).attr('id').substr(22,$(this).attr('id').length);
 		Batiment.name = type;
 		ppmap.changeCursor('images/'+type+'.png','images/cursor-off.png',Batiment.sprite[Batiment.name].decX,Batiment.sprite[Batiment.name].decY);
@@ -416,6 +440,7 @@
 		User.isPlanting = false;
 		User.isWatering = false;
 		User.isFertilizing = false;
+		User.isHarvesting = false;
 		ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		$(this).parent().toggle('fast');
 	});
