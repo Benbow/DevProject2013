@@ -22,9 +22,10 @@ var Map  = require("./js/class/Map");
 var Stockages  = require("./js/class/Stockages");
 var Plantes  = require("./js/class/Plantes");
 var User = require("./js/class/User");
+var Tiles = require("./js/class/Tiles");
 
 var map = new Map();
-// map.initialiseMap();
+map.initialiseMap();
 
 //Creation du serveur http.
 var server = http.createServer(function (req, res) { }).listen(1337);
@@ -124,7 +125,13 @@ io.sockets.on('connection', function(socket){
 		tile = new Tiles();
 		//TODO generate croissance and health
 		map.getIdTile(data.x,data.y,function(id){
-			
+			tile.Watering(id, user.getId(), function(cb){
+				if(cb){
+					socket.emit('valid', 'Watering Succesfull!!');
+				}else{
+					socket.emit('error', 'Watering only Crops!');
+				}
+			});
 		});
 	});
 

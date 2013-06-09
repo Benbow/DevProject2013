@@ -177,6 +177,17 @@
 		    ppmap.addBuilding(value.x, value.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
 		});
 
+		//Mise en place des crops quand tu load la map.
+	    $.each(map.crops, function(index, value) {
+	    	console.log(value.id);
+	    	if(value.id == 1)
+	    		Plantes.name = 'tomates';
+	    	else if (value.id == 2)
+	    		Plantes.name = 'mais';
+	    
+		    ppmap.addObject(value.x, value.y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
+		});
+
 		//Mise en place des batiments quand tu load la map.
 	    $.each(map.all_user, function(index, value) {
 		    ppmap.addObject(value.x, value.y, 'images/avatar.png', 0, 0, value.pseudo, value.pseudo, 'char_'+value.id);

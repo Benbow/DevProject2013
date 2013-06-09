@@ -128,6 +128,7 @@ var Map = (function() {
         var string_map = {
             'map' : '',
             'storage' : {},
+            'crops' : {},
             'user' : {},
             'all_user' : {}
         };
@@ -150,6 +151,18 @@ var Map = (function() {
             for(var i = 0;i < rows.length;i++)
             {
                 string_map.storage[i] = {
+                    'x': rows[i].x,
+                    'y': rows[i].y,
+                    'id': rows[i].id
+                };
+            }
+        });
+
+        connection.query('SELECT t.x as x, t.y as y, p.graines_spec_id as id FROM Plantes as p LEFT JOIN Tiles as t ON p.tile_id = t.id', function(err,rows,fields){
+            if(err) throw err;
+            for(var i = 0;i < rows.length;i++)
+            {
+                string_map.crops[i] = {
                     'x': rows[i].x,
                     'y': rows[i].y,
                     'id': rows[i].id

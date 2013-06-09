@@ -23,13 +23,28 @@ var Tiles = (function() {
         
     };
 
-    Tiles.prototype.Watering = function(tile_id, user_id){
-        // var query = 'INSERT INTO Plantes (croissance, health, user_id, graines_spec_id, tile_id) VALUES ('+croissance+', '+health+', '+user_id+', '+graines_spec_id+', '+tile_id+');';
-        // connection.query(query,function(err, rows, fields) {
-        //     if (err) throw err;
-        //     console.log("Plantes created");
-        // });
-    }
+    Tiles.prototype.Watering = function(tile_id, user_id, callback){
+        var query = 'SELECT * FROM Plantes where tile_id ='+tile_id+';';
+        connection.query(query,function(err, row, fields) {
+            if (err) throw err;
+            if( typeof( row[0] ) != "undefined" ){
+                query = 'SELECT * FROM Tiles where id ='+tile_id+';';
+                connection.query(query,function(err, rows, fields) {
+                    if (err) throw err;
+                    var h = rows[0].humidite +10;
+                    query = 'UPDATE Tiles SET humidite = '+h+' WHERE id ='+tile_id+';';
+                    connection.query(query,function(err, rows, fields) {
+                        if (err) throw err;
+                        console.log('success watering');
+                        callback(true);
+                    });
+                });
+            }else{
+                callback(false);
+            }
+            
+        }); 
+    };
 
     //Getters
     Tiles.prototype.getId = function() {
