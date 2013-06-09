@@ -202,7 +202,8 @@
 	    	else if (value.id == 2)
 	    		Plantes.name = 'mais';
 	    
-		    ppmap.addObject(value.x, value.y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
+		    //ppmap.addObject(value.x, value.y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
+		    ppmpap.changeOneMap(value.x, value.y, Plantes.sprite[Plantes.name].sprite_id)
 		});
 
 		//Mise en place des batiments quand tu load la map.
@@ -237,7 +238,8 @@
 			});
 			if(testTile)
 			{
-				ppmap.addObject(x, y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
+				//ppmap.addObject(x, y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
+				ppmap.changeOneMap(x, y, Plantes.sprite[Plantes.name].sprite_id)
 				socket.emit('newCrops', {
 					x: x,
 					y: y,
@@ -327,7 +329,7 @@
 	};
 
 	socket.on('destroyCrops', function(data){
-		ppmap.killObject('char_'+data.id);
+		ppmap.changeOneMap(data.x, data.y, '2');
 	});
 
 
@@ -345,7 +347,7 @@
 		{
 			User.isAttacking = false;
 			$(this).val('Conquerir terrain');
-			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
+			ppmap.changCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else
 		{

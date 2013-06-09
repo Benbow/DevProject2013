@@ -28,7 +28,7 @@ var Plantes = (function() {
             seconde = ((d.getSeconds()).toString().length > 1) ? d.getSeconds() : '0'+d.getSeconds();
         var db_date = years+'-'+month+'-'+day+' '+hours+':'+minute+':'+seconde;
 
-        var query = 'INSERT INTO Plantes (croissance, health, user_id, graines_spec_id, tile_id, created_at, updated_at) VALUES ('+croissance+', '+health+', '+user_id+', '+graines_spec_id+', '+tile_id+', '+db_date+', '+db_date+');';
+        var query = 'INSERT INTO Plantes (croissance, health, user_id, graines_spec_id, tile_id, created_at, updated_at) VALUES ('+croissance+', '+health+', '+user_id+', '+graines_spec_id+', '+tile_id+', "'+db_date+'", "'+db_date+'");';
 
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;

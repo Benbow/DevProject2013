@@ -159,6 +159,24 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	socket.on('harvesting', function(data){
+		tile = new Tiles();
+		//TODO generate croissance and health
+		map.getIdTile(data.x,data.y,function(id){
+			tile.Harvesting(id, user.getId(), function(cb){
+				if(cb){
+					socket.emit('valid', 'Harvesting Succesfull!!');
+					socket.emit('destroyCrops', {
+						x: data.x,
+						y: data.y
+					});
+				}else{
+					socket.emit('error', 'Not a Mature crop !');
+				}
+			});
+		});
+	});
+
 	socket.on('error', function(msg){
 		socket.emit('error', msg);
 	});
