@@ -25,7 +25,7 @@ var User = require("./js/class/User");
 var Tiles = require("./js/class/Tiles");
 
 var map = new Map();
-map.initialiseMap();
+// map.initialiseMap();
 
 //Creation du serveur http.
 var server = http.createServer(function (req, res) { }).listen(1337);
@@ -47,7 +47,7 @@ io.sockets.on('connection', function(socket){
 					user.setPseudo(socket_user[0]);
 					user.setId(socket_user[3]);
 					user.connected();
-					socket.emit('valid', 'Connected !');                
+					socket.emit('valid', 'Connected !');
                     socket.emit('connected', {
                     	'pseudo': user.getPseudo()
                     });
@@ -113,6 +113,19 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	socket.on('userAttack',function(data){
+		map.getIdTile(data.x,data.y,function(id){
+			map.canAttack(id,user.getId(),function(result){
+				if(result)
+				{
+					user.attack(id);
+					socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
+				}
+				else
+					socket.emit('error', "Vous ne pouvez attaquer un terrain qui vous appartient !");
+			})
+		});
+	});
 	socket.on('newCrops', function(data){
 		crops = new Plantes();
 		//TODO generate croissance and health

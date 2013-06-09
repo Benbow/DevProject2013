@@ -1,151 +1,157 @@
 var DB = require('./DB');
 var User = require('./User');
+var $ = require('jquery');
 
 var Map = (function() {
-    // "private" variables 
-    var _longeur;
-    var _DB;
-    var _table = "Tiles";
+	// "private" variables 
+	var _longeur;
+	var _DB;
+	var _table = "Tiles";
 
-    // constructor
-    function Map(){
-        _DB = new DB();
-    };
+	// constructor
+	function Map(){
+		_DB = new DB();
+	};
 
-    // add the methods to the prototype so that all of the 
-    // Map instances can access the private static
-    Map.prototype.getL = function() {
-        return _longeur;
-    };
+	// add the methods to the prototype so that all of the 
+	// Map instances can access the private static
+	Map.prototype.getL = function() {
+		return _longeur;
+	};
 
-    Map.prototype.setL = function(L) {
-        _longeur = L;
-    };
+	Map.prototype.setL = function(L) {
+		_longeur = L;
+	};
 
-    Map.prototype.initialiseMap = function() { 
-        var i = 1,j = 1, rh = 0, rf = 0, count = 0;
-        var randhum = Math.floor((Math.random()*100)+1);
-        var randfert = Math.floor((Math.random()*100)+1);
+	Map.prototype.initialiseMap = function() { 
+		var i = 1,j = 1, rh = 0, rf = 0, count = 0;
+		var randhum = Math.floor((Math.random()*100)+1);
+		var randfert = Math.floor((Math.random()*100)+1);
 
-        var mapGeneration = setInterval(function(){
-            var connection = _DB.connection();
-            if(i == 1){
-                if(j == 1){
-                    rh = randhum;
-                    rf = randfert;
-                    nextStep(i, j, rh, rf, function(){
-                        if(j == 50)
-                        {
-                            if(i == 50)
-                            {
-                                console.log('done');
-                                clearInterval(mapGeneration);
-                            }
-                            i++;
-                            j=1;
-                        }else{
-                            j++;
-                        }
-                    });
-                }else{
-                    rh = makeTilesPropertyByLeft(rh);
-                    rf = makeTilesPropertyByLeft(rf);
-                    nextStep(i, j, rh, rf, function(){
-                        if(j == 50)
-                        {
-                            if(i == 50)
-                            {
-                                console.log('done');
-                                   clearInterval(mapGeneration);
-                            }
-                            i++;
-                            j=1;
-                        }else{
-                            j++;
-                        }
-                    });
-                }
-            }else{
-                if(j == 1){
-                    makeTilesPropertyByUp(i, j,function(retour){
-                        rh = retour[0];
-                        rf = retour[1];
-                        nextStep(i, j, rh, rf, function(){
-                            if(j == 50)
-                            {
-                                if(i == 50)
-                                {
-                                    console.log('done');
-                                    clearInterval(mapGeneration);
-                                }
-                                i++;
-                                j=1;
-                            }else{
-                                j++;
-                            }
-                        });
-                    });
-                }else{
-                    makeTilesPropertyByLeftAndUp(i, j, function(retour){
-                        rh = retour[0];
-                        rf = retour[1];
-                        nextStep(i, j, rh, rf, function(){
-                            if(j == 50)
-                            {
-                                if(i == 50)
-                                {
-                                    console.log('done');
-                                    clearInterval(mapGeneration);
-                                }
-                                i++;
-                                j=1;
-                            }else{
-                                j++;
-                            }
-                        });
-                    });
-                    
-                }
-            }
-        },20);
-    };
-
-
-    Map.prototype.saveMap = function(x,y,id) {
-    
-        var connection = _DB.connection();
-        connection.query('UPDATE Tiles SET x=' + x + ' y=' + y + 'sprite_id=' + id + ' ;' , function(err,rows,fields){
-            if(err) throw err;
-        });
-    };
+		var mapGeneration = setInterval(function(){
+			var connection = _DB.connection();
+			if(i == 1){
+				if(j == 1){
+					rh = randhum;
+					rf = randfert;
+					nextStep(i, j, rh, rf, function(){
+						if(j == 50)
+						{
+							if(i == 50)
+							{
+								console.log('done');
+								clearInterval(mapGeneration);
+							}
+							i++;
+							j=1;
+						}else{
+							j++;
+						}
+					});
+				}else{
+					rh = makeTilesPropertyByLeft(rh);
+					rf = makeTilesPropertyByLeft(rf);
+					nextStep(i, j, rh, rf, function(){
+						if(j == 50)
+						{
+							if(i == 50)
+							{
+								console.log('done');
+								   clearInterval(mapGeneration);
+							}
+							i++;
+							j=1;
+						}else{
+							j++;
+						}
+					});
+				}
+			}else{
+				if(j == 1){
+					makeTilesPropertyByUp(i, j,function(retour){
+						rh = retour[0];
+						rf = retour[1];
+						nextStep(i, j, rh, rf, function(){
+							if(j == 50)
+							{
+								if(i == 50)
+								{
+									console.log('done');
+									clearInterval(mapGeneration);
+								}
+								i++;
+								j=1;
+							}else{
+								j++;
+							}
+						});
+					});
+				}else{
+					makeTilesPropertyByLeftAndUp(i, j, function(retour){
+						rh = retour[0];
+						rf = retour[1];
+						nextStep(i, j, rh, rf, function(){
+							if(j == 50)
+							{
+								if(i == 50)
+								{
+									console.log('done');
+									clearInterval(mapGeneration);
+								}
+								i++;
+								j=1;
+							}else{
+								j++;
+							}
+						});
+					});
+					
+				}
+			}
+		},20);
+	};
 
 
-    Map.prototype.getMap = function(user,callback) { 
-        var connection = _DB.connection();
-        var user_id = user.getId();
-        var user_pseudo = user.getPseudo();
-        console.log('User_id getMap : '+user_id);
-        var string_map = {
-            'map' : '',
-            'storage' : {},
+	Map.prototype.saveMap = function(x,y,id) {
+	
+		var connection = _DB.connection();
+		connection.query('UPDATE Tiles SET x=' + x + ' y=' + y + 'sprite_id=' + id + ' ;' , function(err,rows,fields){
+			if(err) throw err;
+		});
+	};
+
+
+	Map.prototype.getMap = function(user,callback) { 
+		var connection = _DB.connection();
+		var user_id = user.getId();
+		var user_pseudo = user.getPseudo();
+		console.log('User_id getMap : '+user_id);
+		var string_map = {
+			'map' : '',
+			'storage' : {},
             'crops' : {},
-            'user' : {},
-            'all_user' : {}
-        };
-        connection.query('SELECT * FROM Tiles', function(err,rows,fields){
-            if(err) throw err;
-            var check = 0;
-            for(var i = 0;i < rows.length;i++)
-            {
-                string_map.map += rows[i].sprite_id + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
-                if(check == 49)
-                {
-                    check = -1;
-                }
-               check++;
-            }
-        });
+			'user' : {},
+			'all_user' : {}
+		};
+		connection.query('SELECT * FROM Tiles ORDER BY `Tiles`.`y` ASC', function(err,rows,fields){
+			if(err) throw err;
+			var check = 0;
+			for(var i = 0;i < rows.length;i++)
+			{
+				if(user_id == rows[i].owner)
+					string_map.map += 2 + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+				else if(user_id != rows[i].owner && rows[i].owner != null)
+					string_map.map += 3 + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+				else
+					string_map.map += rows[i].sprite_id + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
 
+				if(check == 49)
+				{
+					check = -1;
+				}
+			   check++;
+			}
+		});
         connection.query('SELECT t.x as x, t.y as y, s.stockages_spec_id as id FROM Stockages as s LEFT JOIN Tiles as t ON s.tile_id = t.id', function(err,rows,fields){
             if(err) throw err;
             for(var i = 0;i < rows.length;i++)

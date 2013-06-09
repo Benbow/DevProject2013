@@ -89,6 +89,8 @@ var User = (function() {
         connection.query('UPDATE Tiles SET user_id = ' + this._id + ' WHERE x = ' + x + ' AND y = ' + y, function(err,rows,fields){
             if(err) throw err;
         });
+
+        console.log('test move');
     };
 
     User.prototype.connected = function(){
@@ -119,6 +121,13 @@ var User = (function() {
     User.prototype.disconnect = function(){
         var connection = _DB.connection();
         connection.query('UPDATE Users_Connected SET isConnected = 0 WHERE user_id = '+this._id, function(err,rows,fields){
+            if(err) throw err;
+        });
+    };
+
+    User.prototype.attack = function(tile_id){
+        var connection = _DB.connection();
+        connection.query('UPDATE Tiles SET owner = '+ this._id +' WHERE id = '+ tile_id, function(err,rows,fields){
             if(err) throw err;
         });
     };

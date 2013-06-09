@@ -3,9 +3,11 @@
 	var socket = io.connect('http://localhost:1337');
 	var ppmap;
 	var map = false;
+	var tileSelect = new Array();
 	var User = {
 		isPlanting : false,
 		isBuilding : false,
+		isAttacking : false,
 		isWatering : false,
 		isFertilizing : false
 	};
@@ -203,11 +205,8 @@
 	});
 
 	var mouseClick = function(x, y) {
-		socket.emit('userMove', {
-			x: x,
-			y: y
-		});
-		if(User.isPlanting == true)
+
+		if(User.isPlanting)
 		{
 			ppmap.addObject(x, y, 'images/'+Plantes.name + '.png', 0, 0);
 			ppmap.changeOneMap(x,y,Plantes.sprite[Plantes.name].sprite_id);
@@ -217,13 +216,20 @@
 				id: Plantes.sprite[Plantes.name].id
 			});
 		}
-		else if(User.isBuilding == true)
+		else if(User.isBuilding)
 		{
 			ppmap.addBuilding(x, y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
 			socket.emit('newstorage', {
 				x: x,
 				y: y,
 				id: Batiment.sprite[Batiment.name].id
+			});
+		}
+		else if(User.isAttacking)
+		{
+			socket.emit('userAttack', {
+				x: x,
+				y: y
 			});
 		}
 		else if(User.isWatering == true){
@@ -238,15 +244,39 @@
 				y: y
 			});
 		}
+		socket.emit('userMove', {
+			x: x,
+			y: y
+		});
 	};
 
 
 	$(".button_menu").click(function(){
 		var type = $(this).attr('id').substr(12,$(this).attr('id').length);
-		$('.menu_select_options').css('display','none');
-		$("#menu_select_"+type+"_type").toggle('fast');
+		if(type == "plantes" || type == 'batiments')
+		{
+			$('.menu_select_options').css('display','none');
+			$("#menu_select_"+type+"_type").toggle('fast');
+		}
 	});
 
+	$("#menu_select_conquerir").click(function(){
+		if(User.isAttacking)
+		{
+			User.isAttacking = false;
+			$(this).val('Conquerir terrain');
+			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
+		}
+		else
+		{
+			User.isAttacking = true;
+			User.isPlanting = false;
+			User.isBuilding = false;
+			$(this).val('Arreter d\'attaquer');
+			ppmap.changeCursor('images/attackTile.png','images/emptyTile.png',0,0);
+		}
+		
+	});
 	$("#menu_arrosage_plantes").click(function(){
 		User.isBuilding = false;
 		User.isPlanting = false;
@@ -270,6 +300,7 @@
 	$(".button_menu_plantes").click(function(){
 		User.isPlanting = true;
 		User.isBuilding = false;
+		User.isAttacking = false;
 		User.isWatering = false;
 		User.isFertilizing = false;
 		var type = $(this).attr('id').substr(20,$(this).attr('id').length);
@@ -280,6 +311,7 @@
 	$(".button_menu_batiments").click(function(){
 		User.isBuilding = true;
 		User.isPlanting = false;
+		User.isAttacking = false;
 		User.isWatering = false;
 		User.isFertilizing = false;
 		var type = $(this).attr('id').substr(22,$(this).attr('id').length);
@@ -296,6 +328,14 @@
 		$(this).parent().toggle('fast');
 	});
 
-	
+	var count = 0;
+	$("#s_1_1").hover(
+		function () {
+			alert('plop');
+		},
+		function (){
+
+		}
+	);
 
 })(jQuery);
