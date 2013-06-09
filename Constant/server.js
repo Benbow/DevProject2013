@@ -27,6 +27,11 @@ var Tiles = require("./js/class/Tiles");
 var map = new Map();
 //map.initialiseMap();
 
+//Timer
+var date = new Date();
+var current_hour = date.getHours();
+console.log(date + " lol " +current_hour)
+
 //Creation du serveur http.
 var server = http.createServer(function (req, res) { }).listen(1337);
 

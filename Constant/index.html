@@ -3,18 +3,7 @@
 		<title>Farm Warfare</title>
 		<link rel="stylesheet" type="text/css" href="css/global.css">
 		<link rel="stylesheet" type="text/css" href="css/pp3diso.css">
-		
-		<script type="text/javascript">
-		
-   			function confirmPass() {
-	        var pass = document.getElementById("newPassword").value;
-	        var confPass = document.getElementById("confirmNewPassword").value;
-	        alert(pass + confPass);
-	        if(pass != confPass) {
-	            alert('Wrong confirm password !');
-	        }
-	    }
-	</script>
+	
 
 	</head>
 	<body>
@@ -28,13 +17,22 @@
 				</form>	
 			</div>
 
+			<script language="javascript"> 
+				function checkPassword() { 
+				    if (document.pwForm.newPassword.value != document.pwForm.confirmNewPassword.value) { 
+				        alert ('The passwords do not match!');
+				        return false; 
+				    } 
+				} 
+				</script>
+
 			<div id="div_register">
-					<form action="" id="registerform">
-						<input type="email" value="" id="newMail" name="mail" >
-						<input type="text" value="" id="newPseudo" name="pseudo" >						
+					<form action="" id="registerform" method="post" name="pwForm">
+						<input type="text" value="" id="newMail" name="mail" />
+						<input type="text" value="" id="newPseudo" name="pseudo" />						
 						<input type="password" value="" id="newPassword" name="newpassword">	
 						<input type="password" value="" id="confirmNewPassword" name="confirmnewpassword"/>						
-						<input type="submit" value="" id="submitRegister" onblur="confirmPass()"/>
+						<input type="submit" value="" id="submitRegister" onClick="return checkPassword();"/>
 				</form>	
 			</div>
 			
