@@ -267,16 +267,30 @@
 			});
 		}
 		else if(User.isWatering == true){
-			socket.emit('watering', {
-				x: x,
-				y: y
+			var testTile = true;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = false;
 			});
+			if(testTile){
+				socket.emit('watering', {
+					x: x,
+					y: y
+				});
+			}
 		}
 		else if(User.isFertilizing == true){
-			socket.emit('fertilizing', {
-				x: x,
-				y: y
+			var testTile = true;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = false;
 			});
+			if(testTile){
+				socket.emit('fertilizing', {
+					x: x,
+					y: y
+				});
+			}
 		}
 		socket.emit('userMove', {
 			x: x,

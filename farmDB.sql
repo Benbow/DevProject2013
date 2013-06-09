@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS `Arrosoirs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `arrosoirs_spec_id` int(11) DEFAULT NULL,
+  `isActive` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `arrosoirs_to_user_idx` (`user_id`),
   KEY `arrosoirs_to_spec_idx` (`arrosoirs_spec_id`)
