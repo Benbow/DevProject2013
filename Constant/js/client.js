@@ -203,7 +203,7 @@
 	    		Plantes.name = 'mais';
 	    
 		    //ppmap.addObject(value.x, value.y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
-		    ppmpap.changeOneMap(value.x, value.y, Plantes.sprite[Plantes.name].sprite_id)
+		    ppmap.changeOneMap(value.x, value.y, Plantes.sprite[Plantes.name].sprite_id)
 		});
 
 		//Mise en place des batiments quand tu load la map.

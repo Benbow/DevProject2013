@@ -92,16 +92,24 @@ var Tiles = (function() {
                         
                         if( typeof( ro[0]) == "undefined"){
                             query = 'INSERT INTO Fruits (nb,user_id,fruits_spec_id) VALUES("' + nb_fruits + '","' + user_id + '","' + row[0].graines_spec_id + '");';
-                            connection.query(query,function(err, ro, fields) {
+                            connection.query(query,function(err, r, fields) {
                                 if (err) throw err;
-                                callback(true);
+                                query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
+                                connection.query(query,function(err, r, fields) {
+                                    if (err) throw err;
+                                    callback(true);
+                                });
                             });
                         }else{
                             var nb = ro[0].nb + nb_fruits;
                             query = 'UPDATE Fruits SET nb = '+nb+' WHERE id ='+user_id+' AND fruits_spec_id = '+row[0].graines_spec_id+';';
-                            connection.query(query,function(err, ro, fields) {
+                            connection.query(query,function(err, r, fields) {
                                 if (err) throw err;
-                                callback(true);
+                                query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
+                                connection.query(query,function(err, r, fields) {
+                                    if (err) throw err;
+                                    callback(true);
+                                });
                             });
                         }
                     });           
