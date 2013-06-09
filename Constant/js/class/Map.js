@@ -24,6 +24,7 @@ var Map = (function() {
 	};
 
 	Map.prototype.initialiseMap = function() { 
+        console.log("lol");
 		var i = 1,j = 1, rh = 0, rf = 0, count = 0;
 		var randhum = Math.floor((Math.random()*100)+1);
 		var randfert = Math.floor((Math.random()*100)+1);
