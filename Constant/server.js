@@ -134,7 +134,7 @@ io.sockets.on('connection', function(socket){
 				if(cb){
 					socket.emit('valid', 'Watering Succesfull!!');
 				}else{
-					socket.emit('error', 'Watering only Crops!');
+					socket.emit('error', 'Not enough Water !');
 				}
 			});
 		});
@@ -148,10 +148,18 @@ io.sockets.on('connection', function(socket){
 				if(cb){
 					socket.emit('valid', 'Fertilizing Succesfull!!');
 				}else{
-					socket.emit('error', 'Fertilizing only Crops!');
+					socket.emit('error', 'Not enough Fertilizer !');
 				}
 			});
 		});
+	});
+
+	socket.on('error', function(msg){
+		socket.emit('error', msg);
+	});
+
+	socket.on('valid', function(msg){
+		socket.emit('valid', msg);
 	});
 
 	socket.on('disconnect', function(socket){

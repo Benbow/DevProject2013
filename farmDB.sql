@@ -90,6 +90,7 @@ CREATE TABLE IF NOT EXISTS `Arrosoirs` (
   `user_id` int(11) DEFAULT NULL,
   `arrosoirs_spec_id` int(11) DEFAULT NULL,
   `isActive` int(11) DEFAULT NULL,
+  `current` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `arrosoirs_to_user_idx` (`user_id`),
   KEY `arrosoirs_to_spec_idx` (`arrosoirs_spec_id`)

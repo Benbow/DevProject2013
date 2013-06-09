@@ -24,10 +24,10 @@ var Tiles = (function() {
     };
 
     Tiles.prototype.Watering = function(tile_id, user_id, callback){
-        var query = 'SELECT * FROM Plantes where tile_id ='+tile_id+';';
+        var query = 'SELECT * FROM Arrosoirs WHERE user_id ='+user_id+' AND isActive = 1;';
         connection.query(query,function(err, row, fields) {
             if (err) throw err;
-            if( typeof( row[0] ) != "undefined" ){
+            if( typeof( row[0].current ) != "undefined" && row[0].current != 0){
                 query = 'SELECT * FROM Tiles where id ='+tile_id+';';
                 connection.query(query,function(err, rows, fields) {
                     if (err) throw err;
@@ -35,37 +35,43 @@ var Tiles = (function() {
                     query = 'UPDATE Tiles SET humidite = '+h+' WHERE id ='+tile_id+';';
                     connection.query(query,function(err, rows, fields) {
                         if (err) throw err;
-                        console.log('success watering');
-                        callback(true);
+                        var c = row[0].current - 1;
+                        query = 'UPDATE Arrosoirs SET current = '+c+' WHERE user_id ='+user_id+' AND isActive = 1;';
+                        connection.query(query,function(err, rows, fields) {
+                            if (err) throw err;
+                            callback(true);
+                        });
                     });
                 });
             }else{
                 callback(false);
             }
-            
         }); 
     };
 
     Tiles.prototype.Fertilizing = function(tile_id, user_id, callback){
-        var query = 'SELECT * FROM Plantes where tile_id ='+tile_id+';';
+        var query = 'SELECT * FROM Users where id ='+user_id+';';
         connection.query(query,function(err, row, fields) {
             if (err) throw err;
-            if( typeof( row[0] ) != "undefined" ){
+            if( typeof( row[0].nb_fertilisants ) != "undefined" && row[0].nb_fertilisants != 0){
                 query = 'SELECT * FROM Tiles where id ='+tile_id+';';
                 connection.query(query,function(err, rows, fields) {
                     if (err) throw err;
-                    var h = rows[0].fertilite +10;
-                    query = 'UPDATE Tiles SET fertilite = '+h+' WHERE id ='+tile_id+';';
+                    var f = rows[0].fertilite +10;
+                    query = 'UPDATE Tiles SET fertilite = '+f+' WHERE id ='+tile_id+';';
                     connection.query(query,function(err, rows, fields) {
                         if (err) throw err;
-                        console.log('success Fertilizing');
-                        callback(true);
+                        var nb = row[0].nb_fertilisants - 1;
+                        query = 'UPDATE Users SET nb_fertilisants = '+nb+' WHERE id ='+user_id+';';
+                        connection.query(query,function(err, rows, fields) {
+                            if (err) throw err;
+                            callback(true);
+                        });
                     });
                 });
             }else{
                 callback(false);
             }
-            
         }); 
     };
 
