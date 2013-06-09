@@ -25,7 +25,7 @@ var connection = bdd.connection();
 //Timer
 var date = new Date();
 var current_hour = date.getHours();
-console.log(date + " lol " +current_hour)
+console.log(date + " heure: " +current_hour)
 
 //Creation du serveur http.
 var server = http.createServer(function (req, res) { }).listen(1337);
