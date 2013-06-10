@@ -181,6 +181,9 @@
 	        pathfinding: true,		// chemin auto pour le deplacement de l'avatar
 	        onmoveavatar:function(x, y, mapid) {
 	            mouseClick(x, y);// Fonction que l'on fait quand on clique pour bouger le perso
+	        },
+	        onclicbuilding:function(x, y, mapid){
+	        	buildingProps(x, y);
 	        }
 	    });
 
@@ -385,6 +388,22 @@
 		});
 	};
 
+	var buildingProps = function(x, y){
+		var testTile = true;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = false;
+			});
+			if(testTile){
+				socket.emit('showBuildingProps', {
+					x: x,
+					y: y
+				});
+			}else{
+
+			}
+	};
+
 	socket.on('destroyCrops', function(data){
 		ppmap.changeOneMap(data.x, data.y, '2');
 	});
@@ -405,7 +424,6 @@
 	});
 
 	socket.on('chooseStorage', function(data){
-
 		var nb = data.data.nb;
 		var text = '';
 		var name;
@@ -423,6 +441,39 @@
 		console.log(text);
 		$("#chooseStorage").css('display','block');
 		$("#storageList").html(text);
+	});
+
+	socket.on('DisplayBuildingProps', function(data){
+		var text = "Name : "+data.stockages_spec.name+" "+data.stockages.id+"</br>";
+		text += "Free Space : "+data.stockages.stockage_state;
+		$("#buildingInfos").html(text);
+		text = '';
+		$.each(data.fruits, function(index, fruits) {
+			text += '<div class ="fruit_property" id="fruit_'+fruits.id+'">';
+			var fruit_spec_id = fruits.fruits_spec_id;
+			var fruit_sp;
+			console.log(fruit_spec_id);
+			$.each(data.fruits_spec, function(index, fruits_spec) {
+				if(fruits_spec.id == fruit_spec_id){
+					fruit_sp = fruits_spec;
+					console.log(fruit_sp);
+					return false;
+				}
+			});
+			text += '<span class="fruit_name"> Name : '+fruit_sp.name+' '+fruits.id+'</span></br>';
+			text += '<span class="fruit_sante"> Health : '+fruits.pourrissement_state+'</span></br>';
+			var percentage = Math.ceil((fruits.pourrissement_state * 100)/fruit_sp.stockage_time);
+			text += '<span class="fruit_per_sante"> Percentage Health : '+percentage+'%</span></br>';
+			text += '<span class="fruit_prix"> Prix : '+fruit_sp.prix_vente+'</span></br>';
+			if(fruits.pourrissement_state > 0){
+				text += '<input id="sell_fruit" class="'+fruits.id+'" type="button" value="Vendre ce fruit"/>';
+			}
+			text += '<input id="drop_fruit" class="'+fruits.id+'" type="button" value="Jeter ce fruit"/>';
+			text += '</div>'
+		});
+		$("#fruitsList").html(text);
+		$("#buildingProps").css('display', 'block');
+
 	});
 
 

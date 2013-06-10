@@ -58,6 +58,49 @@ var Stockages = (function() {
         });
     };
 
+    Stockages.prototype.GetInfos = function(user_id, tile_id, callback){
+        var connection = _DB.connection();
+        var query = 'SELECT * FROM Stockages WHERE tile_id='+tile_id+';';
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            if(typeof(rows[0]) != 'undefined'){
+                if (err) throw err;     
+                query = 'SELECT * FROM Stockages_spec WHERE id='+rows[0].stockages_spec_id+';';
+                connection.query(query,function(err, row, fields) {
+                    if (err) throw err;
+                    if(typeof(row[0]) != 'undefined'){
+                        query = 'SELECT * FROM Fruits WHERE stockage_id ='+rows[0].id+';';
+                        connection.query(query,function(err, ro, fields) {
+                             if (err) throw err;
+                             if(typeof(ro[0]) != 'undefined'){
+                                query = 'SELECT * FROM Fruits_spec;';
+                                connection.query(query,function(err, r, fields) {
+                                    if (err) throw err;
+                                    if(typeof(r[0]) != 'undefined'){
+                                        callback({
+                                            stockages : rows[0],
+                                            stockages_spec : row[0],
+                                            fruits : ro,
+                                            fruits_spec : r
+                                        });
+                                    }else{
+                                        callback(false);
+                                    }
+                                });
+                             }else{ 
+                                callback(false);
+                             }
+                        });
+                    }else{
+                        callback(false);
+                    }
+                });
+            }else{
+                callback(false);
+            }
+        });
+    };
+
     
     //Getters
     Stockages.prototype.getId = function() {

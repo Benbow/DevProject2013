@@ -276,7 +276,7 @@ io.sockets.on('connection', function(socket){
 						x: data.x,
 						y: data.y
 					});
-					socket.emit('valid', 'Crops Suceesfully destroyed');
+					socket.emit('valid', 'Crops Succesfully destroyed');
 				}else{
 					socket.emit('error', 'Not a Crop !');
 				}
@@ -295,7 +295,25 @@ io.sockets.on('connection', function(socket){
 						x: data.x,
 						y: data.y
 					});
-					socket.emit('valid', 'Building Suceesfully destroyed');
+					socket.emit('valid', 'Building Succesfully destroyed');
+				}else{
+					socket.emit('error', 'Not a Building !');
+				}
+			});
+		});
+	});
+
+	socket.on('showBuildingProps', function(data){
+		stockages = new Stockages();
+		map.getIdTile(data.x,data.y,function(id){
+			stockages.GetInfos(user.getId(), id, function(cb){
+				if(cb){
+					socket.emit('DisplayBuildingProps', {
+						stockages : cb.stockages,
+                        stockages_spec : cb.stockages_spec,
+                        fruits : cb.fruits,
+                        fruits_spec : cb.fruits_spec
+					});
 				}else{
 					socket.emit('error', 'Not a Building !');
 				}
