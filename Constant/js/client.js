@@ -163,7 +163,7 @@
 		loadmap(map);
 		User.own_tile = map.own_tile;
 		User.enemi_tile = map.enemi_tile;
-		User.allies = map.allies;
+		console.log(User);
 	});
 
 	var loadmap = function(map) {
@@ -184,6 +184,7 @@
 
 		//Mise en place des batiments quand tu load la map.
 	    $.each(map.storage, function(index, value) {
+	    	console.log(value.id);
 	    	if(value.id == 1)
 	    		Batiment.name = 'silo';
 	    	else if (value.id == 2)
@@ -233,6 +234,7 @@
 
 	var mouseClick = function(x, y) {
 
+		console.log(User.isHarvesting);
 		if(User.isPlanting)
 		{
 			var testTile = false;
@@ -276,6 +278,8 @@
 		}
 		else if(User.isAttacking)
 		{
+			//if (own_tile.y-1 || own_tile.y+1 || own_tile.x+1 || own_tile.x-1){
+			ppmap.changeOneMap(x, y, '2');
 			socket.emit('userAttack', {
 				x: x,
 				y: y
@@ -379,6 +383,7 @@
 			}
 			text += '<option value="'+value.id+'">'+name+' '+value.id+' ('+value.stockage_state+')'+'</option>';
 		});
+		console.log(text);
 		$("#chooseStorage").css('display','block');
 		$("#storageList").html(text);
 	});
@@ -467,6 +472,7 @@
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
+			console.log('test');
 			User.isBuilding = false;
 			User.isPlanting = false;
 			User.isWatering = false;
