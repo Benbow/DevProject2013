@@ -41,11 +41,11 @@
 		sprite : {
 			tomates : {
 				id : 1,
-				sprite_id : 50
+				sprite_id : 10
 			},
 			mais : {
 				id : 2,
-				sprite_id : 60
+				sprite_id : 20
 			}
 		}
 	}
@@ -102,19 +102,11 @@
 	*	Gestion des erreurs en popup.
 	*/
 	socket.on('error', function(error){
-		$("#error").html(error);
-		$("#error").fadeIn('slow');
-		var t = setTimeout(function(){
-			$("#error").fadeOut('slow');
-		}, 3000);
+		sendError(error);
 	});
 
 	socket.on('valid', function(valid){
-		$("#valid").html(valid);
-		$("#valid").fadeIn('slow');
-		setTimeout(function(){
-			$("#valid").fadeOut('slow');
-		}, 3000);
+		sendValid(valid);
 	});
 
 	
@@ -195,17 +187,6 @@
 		    ppmap.addBuilding(value.x, value.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
 		});
 
-		//Mise en place des crops quand tu load la map.
-	    $.each(map.crops, function(index, value) {
-	    	console.log(value.id);
-	    	if(value.id == 1)
-	    		Plantes.name = 'tomates';
-	    	else if (value.id == 2)
-	    		Plantes.name = 'mais';
-	    
-		    ppmap.addObject(value.x, value.y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
-		});
-
 		//Mise en place des batiments quand tu load la map.
 	    $.each(map.all_user, function(index, value) {
 		    ppmap.addObject(value.x, value.y, 'images/avatar.png', 0, 0, value.pseudo, value.pseudo, 'char_'+value.id);
@@ -227,6 +208,14 @@
 		ppmap.killObject('char_'+data.id);
 	});
 
+	socket.on('newTileSprite', function(data){
+		ppmap.changeOneMap(data.x,data.y,data.sprite_id);
+	});
+
+	// socket.on('newTileAttack', function(data){
+	// 	ppmap.changeOneMap(data.x,data.y,data.sprite_id);
+	// });
+
 	var mouseClick = function(x, y) {
 
 		if(User.isPlanting)
@@ -238,7 +227,8 @@
 			});
 			if(testTile)
 			{
-				ppmap.addObject(x, y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
+				//ppmap.addObject(x, y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
+				ppmap.changeOneMap(x, y, Plantes.sprite[Plantes.name].sprite_id)
 				socket.emit('newCrops', {
 					x: x,
 					y: y,
@@ -251,10 +241,10 @@
 		}
 		else if(User.isBuilding)
 		{
-			var testTile = true;
+			var testTile = false;
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
-					testTile = false;
+					testTile = true;
 			});
 			if(testTile)
 			{
@@ -288,7 +278,7 @@
 					y: y
 				});
 			}else{
-				socket.emit('error', 'Watering only your tiles');
+				sendError('Watering only your tiles');
 			}
 		}
 		else if(User.isFertilizing == true){
@@ -303,7 +293,22 @@
 					y: y
 				});
 			}else{
-				socket.emit('error', 'Fertilizing only your tiles');
+				sendError('Fertilizing only your tiles');
+			}
+		}
+		else if(User.isHarvesting == true){
+			var testTile = false;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = true;
+			});
+			if(testTile){
+				socket.emit('harvesting', {
+					x: x,
+					y: y
+				});
+			}else{
+				sendError('Fertilizing only your tiles');
 			}
 		}
 		socket.emit('userMove', {
@@ -311,6 +316,38 @@
 			y: y
 		});
 	};
+
+	socket.on('destroyCrops', function(data){
+		ppmap.changeOneMap(data.x, data.y, '2');
+	});
+
+	socket.on('instantSell', function(data){
+		$("#instantSell").css('display','block');
+		$("#nbFruits").text(data.nb);
+		$("#nameFruits").text(data.nom);
+		$("#prixFruits").text(data.prix);
+	});
+
+	socket.on('chooseStorage', function(data){
+
+		var nb = data.data.nb;
+		var text = '';
+		var name;
+		$.each(data.stockages, function(index, value) {
+
+			if(value.stockages_spec_id == 1){
+				name = 'Silo';
+			}else if (value.stockages_spec_id == 2){
+				name = 'Grange';
+			}else if (value.stockages_spec_id == 3){
+				name = 'Chambre Froide';
+			}
+			text += '<option value="stock_'+value.id+'">'+name+' '+value.id+' ('+value.stockage_state+')'+'</option>';
+		});
+		console.log(text);
+		$("#chooseStorage").css('display','block');
+		$("#storageList").html(text);
+	});
 
 
 	$(".button_menu").click(function(){
@@ -374,6 +411,7 @@
 			User.isPlanting = false;
 			User.isWatering = true;
 			User.isFertilizing = false;
+			User.isHarvesting = false;
 			$(this).val('Arreter d\'arroser');
 			ppmap.changeCursor('images/arrosoir.jpg','images/cursor-off.png',64,0);
 		}
@@ -387,10 +425,12 @@
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
+			console.log('test');
 			User.isBuilding = false;
 			User.isPlanting = false;
 			User.isWatering = false;
 			User.isFertilizing = true;
+			User.isHarvesting = false;
 			$(this).val('Arreter de fertiliser');
 			ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',64,0);
 		}
@@ -400,17 +440,18 @@
 	$("#menu_recolte_plantes").click(function(){
 
 		if(User.isHarvesting){
-			User.isFertilizing = false;
-			$(this).val('Fertiliser une plante');
+			User.isHarvesting = false;
+			$(this).val('Récolter une plante');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
 			User.isBuilding = false;
 			User.isPlanting = false;
 			User.isWatering = false;
-			User.isFertilizing = true;
-			$(this).val('Arreter de fertiliser');
-			ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',64,0);
+			User.isFertilizing = false;
+			User.isHarvesting = true;
+			$(this).val('Arreter de Récolter');
+			ppmap.changeCursor('images/harvesting.png','images/cursor-off.png',64,0);
 		}
 
 	});
@@ -421,6 +462,7 @@
 		User.isAttacking = false;
 		User.isWatering = false;
 		User.isFertilizing = false;
+		User.isHarvesting = false;
 		var type = $(this).attr('id').substr(20,$(this).attr('id').length);
 		Plantes.name = type;
 		ppmap.changeCursor('images/5.png','images/cursor-off.png',0,0);
@@ -432,6 +474,7 @@
 		User.isAttacking = false;
 		User.isWatering = false;
 		User.isFertilizing = false;
+		User.isHarvesting = false;
 		var type = $(this).attr('id').substr(22,$(this).attr('id').length);
 		Batiment.name = type;
 		ppmap.changeCursor('images/'+type+'.png','images/cursor-off.png',Batiment.sprite[Batiment.name].decX,Batiment.sprite[Batiment.name].decY);
@@ -440,10 +483,52 @@
 	$(".end_menu_build").click(function(){
 		User.isBuilding = false;
 		User.isPlanting = false;
+		User.isAttacking = false;
 		User.isWatering = false;
 		User.isFertilizing = false;
+		User.isHarvesting = false;
 		ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		$(this).parent().toggle('fast');
 	});
+
+	$("#Sell").click(function(){
+		var name = $("#nameFruits").text();
+		var n = $("#nbFruits").text();
+		var p = $("#prixFruits").text();
+		$("#instantSell").css('display','none');
+		socket.emit('instantSellConfirm', {
+			nom : name,
+			nb : parseInt(n),
+			prix : parseInt(p)
+		});
+	});
+
+	$("#Stack").click(function(){
+		var name = $("#nameFruits").text();
+		var n = $("#nbFruits").text();
+		var p = $("#prixFruits").text();
+		$("#instantSell").css('display','none');
+		socket.emit('instantSellStack', {
+			nom : name,
+			nb : parseInt(n),
+			prix : parseInt(p)
+		});
+	});
+
+	sendError = function(error){
+		$("#error").html(error);
+		$("#error").fadeIn('slow');
+		var t = setTimeout(function(){
+			$("#error").fadeOut('slow');
+		}, 3000);
+	};
+
+	sendValid = function(valid){
+		$("#valid").html(valid);
+		$("#valid").fadeIn('slow');
+		var t = setTimeout(function(){
+			$("#valid").fadeOut('slow');
+		}, 3000);
+	};
 
 })(jQuery);
