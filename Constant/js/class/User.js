@@ -107,8 +107,6 @@ var User = (function() {
         connection.query('UPDATE Tiles SET user_id = ' + this._id + ' WHERE x = ' + x + ' AND y = ' + y, function(err,rows,fields){
             if(err) throw err;
         });
-
-        console.log('test move');
     };
 
     User.prototype.connected = function(){
@@ -143,10 +141,18 @@ var User = (function() {
         });
     };
 
-    User.prototype.attack = function(tile_id){
+    User.prototype.conquet = function(tile_id){
         var connection = _DB.connection();
         connection.query('UPDATE Tiles SET owner = '+ this._id +' WHERE id = '+ tile_id, function(err,rows,fields){
             if(err) throw err;
+        });
+    };
+
+    User.prototype.getTimerConquet = function(callback){
+        var connection = _DB.connection();
+        connection.query('SELECT uspec.conquete_timer as conquete_timer FROM Users_level_spec as uspec LEFT JOIN Users as u ON u.experience = uspec.id', function(err,rows,fields){
+            if(err) throw err;
+            callback(rows[0].conquete_timer);
         });
     };
 

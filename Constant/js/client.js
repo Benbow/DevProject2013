@@ -12,7 +12,8 @@
 		isFertilizing : false,
 		isHarvesting : false,
 		own_tile : {},
-		enemi_tile : {}
+		enemi_tile : {},
+		allies : {}
 	};
 	var Batiment = {
 		name : '',
@@ -162,7 +163,7 @@
 		loadmap(map);
 		User.own_tile = map.own_tile;
 		User.enemi_tile = map.enemi_tile;
-		console.log(User);
+		User.allies = map.allies;
 	});
 
 	var loadmap = function(map) {
@@ -218,6 +219,14 @@
 		ppmap.changeOneMap(data.x,data.y,data.sprite_id);
 	});
 
+	socket.on('newTileConquer', function(data){
+		console.log(User.allies);
+		if(($.inArray(data.user_id, User.allies)) < 0)
+			ppmap.changeOneMap(data.x,data.y,2);
+		else
+			ppmap.changeOneMap(data.x,data.y,3);
+	});
+
 	// socket.on('newTileAttack', function(data){
 	// 	ppmap.changeOneMap(data.x,data.y,data.sprite_id);
 	// });
@@ -271,6 +280,25 @@
 				x: x,
 				y: y
 			});
+		}
+		else if(User.isConquering)
+		{
+			var testTile = true;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = false;
+			});
+			if(testTile)
+			{
+				tileSelect.push({
+					'x': x,
+					'y': y
+				});
+			}
+			else
+				sendError('Tu ne peux pas conquerir un terrain qui t\'appartient.');
+
+			console.log(tileSelect);
 		}
 		else if(User.isWatering == true){
 			var testTile = false;
@@ -369,6 +397,14 @@
 		if(User.isConquering)
 		{
 			User.isConquering = false;
+			$.each(tileSelect,function(index,val){
+				socket.emit('newTileSelectConquet',{
+					'x': val.x,
+					'y': val.y
+				});
+			});
+
+			socket.emit('userConquer',true);
 			$(this).val('Conquerir terrain');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
@@ -381,7 +417,7 @@
 			User.isFertilizing = false;
 			User.isHarvesting = false;
 			User.isAttacking = false;
-			$(this).val('Arreter de conquerir');
+			$(this).val('Attaquer les terrains selectionnes');
 			ppmap.changeCursor('images/attackTile.png','images/emptyTile.png',0,0);
 		}
 		

@@ -126,7 +126,6 @@ var Map = (function() {
 		var connection = _DB.connection();
 		var user_id = user.getId();
 		var user_pseudo = user.getPseudo();
-		console.log('User_id getMap : '+user_id);
 		var string_map = {
 			'map' : '',
 			'storage' : {},
@@ -134,7 +133,8 @@ var Map = (function() {
 			'user' : {},
 			'all_user' : {},
 			'enemi_tile' : {},
-			'own_tile' : {}
+			'own_tile' : {},
+            'allies' : {}
 		};
 		connection.query('SELECT * FROM Tiles ORDER BY `Tiles`.`y` ASC', function(err,rows,fields){
 			if(err) throw err;
@@ -178,6 +178,19 @@ var Map = (function() {
                     'id': rows[i].id
                 };
             }
+        });
+        
+        connection.query('SELECT alliance_id FROM Users WHERE id = '+user_id, function(err,rows,fields){
+            if(err) throw err;
+            if(rows[0].alliance_id != null && rows[0].alliance_id > 0)
+                connection.query('SELECT id FORM Users WHERE alliance_id = '+rows[0].alliance_id, function(err,rows,fields){
+                    for(var i = 0;i < rows.length;i++)
+                    {
+                        string_map.allies[id] = rows[i].id
+                    }
+                });
+            else
+                string_map.allies[user_id] = user_id;
         });
 
         this.getUserTile(user_id,function(data){
@@ -252,7 +265,7 @@ var Map = (function() {
 
     
 
-	Map.prototype.canAttack = function(tile_id, user_id, callback)
+	Map.prototype.canConquer = function(tile_id, user_id, callback)
 	{
 		var connection = _DB.connection();
 

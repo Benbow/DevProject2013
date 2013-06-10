@@ -27,7 +27,9 @@ var connection = bdd.connection();
 //Timer
 var date = new Date();
 var current_hour = date.getHours();
-console.log(date + " heure: " +current_hour)
+
+
+var saveTiles = new Array();
 
 //Creation du serveur http.
 var server = http.createServer(function (req, res) { }).listen(1337);
@@ -44,27 +46,27 @@ io.sockets.on('connection', function(socket){
 		//On va chercher en bdd si le mail existe.
 		user.loginUser(datalogin.mail,datalogin.password,function(socket_user){
 			if(socket_user[1] != null) // true si le mail existe
-			{
+            {
 				if(socket_user[2] == datalogin.password)// On check le password
 				{
 					user.setPseudo(socket_user[0]);
 					user.setId(socket_user[3]);
 					user.connected();
 					socket.emit('valid', 'Connected !');
-					socket.emit('connected', {
-						'pseudo': user.getPseudo()
-					});
-					if(socket_user[4]){
-						if(socket_user[4] == 2){
-							socket.emit('isAdmin');
-						}
-					}
+                    socket.emit('connected', {
+                    	'pseudo': user.getPseudo()
+                    });
+                    if(socket_user[4]){
+                    	if(socket_user[4] == 2){
+                    		socket.emit('isAdmin');
+                    	}
+                    }
 				}
 				else
-					socket.emit('error', 'Wrong password !');
-			}
-			else
-				socket.emit('error', 'Bad mail !');
+                    socket.emit('error', 'Wrong password !');
+            }
+            else
+                socket.emit('error', 'Bad mail !');
 		});
 	});
 		
@@ -113,24 +115,36 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
-	socket.on('userAttack',function(data){
-		map.getIdTile(data.x,data.y,function(id){
-			map.canAttack(id,user.getId(),function(result){
-				if(result)
-				{
-					user.attack(id);
-					newOptions = {
-						'type': 'attack',
-						'user_id': user.getId()
-					};
-					updateTile(data.x, data.y, newOptions);
-					socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
-				}
-				else
-					socket.emit('error', "Vous ne pouvez attaquer un terrain qui vous appartient !");
-			})
+	socket.on('newTileSelectConquet',function(value){
+		map.getIdTile(value.x,value.y,function(id){
+			saveTiles.push({
+				'x': value.x,
+				'y': value.y,
+				'id': id
+			});
 		});
+	})
+
+	socket.on('userConquer',function(check){
+		if(check)
+		{
+			user.getTimerConquet(function(timer){
+				setTimeout(function(){
+					console.log(timer);
+					$.each(saveTiles,function(index, value){
+						user.conquet(value.id);
+						newOptions = {
+							'type': 'conquer',
+							'user_id': user.getId()
+						};
+						updateTile(value.x, value.y, newOptions);
+						socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
+					});
+				},timer*1000);
+			});
+		}
 	});
+
 	socket.on('newCrops', function(data){
 		crops = new Plantes();
 		//TODO generate croissance and health
@@ -304,7 +318,9 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('UpdateDB', function(data){
+		console.log(data);
 		if(typeof data.val == "string"){
+			console.log("ok");
 			connection.query('UPDATE '+data.table+' SET '+data.column+'="'+data.val+'" WHERE id='+data.id, function(err, rows, fields) {
 				if (err) throw err;
 			});
@@ -345,20 +361,20 @@ getTimeDb = function(){
 };
 
 updateTile = function(x,y,options){
-	if(options.type == 'update_status'){
-		var sprite_id = options.graine_id+""+options.status;
-		Tiles.changeSprite(x,y,sprite_id);
-		io.sockets.emit('newTileSprite', {
-			'x':x,
-			'y':y,
-			'sprite_id': sprite_id
-		});
-	}
-	else if(options.type == 'attack'){
-		io.sockets.emit('newTileAttack', {
-			'x':x,
-			'y':y,
-			'user_id': options.user_id
-		});
-	}
+    if(options.type == 'update_status'){
+	    var sprite_id = options.graine_id+""+options.status;
+	    Tiles.changeSprite(x,y,sprite_id);
+	    io.sockets.emit('newTileSprite', {
+	        'x':x,
+	        'y':y,
+	        'sprite_id': sprite_id
+	    });
+    }
+    else if(options.type == 'conquer'){
+	    io.sockets.emit('newTileConquer', {
+	        'x':x,
+	        'y':y,
+	        'user_id': options.user_id
+	    });
+    }
 };
