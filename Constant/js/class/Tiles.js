@@ -116,6 +116,13 @@ var Tiles = (function() {
         }); 
     };
 
+    Tiles.changeSprite = function(x,y,sprite_id){
+        connection.query('UPDATE Tiles SET sprite_id = '+sprite_id+' WHERE x = '+x+' AND y = '+y, function(err,rows,fields){
+            if(err) throw err;
+        });
+
+    };
+
     //Getters
     Tiles.prototype.getId = function() {
         return _id;

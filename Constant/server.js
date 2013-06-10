@@ -117,6 +117,11 @@ io.sockets.on('connection', function(socket){
 				if(result)
 				{
 					user.attack(id);
+					newOptions = {
+						'type': 'attack',
+						'user_id': user.getId()
+					};
+					updateTile(data.x, data.y, newOptions);
 					socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
 				}
 				else
@@ -130,7 +135,20 @@ io.sockets.on('connection', function(socket){
 		map.getIdTile(data.x,data.y,function(id){
 			map.getInfosTile(id,function(infos){
 				crops.Add_Plantes(50,user.getId(),data.id,infos.id,infos.humidite,infos.fertilite);
-				crops.updatePlante();
+				var options = {
+					'status' : 0,
+					'graine_id' : data.id,
+					'type' : 'update_status'
+				}
+				updateTile(data.x, data.y, options);
+				crops.updatePlante(function(status, graine_id){
+					var newOptions = {
+						'status' : status,
+						'graine_id' : graine_id,
+						'type' : 'update_status'
+					}
+					updateTile(data.x, data.y, newOptions);
+				});
 			});
 		});
 	});
@@ -314,4 +332,23 @@ getTimeDb = function(){
 	var db_date = years+'-'+month+'-'+day+' '+hours+':'+minute+':'+seconde;
 
 	return db_date;
-}
+};
+
+updateTile = function(x,y,options){
+	if(options.type == 'update_status'){
+		var sprite_id = options.graine_id+""+options.status;
+		Tiles.changeSprite(x,y,sprite_id);
+		io.sockets.emit('newTileSprite', {
+			'x':x,
+			'y':y,
+			'sprite_id': sprite_id
+		});
+	}
+	else if(options.type == 'attack'){
+		io.sockets.emit('newTileAttack', {
+			'x':x,
+			'y':y,
+			'user_id': options.user_id
+		});
+	}
+};

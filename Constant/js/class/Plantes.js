@@ -33,6 +33,8 @@ var Plantes = (function() {
 		this.setStatus(0);
 		this.setPlantesSpecId(graines_spec_id);
 		this.setTileId(tile_id);
+		this.setHumidite(humidite);
+		this.setFertilite(fertilite);
 
 		var query = 'INSERT INTO Plantes (croissance, health, user_id, graines_spec_id, tile_id, created_at, updated_at) VALUES ('+croissance+', '+health+', '+user_id+', '+graines_spec_id+', '+tile_id+', "'+getTimeDb()+'", "'+getTimeDb()+'");';
 
@@ -41,33 +43,38 @@ var Plantes = (function() {
 			console.log('Plantes created !');
 		});
 
-		connection.query('SELECT * FROM Plantes WHERE id = LAST_INSERT_ID();', function(err,rows,fields){
+		connection.query('SELECT id FROM Plantes WHERE tile_id = '+tile_id+';', function(err,rows,fields){
 			if (err) throw err;
 
 			_id = rows[0].id;
 		});
 	};
 
-	Plantes.prototype.updatePlante = function(){
+	Plantes.prototype.updatePlante = function(callback){
 		var connection = _DB.connection();
+		var statu = this.getStatus(),
+			humi = this.getHumidite(),
+			ferti = this.getFertilite(),
+			idTile = this.getTileId();
 
 		this.getInfosGraine(function(graine_infos){
 			var refresh = setInterval(function(){
-				_status++;
-				if(_status > 5)
+				statu++;
+				if(statu > 5)
 				{
 					clearInterval(refresh);
 				}
 				else
 				{
-					connection.query('UPDATE Plantes SET status = '+_status+', updated_at = "'+getTimeDb()+'" WHERE id = ' + _id, function(err,rows,fields){
+					connection.query('UPDATE Plantes SET status = '+statu+', updated_at = "'+getTimeDb()+'" WHERE id = ' + _id, function(err,rows,fields){
 			            if(err) throw err;
 			        });
-			        ((_tile_fertilite - 30) < 0) ? 0 : (_tile_fertilite - 30);
-			        ((_tile_humidite - 30) < 0) ? 0 : (_tile_humidite - 30);
-					connection.query('UPDATE Tiles SET fertilite = '+ _tile_fertilite +', humidite = "'+ _tile_humidite +'" WHERE id = ' + _tile_id, function(err,rows,fields){
+			        ((ferti - 30) < 0) ? 0 : (ferti - 30);
+			        ((humi - 30) < 0) ? 0 : (humi - 30);
+					connection.query('UPDATE Tiles SET fertilite = '+ ferti +', humidite = "'+ humi +'" WHERE id = ' + idTile, function(err,rows,fields){
 			            if(err) throw err;
 			        });
+			        callback(statu, graine_infos.id);
 				}
 			},(graine_infos.croissance*1000));
 			
@@ -76,7 +83,7 @@ var Plantes = (function() {
 
 	Plantes.prototype.getInfosGraine = function(callback){
 		var connection = _DB.connection();
-		var query = 'SELECT * FROM Graines_spec WHERE id = '+_plantes_spec_id;
+		var query = 'SELECT * FROM Graines_spec WHERE id = '+this.getPlantesSpecId();
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
             callback(rows[0]);
@@ -85,49 +92,61 @@ var Plantes = (function() {
 
 	//Getters
 	Plantes.prototype.getId = function() {
-		return _id;
+		return this._id;
 	};
 	Plantes.prototype.getCroissance = function() {
-		return _croissance;
+		return this._croissance;
 	};
 	Plantes.prototype.getHealth = function() {
-		return _health;
+		return this._health;
 	};
 	Plantes.prototype.getStatus = function() {
-		return _status;
+		return this._status;
 	};
 	Plantes.prototype.getUserId = function() {
-		return _user_id;
+		return this._user_id;
 	};
 	Plantes.prototype.getPlantesSpecId = function() {
-		return _plantes_spec_id;
+		return this._plantes_spec_id;
 	};
 	Plantes.prototype.getTileId = function() {
-		return _tile_id;
+		return this._tile_id;
+	};
+	Plantes.prototype.getHumidite = function() {
+		return this._tile_humidite;
+	};
+	Plantes.prototype.getFertilite = function() {
+		return this._tile_fertilite;
 	};
 
 
 	//Setters
 	Plantes.prototype.setId = function(id) {
-		_id = id;
+		this._id = id;
 	};
 	Plantes.prototype.setCroissance = function(croissance) {
-		_croissance = croissance;
+		this._croissance = croissance;
 	};
 	Plantes.prototype.setHealth = function(health) {
-		_health = health;
+		this._health = health;
 	};
 	Plantes.prototype.setStatus = function(status) {
-		_status = status;
+		this._status = status;
 	};
 	Plantes.prototype.setUserId = function(user_id) {
-		_user_id = user_id;
+		this._user_id = user_id;
 	};
 	Plantes.prototype.setPlantesSpecId = function(plantes_spec_id) {
-		_plantes_spec_id = plantes_spec_id;
+		this._plantes_spec_id = plantes_spec_id;
 	};
 	Plantes.prototype.setTileId = function(tile_id) {
-		_tile_id = tile_id;
+		this._tile_id = tile_id;
+	};
+	Plantes.prototype.setHumidite = function(tile_humidite) {
+		this._tile_humidite = tile_humidite;
+	};
+	Plantes.prototype.setFertilite = function(tile_fertilite) {
+		this._tile_fertilite = tile_fertilite;
 	};
 
 	return Plantes;

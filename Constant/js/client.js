@@ -194,18 +194,6 @@
 		    ppmap.addBuilding(value.x, value.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
 		});
 
-		//Mise en place des crops quand tu load la map.
-	    $.each(map.crops, function(index, value) {
-	    	console.log(value.id);
-	    	if(value.id == 1)
-	    		Plantes.name = 'tomates';
-	    	else if (value.id == 2)
-	    		Plantes.name = 'mais';
-	    
-		    //ppmap.addObject(value.x, value.y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
-		    ppmap.changeOneMap(value.x, value.y, Plantes.sprite[Plantes.name].sprite_id)
-		});
-
 		//Mise en place des batiments quand tu load la map.
 	    $.each(map.all_user, function(index, value) {
 		    ppmap.addObject(value.x, value.y, 'images/avatar.png', 0, 0, value.pseudo, value.pseudo, 'char_'+value.id);
@@ -226,6 +214,14 @@
 	socket.on('userDisconnect', function(data){
 		ppmap.killObject('char_'+data.id);
 	});
+
+	socket.on('newTileSprite', function(data){
+		ppmap.changeOneMap(data.x,data.y,data.sprite_id);
+	});
+
+	// socket.on('newTileAttack', function(data){
+	// 	ppmap.changeOneMap(data.x,data.y,data.sprite_id);
+	// });
 
 	var mouseClick = function(x, y) {
 
@@ -278,10 +274,10 @@
 			});
 		}
 		else if(User.isWatering == true){
-			var testTile = false;
+			var testTile = true;
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
-					testTile = true;
+					testTile = false;
 			});
 			if(testTile){
 				socket.emit('watering', {
@@ -293,10 +289,10 @@
 			}
 		}
 		else if(User.isFertilizing == true){
-			var testTile = false;
+			var testTile = true;
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
-					testTile = true;
+					testTile = false;
 			});
 			if(testTile){
 				socket.emit('fertilizing', {
@@ -308,10 +304,10 @@
 			}
 		}
 		else if(User.isHarvesting == true){
-			var testTile = false;
+			var testTile = true;
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
-					testTile = true;
+					testTile = false;
 			});
 			if(testTile){
 				socket.emit('harvesting', {

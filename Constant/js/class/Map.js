@@ -144,14 +144,14 @@ var Map = (function() {
 			for(var i = 0;i < rows.length;i++)
 			{
 				if(user_id == rows[i].owner){
-					string_map.map += 2 + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+					string_map.map += ((rows[i].sprite_id == 1) ? 2 : rows[i].sprite_id) + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
 					string_map.own_tile[own_check] = {
 						'x': rows[i].x,
 						'y': rows[i].y
 					};
 					own_check++;
 				}else if(user_id != rows[i].owner && rows[i].owner != null){
-					string_map.map += 3 + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+					string_map.map += ((rows[i].sprite_id == 1) ? 3 : rows[i].sprite_id) + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
 					string_map.enemi_tile[enemi_check] = {
 						'x': rows[i].x,
 						'y': rows[i].y
@@ -160,6 +160,8 @@ var Map = (function() {
 
 				}else
 					string_map.map += rows[i].sprite_id + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+
+                console.log(rows[i].x);
 
 				if(check == 49)
 				{
@@ -173,18 +175,6 @@ var Map = (function() {
             for(var i = 0;i < rows.length;i++)
             {
                 string_map.storage[i] = {
-                    'x': rows[i].x,
-                    'y': rows[i].y,
-                    'id': rows[i].id
-                };
-            }
-        });
-
-        connection.query('SELECT t.x as x, t.y as y, p.graines_spec_id as id FROM Plantes as p LEFT JOIN Tiles as t ON p.tile_id = t.id', function(err,rows,fields){
-            if(err) throw err;
-            for(var i = 0;i < rows.length;i++)
-            {
-                string_map.crops[i] = {
                     'x': rows[i].x,
                     'y': rows[i].y,
                     'id': rows[i].id
