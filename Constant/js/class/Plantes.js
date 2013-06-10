@@ -59,23 +59,38 @@ var Plantes = (function() {
 
 		this.getInfosGraine(function(graine_infos){
 			var refresh = setInterval(function(){
-				statu++;
-				if(statu > 5)
-				{
-					clearInterval(refresh);
-				}
-				else
-				{
-					connection.query('UPDATE Plantes SET status = '+statu+', updated_at = "'+getTimeDb()+'" WHERE id = ' + _id, function(err,rows,fields){
-			            if(err) throw err;
-			        });
-			        ((ferti - 30) < 0) ? 0 : (ferti - 30);
-			        ((humi - 30) < 0) ? 0 : (humi - 30);
-					connection.query('UPDATE Tiles SET fertilite = '+ ferti +', humidite = "'+ humi +'" WHERE id = ' + idTile, function(err,rows,fields){
-			            if(err) throw err;
-			        });
-			        callback(statu, graine_infos.id);
-				}
+				var testPresence = true;
+				connection.query('SELECT * FROM Plantes WHERE tile_id = '+idTile, function(err,rows,fields){
+			        if(err) throw err;
+			        console.log(rows.length);
+			        if(rows.length > 0)
+			        {
+						statu++;
+						if(statu > 5)
+						{
+							clearInterval(refresh);
+						}
+						else
+						{
+							connection.query('UPDATE Plantes SET status = '+statu+', updated_at = "'+getTimeDb()+'" WHERE tile_id = ' + idTile, function(err,rows,fields){
+					            if(err) throw err;
+					        });
+					        ((ferti - 30) < 0) ? 0 : (ferti - 30);
+					        ((humi - 30) < 0) ? 0 : (humi - 30);
+							connection.query('UPDATE Tiles SET fertilite = '+ ferti +', humidite = "'+ humi +'" WHERE id = ' + idTile, function(err,rows,fields){
+					            if(err) throw err;
+					        });
+					        callback(statu, graine_infos.id);
+						}	
+			        }
+				    else
+				    {
+				    	clearInterval(refresh);
+				    }
+			        	
+			    });
+
+			    
 			},(graine_infos.croissance*1000));
 			
 		});

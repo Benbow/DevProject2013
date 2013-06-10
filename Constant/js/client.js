@@ -101,19 +101,11 @@
 	*	Gestion des erreurs en popup.
 	*/
 	socket.on('error', function(error){
-		$("#error").html(error);
-		$("#error").fadeIn('slow');
-		var t = setTimeout(function(){
-			$("#error").fadeOut('slow');
-		}, 3000);
+		sendError(error);
 	});
 
 	socket.on('valid', function(valid){
-		$("#valid").html(valid);
-		$("#valid").fadeIn('slow');
-		setTimeout(function(){
-			$("#valid").fadeOut('slow');
-		}, 3000);
+		sendValid(valid);
 	});
 
 	
@@ -225,7 +217,6 @@
 
 	var mouseClick = function(x, y) {
 
-		console.log(User.isHarvesting);
 		if(User.isPlanting)
 		{
 			var testTile = false;
@@ -286,7 +277,7 @@
 					y: y
 				});
 			}else{
-				socket.emit('error', 'Watering only your tiles');
+				sendError('Watering only your tiles');
 			}
 		}
 		else if(User.isFertilizing == true){
@@ -301,7 +292,7 @@
 					y: y
 				});
 			}else{
-				socket.emit('error', 'Fertilizing only your tiles');
+				sendError('Fertilizing only your tiles');
 			}
 		}
 		else if(User.isHarvesting == true){
@@ -316,7 +307,7 @@
 					y: y
 				});
 			}else{
-				socket.emit('error', 'Harvesting only your tiles');
+				sendError('Fertilizing only your tiles');
 			}
 		}
 		socket.emit('userMove', {
@@ -466,6 +457,7 @@
 	$(".end_menu_build").click(function(){
 		User.isBuilding = false;
 		User.isPlanting = false;
+		User.isAttacking = false;
 		User.isWatering = false;
 		User.isFertilizing = false;
 		User.isHarvesting = false;
@@ -496,5 +488,21 @@
 			prix : parseInt(p)
 		});
 	});
+
+	sendError = function(error){
+		$("#error").html(error);
+		$("#error").fadeIn('slow');
+		var t = setTimeout(function(){
+			$("#error").fadeOut('slow');
+		}, 3000);
+	};
+
+	sendValid = function(valid){
+		$("#valid").html(valid);
+		$("#valid").fadeIn('slow');
+		var t = setTimeout(function(){
+			$("#valid").fadeOut('slow');
+		}, 3000);
+	};
 
 })(jQuery);

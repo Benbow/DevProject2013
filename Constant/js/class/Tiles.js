@@ -101,9 +101,12 @@ var Tiles = (function() {
                     query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
                     connection.query(query,function(err, r, fields) {
                         if (err) throw err;
+                        connection.query('UPDATE Tiles SET sprite_id = 1 WHERE id = '+tile_id,function(err, r, fields) {
+                            if(err) throw err;
+                        });
                         callback({
                             ok: true,
-                             nb: nb_fruits,
+                            nb: nb_fruits,
                             fruit: row[0].graines_spec_id
                         });
                     });
