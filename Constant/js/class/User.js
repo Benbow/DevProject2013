@@ -150,6 +150,50 @@ var User = (function() {
         });
     };
 
+    User.prototype.lvl = function()
+    {
+        var connection = _DB.connection();
+       // var lvl = new Array();
+        var i                    = 1;
+        var tile_next            = 1;
+        var conque_timer         = 5;
+        var _wait_conquete_timer = 8;
+        var _resistance          = 50;
+        var _victory_timer       = 15;
+        var _win_regen           = 1;
+
+    
+        while (i != 50)
+        {
+            //connection.query('INSERT INTO Users_level_spec VALUES ('+i+', '+tile_next+', '+conque_timer+', '+_wait_conquete_timer+', '+_resistance+','+_victory_timer+', '+_win_regen+')', function(err, rows, fields){if (err) throw err; });
+            var query = 'INSERT INTO Users_level_spec (id, tile_next_level, conquete_timer, wait_conquetes_timer, resistance, victory_timer, win_regen)VALUES ('+i+', '+tile_next+', '+conque_timer+', '+_wait_conquete_timer+', '+_resistance+','+_victory_timer+', '+_win_regen+') ';
+            connection.query(query,function(err, rows, fields){if(err) throw err;});
+            tile_next            = Math.ceil(tile_next * (1.1));
+            conque_timer         = Math.ceil(conque_timer * (1.15));
+            _wait_conquete_timer = Math.ceil(_wait_conquete_timer * (1.15));
+            _resistance          = Math.ceil(_resistance * (1.2));
+            _victory_timer       = Math.ceil(_victory_timer * (1.1));
+            _win_regen           = Math.ceil(_win_regen * (1.1));
+            i++;           
+                console.log ('la ca fonctionne bordel');
+        }
+        console.log ('la ca fonctionne aussi putin');
+    }
+
+    User.prototype.next_lvl = function(id)
+    {
+        /*var connection = _DB.connection();
+        var lvl_now = connection.query('SELECT niveau, experience FROM Users WHERE id = ' + _id);
+
+        var exp = connection.query('SELECT experience, experience FROM Users WHERE id = ' + _id);
+        var next_lvl = connection.query('SELECT tile_next_level FROM Users_level_spec WHERE id = ' + _id );
+        
+    
+        if(lvl [lvl_now] ==)
+        {
+             Math.ceil(coef * 1.7;
+        }*/
+    }
     return User;
 })();
 

@@ -2,8 +2,8 @@
 
 var Users_level_spec = (function() {
     var _id;                    //id unique d'une arme INT
-    var _tile_next_level;       //nombre de tile avant le prochain level
-    var _conquete_timer;        //timer pour conquerir une tile
+    var _tile_next_level;       //nombre de tile avant le prochain level *1.7 / lvl
+    var _conquete_timer;        //timer pour conquerir une tile temps de base = 5s, *1.7 / lvl
     var _wait_conquete_timer;   //timer d'attente entre deux conquetes
     var _resistance;            //vie du joueur
     var _victory_timer;         //timer d'attente d'attaque si victorieux
