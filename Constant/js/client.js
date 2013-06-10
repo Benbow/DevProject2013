@@ -354,7 +354,7 @@
 		{
 			User.isAttacking = false;
 			$(this).val('Conquerir terrain');
-			ppmap.changCursor('images/cursor-on.png','images/cursor-off.png',0,0);
+			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else
 		{

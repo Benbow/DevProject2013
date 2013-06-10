@@ -85,41 +85,30 @@ var Tiles = (function() {
                     if (err) throw err;
                     var f = rows[0].fertilite +10;
                     nb_fruits = Math.ceil((row[0].health * rows[0].production)/100);
-                    query = 'SELECT * FROM Fruits WHERE user_id =  '+user_id+' AND fruits_spec_id = '+row[0].graines_spec_id+';';
-                    connection.query(query,function(err, ro, fields) {
+
+                    // saveFruits(user_id, row[0].graines_spec_id, nb_fruits, function(cb){
+                    //     query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
+                    //     connection.query(query,function(err, r, fields) {
+                    //         if (err) throw err;
+                    //         callback({
+                    //             ok: true,
+                    //             nb: nb_fruits,
+                    //             fruit: row[0].graines_spec_id
+                    //         });
+                    //     });
+                    // });
+
+                    query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
+                    connection.query(query,function(err, r, fields) {
                         if (err) throw err;
-                        
-                        if( typeof( ro[0]) == "undefined"){
-                            query = 'INSERT INTO Fruits (nb,user_id,fruits_spec_id) VALUES("' + nb_fruits + '","' + user_id + '","' + row[0].graines_spec_id + '");';
-                            connection.query(query,function(err, r, fields) {
-                                if (err) throw err;
-                                query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
-                                connection.query(query,function(err, r, fields) {
-                                    if (err) throw err;
-                                    callback({
-                                        ok: true,
-                                        nb: nb_fruits,
-                                        fruit: row[0].graines_spec_id
-                                    });
-                                });
-                            });
-                        }else{
-                            var nb = ro[0].nb + nb_fruits;
-                            query = 'UPDATE Fruits SET nb = '+nb+' WHERE id ='+user_id+' AND fruits_spec_id = '+row[0].graines_spec_id+';';
-                            connection.query(query,function(err, r, fields) {
-                                if (err) throw err;
-                                query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
-                                connection.query(query,function(err, r, fields) {
-                                    if (err) throw err;
-                                    callback({
-                                        ok: true,
-                                        nb: nb_fruits,
-                                        fruit: row[0].graines_spec_id
-                                    });
-                                });
-                            });
-                        }
-                    });           
+                        callback({
+                            ok: true,
+                             nb: nb_fruits,
+                            fruit: row[0].graines_spec_id
+                        });
+                    });
+
+
                 });
             }else{
                 callback(false);
@@ -186,6 +175,21 @@ var Tiles = (function() {
         _user_id = user_id;
     };
    
+    function saveFruits(user_id, fruits_spec_id, nb, callback){
+        while(nb > 0){
+            saveFruit(user_id, fruits_spec_id);
+            nb--;
+        }
+        callback(true);
+    }
+
+    function saveFruit(user_id, fruits_spec_id){
+        console.log('ok');
+        var query = 'INSERT INTO Fruits (user_id,fruits_spec_id) VALUES(' + user_id + ',' + fruits_spec_id + ');';
+        connection.query(query,function(err, r, fields) {
+            if (err) throw err;
+        });
+    }
 
     return Tiles;
 })();
