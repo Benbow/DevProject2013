@@ -1,3 +1,10 @@
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'toor',
+    database : 'farmDB',
+});
 //Classe qui enregistre les Fruits de chaque user
 
 var Fruits = (function() {
@@ -8,6 +15,16 @@ var Fruits = (function() {
 
     function Fruits(){
         
+    };
+
+    Fruits.prototype.storeFruits = function(user_id, stockage_id, fruit_id, nb_fruits, callback){
+        saveFruits(user_id, stockage_id, fruit_id, nb_fruits, function(cb){
+            callback({
+                ok: true,
+                nb: nb_fruits,
+                fruit: row[0].graines_spec_id
+            });
+        });
     };
 
     //Getters
@@ -39,10 +56,33 @@ var Fruits = (function() {
         _fruits_spec_id = fruits_spec_id;
     };
 
+    function saveFruits(user_id, stockage_id, fruit_id, nb_fruits, callback){
+        while(nb_fruits > 0){
+            saveFruit(user_id, fruit_id, stockage_id);
+            nb_fruits--;
+        }
+        var query = 'SELECT * FROM Stockages WHERE id ='+stockage_id+';';
+        connection.query(query,function(err, r, fields) {
+            if (err) throw err;
+            if(typeof(r[0]) != 'undefined'){
+                var nb = r[0].stockage_state - nb_fruits;
+                query = 'UPDATE Stockages SET stockage_state = '+nb+' WHERE id ='+stockage_id+';';
+                connection.query(query,function(err, r, fields) {
+                    callback(true);
+                });
+            }
+        });
+    }
+
+    function saveFruit(user_id, fruit_id, stockage_id){
+        console.log('ok');
+        var query = 'INSERT INTO Fruits (user_id,fruits_spec_id, stockage_id) VALUES(' + user_id + ',' + fruit_id + ','+ stockage_id +');';
+        connection.query(query,function(err, r, fields) {
+            if (err) throw err;
+        });
+    }
+
     return Fruits;
 })();
 
-exports.Fruits = function(){
-	var a = new Fruits();
-	return a;
-}
+module.exports = Fruits;

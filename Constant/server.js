@@ -16,6 +16,7 @@ var Plantes    = require("./js/class/Plantes");
 var User 	   = require("./js/class/User");
 var Tiles 	   = require("./js/class/Tiles");
 var Fruits_sp  = require("./js/class/Fruits_spec");
+var Fruits 	   = require("./js/class/Fruits");
 
 var map = new Map();
 //map.initialiseMap();
@@ -194,12 +195,14 @@ io.sockets.on('connection', function(socket){
 						y: data.y
 					});
 					fruit_spec = new Fruits_sp;
+					console.log(cb.fruit);
 					fruit_spec.getFruitSpec(cb.fruit, function(c){
 						var p = c.fruits_spec.prix_vente * cb.nb;
 						var d = {
 							nom : c.fruits_spec.name,
 							nb : cb.nb,
-							prix : p
+							prix : p, 
+							fruit_id : cb.fruit
 						}
 						socket.emit('instantSell', d);
 					});
@@ -232,6 +235,13 @@ io.sockets.on('connection', function(socket){
 					socket.emit('error', 'Not Enough Storage ! You Sell it');
 				});
 			}
+		});
+	});
+
+	socket.on('storeCrops', function(data){
+		fruit = new Fruits;
+		fruit.storeFruits(user.getId(), data.stor_id, data.fruit_id, data.nb, function(cb){
+			socket.emit('valid', ''+cb.nb+' Crops stored');
 		});
 	});
 

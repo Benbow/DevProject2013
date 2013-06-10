@@ -8,7 +8,6 @@
 		isPlanting : false,
 		isBuilding : false,
 		isAttacking : false,
-		isConquering : false,
 		isWatering : false,
 		isFertilizing : false,
 		isHarvesting : false,
@@ -102,11 +101,19 @@
 	*	Gestion des erreurs en popup.
 	*/
 	socket.on('error', function(error){
-		sendError(error);
+		$("#error").html(error);
+		$("#error").fadeIn('slow');
+		var t = setTimeout(function(){
+			$("#error").fadeOut('slow');
+		}, 3000);
 	});
 
 	socket.on('valid', function(valid){
-		sendValid(valid);
+		$("#valid").html(valid);
+		$("#valid").fadeIn('slow');
+		setTimeout(function(){
+			$("#valid").fadeOut('slow');
+		}, 3000);
 	});
 
 	
@@ -218,6 +225,7 @@
 
 	var mouseClick = function(x, y) {
 
+		console.log(User.isHarvesting);
 		if(User.isPlanting)
 		{
 			var testTile = false;
@@ -308,7 +316,7 @@
 					y: y
 				});
 			}else{
-				sendError('Fertilizing only your tiles');
+				socket.emit('error', 'Harvesting only your tiles');
 			}
 		}
 		socket.emit('userMove', {
@@ -326,6 +334,7 @@
 		$("#nbFruits").text(data.nb);
 		$("#nameFruits").text(data.nom);
 		$("#prixFruits").text(data.prix);
+		$("#instantSell").addClass(""+data.fruit_id+"");
 	});
 
 	socket.on('chooseStorage', function(data){
@@ -342,7 +351,7 @@
 			}else if (value.stockages_spec_id == 3){
 				name = 'Chambre Froide';
 			}
-			text += '<option value="stock_'+value.id+'">'+name+' '+value.id+' ('+value.stockage_state+')'+'</option>';
+			text += '<option value="'+value.id+'">'+name+' '+value.id+' ('+value.stockage_state+')'+'</option>';
 		});
 		console.log(text);
 		$("#chooseStorage").css('display','block');
@@ -384,7 +393,7 @@
 		if(User.isAttacking)
 		{
 			User.isAttacking = false;
-			$(this).val('Attaquer terrain');
+			$(this).val('Conquerir terrain');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else
@@ -530,5 +539,19 @@
 			$("#valid").fadeOut('slow');
 		}, 3000);
 	};
+
+	$("#choosingStorage").click(function(){
+		var value = $("#storageList").val();
+		var id = $("#instantSell").attr('class');
+		var nb = parseInt($("#nbFruits").text());
+		var name = $("#nameFruits").text();
+
+		socket.emit('storeCrops', {
+			stor_id : value,
+			fruit_id : id,
+			nb : nb,
+			name : name
+		});
+	});
 
 })(jQuery);

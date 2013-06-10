@@ -184,22 +184,6 @@ var Tiles = (function() {
     Tiles.prototype.setUserId = function(user_id) {
         _user_id = user_id;
     };
-   
-    function saveFruits(user_id, fruits_spec_id, nb, callback){
-        while(nb > 0){
-            saveFruit(user_id, fruits_spec_id);
-            nb--;
-        }
-        callback(true);
-    }
-
-    function saveFruit(user_id, fruits_spec_id){
-        console.log('ok');
-        var query = 'INSERT INTO Fruits (user_id,fruits_spec_id) VALUES(' + user_id + ',' + fruits_spec_id + ');';
-        connection.query(query,function(err, r, fields) {
-            if (err) throw err;
-        });
-    }
 
     return Tiles;
 })();
