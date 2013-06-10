@@ -161,8 +161,6 @@ var Map = (function() {
 				}else
 					string_map.map += rows[i].sprite_id + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
 
-                console.log(rows[i].x);
-
 				if(check == 49)
 				{
 					check = -1;
@@ -350,7 +348,6 @@ var Map = (function() {
                     retour[1] = val;
                 }
 
-                //console.log(retour);
 
                 //vérification des extrèmes
                 if(retour[0] > 100)

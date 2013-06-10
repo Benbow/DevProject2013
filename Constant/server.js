@@ -195,7 +195,6 @@ io.sockets.on('connection', function(socket){
 						y: data.y
 					});
 					fruit_spec = new Fruits_sp;
-					console.log(cb.fruit);
 					fruit_spec.getFruitSpec(cb.fruit, function(c){
 						var p = c.fruits_spec.prix_vente * cb.nb;
 						var d = {
@@ -305,9 +304,7 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('UpdateDB', function(data){
-		console.log(data);
 		if(typeof data.val == "string"){
-			console.log("ok");
 			connection.query('UPDATE '+data.table+' SET '+data.column+'="'+data.val+'" WHERE id='+data.id, function(err, rows, fields) {
 				if (err) throw err;
 			});

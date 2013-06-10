@@ -86,18 +86,6 @@ var Tiles = (function() {
                     var f = rows[0].fertilite +10;
                     nb_fruits = Math.ceil((row[0].health * rows[0].production)/100);
 
-                    // saveFruits(user_id, row[0].graines_spec_id, nb_fruits, function(cb){
-                    //     query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
-                    //     connection.query(query,function(err, r, fields) {
-                    //         if (err) throw err;
-                    //         callback({
-                    //             ok: true,
-                    //             nb: nb_fruits,
-                    //             fruit: row[0].graines_spec_id
-                    //         });
-                    //     });
-                    // });
-
                     query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
                     connection.query(query,function(err, r, fields) {
                         if (err) throw err;

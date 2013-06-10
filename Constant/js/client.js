@@ -545,6 +545,7 @@
 		var id = $("#instantSell").attr('class');
 		var nb = parseInt($("#nbFruits").text());
 		var name = $("#nameFruits").text();
+		$("#chooseStorage").css('display', 'none');
 
 		socket.emit('storeCrops', {
 			stor_id : value,
