@@ -248,10 +248,10 @@
 		}
 		else if(User.isBuilding)
 		{
-			var testTile = true;
+			var testTile = false;
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
-					testTile = false;
+					testTile = true;
 			});
 			if(testTile)
 			{
@@ -274,10 +274,10 @@
 			});
 		}
 		else if(User.isWatering == true){
-			var testTile = true;
+			var testTile = false;
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
-					testTile = false;
+					testTile = true;
 			});
 			if(testTile){
 				socket.emit('watering', {
@@ -289,10 +289,10 @@
 			}
 		}
 		else if(User.isFertilizing == true){
-			var testTile = true;
+			var testTile = false;
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
-					testTile = false;
+					testTile = true;
 			});
 			if(testTile){
 				socket.emit('fertilizing', {
@@ -304,10 +304,10 @@
 			}
 		}
 		else if(User.isHarvesting == true){
-			var testTile = true;
+			var testTile = false;
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
-					testTile = false;
+					testTile = true;
 			});
 			if(testTile){
 				socket.emit('harvesting', {
@@ -407,6 +407,7 @@
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
+			console.log('test');
 			User.isBuilding = false;
 			User.isPlanting = false;
 			User.isWatering = false;
