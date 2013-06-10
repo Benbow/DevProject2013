@@ -107,6 +107,22 @@ var Tiles = (function() {
         }); 
     };
 
+    Tiles.prototype.DestroyCrops = function(user_id, tile_id, callback){
+        var query = 'SELECT * FROM Plantes WHERE user_id = '+user_id+' AND tile_id = ' + tile_id + ';';
+        connection.query(query,function(err, r, fields) {
+            if (err) throw err;
+            if(typeof(r[0]) != 'undefined'){
+                query = 'DELETE FROM Plantes WHERE user_id = '+user_id+' AND tile_id = ' + tile_id + ';';
+                connection.query(query,function(err, r, fields) {
+                    if (err) throw err;
+                    callback(true);
+                });
+            }else{
+                callback(false);
+            }
+        }); 
+    }
+
     Tiles.changeSprite = function(x,y,sprite_id){
         connection.query('UPDATE Tiles SET sprite_id = '+sprite_id+' WHERE x = '+x+' AND y = '+y, function(err,rows,fields){
             if(err) throw err;

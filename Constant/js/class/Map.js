@@ -183,10 +183,10 @@ var Map = (function() {
         connection.query('SELECT alliance_id FROM Users WHERE id = '+user_id, function(err,rows,fields){
             if(err) throw err;
             if(rows[0].alliance_id != null && rows[0].alliance_id > 0)
-                connection.query('SELECT id FORM Users WHERE alliance_id = '+rows[0].alliance_id, function(err,rows,fields){
+                connection.query('SELECT id FROM Users WHERE alliance_id = '+rows[0].alliance_id, function(err,rows,fields){
                     for(var i = 0;i < rows.length;i++)
                     {
-                        string_map.allies[id] = rows[i].id
+                        string_map.allies[user_id] = rows[i].id;
                     }
                 });
             else
