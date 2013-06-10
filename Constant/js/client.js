@@ -523,6 +523,20 @@
 
 	});
 
+	$("#menu_market").click(function(){
+		
+		$("#menu_market_panel").fadeIn('slow');
+		
+	});
+
+
+	$("#quit_market").click(function(){	
+		$("#menu_market_panel").fadeOut('fast');
+
+		
+	});
+
+
 	$("#menu_recolte_plantes").click(function(){
 
 		if(User.isHarvesting){

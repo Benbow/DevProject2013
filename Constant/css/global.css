@@ -294,3 +294,20 @@ opacity: 0;
 #div_register {
 	display: none;
 }
+
+#menu_market_panel {
+	position: absolute;
+	background-color: #F0FFFF;
+	border: 5px solid #348385;
+	border-radius: 15px;	
+	top: 50px;
+	left: 116px;
+	height: 457px;
+	width: 565px;
+	display: none;
+	z-index: 110;
+	padding: 10px;
+
+}
+#market{
+}

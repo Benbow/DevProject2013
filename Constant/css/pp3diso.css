@@ -133,6 +133,7 @@
 	width:800px;
 	height:600px;
 	overflow:hidden;
+	z-index: 100;
 }
 
 #pp3diso-win {
