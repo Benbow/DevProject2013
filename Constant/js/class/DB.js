@@ -24,6 +24,7 @@ var DB = (function() {
         });
     };
 
+
     DB.prototype.selectRequest = function(champs,table,where){
         if(where == '')
             where = '1=1';
@@ -36,6 +37,20 @@ var DB = (function() {
             return rows;
         });
 
+    };
+    DB.prototype.manag_money = function(id, table, id_object)
+    {
+        var connection = _DB.connection();
+        connection.query('SELECT argent FROM Users WHERE id = '+id,function(err,rows,fields){
+            if(err) throw err;
+            var money = rows[0].argent;
+            connection.query('SELECT prix FROM '+table+' WHERE id = '+id_object,function(err,rows,fields){
+                if(err) throw err;
+                connection.query('UPDATE Users SET argent = '+(money - rows[0].prix),function(err,rows,fields){
+                    if(err) throw err;
+                })
+            })
+        });
     };
 
     return DB;

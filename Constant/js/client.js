@@ -387,6 +387,7 @@
 			y: y
 		});
 	};
+	
 
 	var buildingProps = function(x, y){
 		var testTile = true;
