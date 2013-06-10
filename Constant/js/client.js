@@ -183,7 +183,6 @@
 
 		//Mise en place des batiments quand tu load la map.
 	    $.each(map.storage, function(index, value) {
-	    	console.log(value.id);
 	    	if(value.id == 1)
 	    		Batiment.name = 'silo';
 	    	else if (value.id == 2)
@@ -225,7 +224,6 @@
 
 	var mouseClick = function(x, y) {
 
-		console.log(User.isHarvesting);
 		if(User.isPlanting)
 		{
 			var testTile = false;
@@ -244,7 +242,7 @@
 				});
 			}
 			else
-				console.log('Tu ne peux pas ! plant');
+				sendError('Plant only on your tiles');
 			
 		}
 		else if(User.isBuilding)
@@ -264,7 +262,7 @@
 				});
 			}
 			else
-				console.log('Tu ne peux pas ! bat');
+				sendError('Construct only on your tiles');
 			
 		}
 		else if(User.isAttacking)
@@ -353,7 +351,6 @@
 			}
 			text += '<option value="'+value.id+'">'+name+' '+value.id+' ('+value.stockage_state+')'+'</option>';
 		});
-		console.log(text);
 		$("#chooseStorage").css('display','block');
 		$("#storageList").html(text);
 	});
@@ -434,7 +431,6 @@
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
-			console.log('test');
 			User.isBuilding = false;
 			User.isPlanting = false;
 			User.isWatering = false;
