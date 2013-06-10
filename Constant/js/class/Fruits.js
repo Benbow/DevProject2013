@@ -17,8 +17,8 @@ var Fruits = (function() {
         
     };
 
-    Fruits.prototype.storeFruits = function(user_id, stockage_id, fruit_id, nb_fruits, poids, callback){
-        saveFruits(user_id, stockage_id, fruit_id, nb_fruits, function(cb){
+    Fruits.prototype.storeFruits = function(user_id, stockage_id, fruit_id, nb_fruits, poids, type, time, callback){
+        saveFruits(user_id, stockage_id, fruit_id, nb_fruits, type, time, function(cb){
             var query = 'SELECT * FROM Stockages WHERE id ='+stockage_id+';';
             connection.query(query,function(err, r, fields) {
                 if (err) throw err;
@@ -34,6 +34,15 @@ var Fruits = (function() {
                 }
             });
         });
+    };
+
+    Fruits.prototype.updatePourissementFruits = function(){
+        var upd = setInterval(function(){
+            var query = 'UPDATE Fruits SET pourrissement_state = pourrissement_state-2 WHERE stockage_type = 1 OR stockage_type = 2;';
+            connection.query(query, function(err,rows,fields){
+                if(err) throw err;
+            });
+        },(2000));
     };
 
     //Getters
@@ -65,20 +74,33 @@ var Fruits = (function() {
         _fruits_spec_id = fruits_spec_id;
     };
 
-    function saveFruits(user_id, stockage_id, fruit_id, nb_fruits, callback){
+    function saveFruits(user_id, stockage_id, fruit_id, nb_fruits, type, time, callback){
         while(nb_fruits > 0){
-            saveFruit(user_id, fruit_id, stockage_id);
+            saveFruit(user_id, fruit_id, stockage_id, type, time);
             nb_fruits--;
         }
         callback(true);
     }
 
-    function saveFruit(user_id, fruit_id, stockage_id){
+    function saveFruit(user_id, fruit_id, stockage_id, type, time){
         //console.log(user_id+" "+fruit_id+" "+stockage_id)
-        var query = 'INSERT INTO Fruits (user_id,fruits_spec_id, stockage_id) VALUES(' + user_id + ',' + fruit_id + ','+ stockage_id +');';
+        var query = 'INSERT INTO Fruits (user_id,fruits_spec_id, stockage_id, stockage_type, pourrissement_state) VALUES(' + user_id + ',' + fruit_id + ','+ stockage_id +','+type+','+time+');';
         connection.query(query,function(err, r, fields) {
             if (err) throw err;
         });
+    }
+
+    getTimeDb = function(){
+        var d = new Date();
+        var years   = d.getFullYear(),
+            month   = ((d.getMonth() + 1).toString().length > 1) ? (d.getMonth() + 1) : '0'+(d.getMonth() + 1),
+            day     = ((d.getDate()).toString().length > 1) ? d.getDate() : '0'+d.getDate(),
+            hours   = ((d.getHours()).toString().length > 1) ? d.getHours() : '0'+d.getHours(),
+            minute  = ((d.getMinutes()).toString().length > 1) ? d.getMinutes() : '0'+d.getMinutes(),
+            seconde = ((d.getSeconds()).toString().length > 1) ? d.getSeconds() : '0'+d.getSeconds();
+        var db_date = years+'-'+month+'-'+day+' '+hours+':'+minute+':'+seconde;
+
+        return db_date;
     }
 
     return Fruits;

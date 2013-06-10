@@ -400,6 +400,7 @@
 		$("#nameFruits").text(data.nom);
 		$("#prixFruits").text(data.prix);
 		$("#poidsFruits").text(data.poids);
+		$("#timeFruits").text(data.pourissement);
 		$("#instantSell").addClass(""+data.fruit_id+"");
 	});
 
@@ -417,7 +418,7 @@
 			}else if (value.stockages_spec_id == 3){
 				name = 'Chambre Froide';
 			}
-			text += '<option value="'+value.id+'">'+name+' '+value.id+' ('+value.stockage_state+')'+'</option>';
+			text += '<option value="'+value.id+'_'+value.stockages_spec_id+'">'+name+' '+value.id+' ('+value.stockage_state+')'+'</option>';
 		});
 		$("#chooseStorage").css('display','block');
 		$("#storageList").html(text);
@@ -661,19 +662,25 @@
 	};
 
 	$("#choosingStorage").click(function(){
-		var value = $("#storageList").val();
+		var val = $("#storageList").val();
+		var value = val.split("_");
+		var stock_id = value[0];
+		var stock_type = value[1];
 		var id = $("#instantSell").attr('class');
 		var nb = parseInt($("#nbFruits").text());
 		var name = $("#nameFruits").text();
 		var poids = $("#poidsFruits").text();
+		var time = $("#timeFruits").text();
 		$("#chooseStorage").css('display', 'none');
 
 		socket.emit('storeCrops', {
-			stor_id : value,
+			stor_id : parseInt(stock_id),
+			stor_type : parseInt(stock_type),
 			fruit_id : parseInt(id),
 			nb : parseInt(nb),
 			name : name,
-			poids : parseInt(poids)
+			poids : parseInt(poids),
+			time : parseInt(time)
 		});
 	});
 
