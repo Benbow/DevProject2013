@@ -8,6 +8,7 @@
 		isPlanting : false,
 		isBuilding : false,
 		isAttacking : false,
+		isConquering : false,
 		isWatering : false,
 		isFertilizing : false,
 		isHarvesting : false,
@@ -322,10 +323,31 @@
 	});
 
 	$("#menu_select_conquerir").click(function(){
+		if(User.isConquering)
+		{
+			User.isConquering = false;
+			$(this).val('Conquerir terrain');
+			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
+		}
+		else
+		{
+			User.isConquering = true;
+			User.isPlanting = false;
+			User.isBuilding = false;
+			User.isWatering = false;
+			User.isFertilizing = false;
+			User.isHarvesting = false;
+			User.isAttacking = false;
+			$(this).val('Arreter de conquerir');
+			ppmap.changeCursor('images/attackTile.png','images/emptyTile.png',0,0);
+		}
+		
+	});
+	$("#menu_select_attaquer").click(function(){
 		if(User.isAttacking)
 		{
 			User.isAttacking = false;
-			$(this).val('Conquerir terrain');
+			$(this).val('Attaquer terrain');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else
@@ -333,6 +355,10 @@
 			User.isAttacking = true;
 			User.isPlanting = false;
 			User.isBuilding = false;
+			User.isWatering = false;
+			User.isFertilizing = false;
+			User.isHarvesting = false;
+			User.isConquering = false;
 			$(this).val('Arreter d\'attaquer');
 			ppmap.changeCursor('images/attackTile.png','images/emptyTile.png',0,0);
 		}
