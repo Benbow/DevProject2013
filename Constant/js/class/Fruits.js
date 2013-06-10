@@ -38,7 +38,7 @@ var Fruits = (function() {
 
     Fruits.prototype.updatePourissementFruits = function(){
         var upd = setInterval(function(){
-            var query = 'UPDATE Fruits SET pourrissement_state = pourrissement_state-2 WHERE stockage_type = 1 OR stockage_type = 2;';
+            var query = 'UPDATE Fruits SET pourrissement_state = pourrissement_state-2 WHERE pourrissement_state >0 AND (stockage_type = 1 OR stockage_type = 2);';
             connection.query(query, function(err,rows,fields){
                 if(err) throw err;
             });
