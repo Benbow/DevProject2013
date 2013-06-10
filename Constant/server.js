@@ -276,6 +276,25 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	
+	socket.on('destroyingBuilding', function(data){
+		tile = new Tiles();
+		//TODO generate croissance and health
+		map.getIdTile(data.x,data.y,function(id){
+			tile.DestroyBuilding(user.getId(), id, function(cb){
+				if(cb){
+					socket.emit('destroyBuilding', {
+						x: data.x,
+						y: data.y
+					});
+					socket.emit('valid', 'Building Suceesfully destroyed');
+				}else{
+					socket.emit('error', 'Not a Building !');
+				}
+			});
+		});
+	});
+
 	socket.on('error', function(msg){
 		socket.emit('error', msg);
 	});

@@ -12,6 +12,7 @@
 		isFertilizing : false,
 		isHarvesting : false,
 		isDestroyCrop:false,
+		isDestroyBuilding : false,
 		own_tile : {},
 		enemi_tile : {},
 		allies : {}
@@ -365,6 +366,21 @@
 				socket.emit('error', 'Destroy crops only on your tiles');
 			}
 		}
+		else if(User.isDestroyBuilding == true){
+			var testTile = false;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = true;
+			});
+			if(testTile){
+				socket.emit('destroyingBuilding', {
+					x: x,
+					y: y
+				});
+			}else{
+				socket.emit('error', 'Destroy Building only on your tiles');
+			}
+		}
 		socket.emit('userMove', {
 			x: x,
 			y: y
@@ -372,6 +388,11 @@
 	};
 
 	socket.on('destroyCrops', function(data){
+		ppmap.changeOneMap(data.x, data.y, '2');
+	});
+
+	socket.on('destroyBuilding', function(data){
+		ppmap.killBuilding(data.x, data.y);
 		ppmap.changeOneMap(data.x, data.y, '2');
 	});
 
@@ -532,7 +553,29 @@
 			User.isWatering = false;
 			User.isFertilizing = false;
 			User.isHarvesting = false;
+			User.isDestroyBuilding = false;
 			User.isDestroyCrop = true;
+			$(this).val('Arreter de Détruire');
+			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',64,0);
+		}
+
+	});
+
+	$("#menu_destroy_stockages").click(function(){
+
+		if(User.isDestroyBuilding){
+			User.isDestroyBuilding = false;
+			$(this).val('Détruire un batiments');
+			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
+		}
+		else{
+			User.isBuilding = false;
+			User.isPlanting = false;
+			User.isWatering = false;
+			User.isFertilizing = false;
+			User.isHarvesting = false;
+			User.isDestroyCrop = false;
+			User.isDestroyBuilding = true;
 			$(this).val('Arreter de Détruire');
 			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',64,0);
 		}
