@@ -38,6 +38,25 @@ var Stockages = (function() {
         });
     };
 
+    Stockages.prototype.GetMyStockages = function(id, callback){
+        var connection = _DB.connection();
+        var query = 'SELECT * FROM Stockages WHERE user_id='+id;
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+
+            if(typeof(rows[0]) != 'undefined'){
+                callback({
+                    ok : true,
+                    stock : rows
+                });
+            }else{
+                callback({
+                    ok : false
+                });
+            }
+        });
+    };
+
     
     //Getters
     Stockages.prototype.getId = function() {

@@ -460,7 +460,7 @@
 		var p = $("#prixFruits").text();
 		$("#instantSell").css('display','none');
 		socket.emit('instantSellConfirm', {
-			nom : parseInt(name),
+			nom : name,
 			nb : parseInt(n),
 			prix : parseInt(p)
 		});
@@ -471,8 +471,9 @@
 		var n = $("#nbFruits").text();
 		var p = $("#prixFruits").text();
 		$("#instantSell").css('display','none');
+		console.log(name);
 		socket.emit('instantSellStack', {
-			nom : parseInt(name),
+			nom : name,
 			nb : parseInt(n),
 			prix : parseInt(p)
 		});

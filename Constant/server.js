@@ -192,7 +192,6 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('instantSellConfirm', function(data){
-		console.log(data);
 		u = new User();
 		u.SellCrop(user.getId(), data.prix, function(ok){
 			//here, update l'affichage de l'argent du player
@@ -200,7 +199,19 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('instantSellStack', function(data){
-		
+
+		s = new Stockages();
+		s.GetMyStockages(user.getId(), function(cb){
+			if(cb.ok){
+				
+			}else{
+				u = new User();
+				u.SellCrop(user.getId(), data.prix, function(ok){
+					//here, update l'affichage de l'argent du player
+					socket.emit('error', 'Not Enough Storage ! You Sell it');
+				});
+			}
+		});
 	});
 
 	socket.on('error', function(msg){
