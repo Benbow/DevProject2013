@@ -17,13 +17,13 @@ var Fruits = (function() {
         
     };
 
-    Fruits.prototype.storeFruits = function(user_id, stockage_id, fruit_id, nb_fruits, callback){
+    Fruits.prototype.storeFruits = function(user_id, stockage_id, fruit_id, nb_fruits, poids, callback){
         saveFruits(user_id, stockage_id, fruit_id, nb_fruits, function(cb){
             var query = 'SELECT * FROM Stockages WHERE id ='+stockage_id+';';
             connection.query(query,function(err, r, fields) {
                 if (err) throw err;
                 if(typeof(r[0]) != 'undefined'){
-                    var nb = r[0].stockage_state - nb_fruits;
+                    var nb = r[0].stockage_state - (poids);
                     query = 'UPDATE Stockages SET stockage_state = '+nb+' WHERE id ='+stockage_id+';';
                     connection.query(query,function(err, r, fields) {
                         callback({

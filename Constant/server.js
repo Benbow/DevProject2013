@@ -215,7 +215,8 @@ io.sockets.on('connection', function(socket){
 							nom : c.fruits_spec.name,
 							nb : cb.nb,
 							prix : p, 
-							fruit_id : cb.fruit
+							fruit_id : cb.fruit,
+							poids : c.fruits_spec.poids*cb.nb
 						}
 						socket.emit('instantSell', d);
 					});
@@ -235,7 +236,7 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('instantSellStack', function(data){
 		s = new Stockages();
-		s.GetMyStockages(user.getId(), data.nb, function(cb){
+		s.GetMyStockages(user.getId(), data.nb, data.poids, function(cb){
 			if(cb.ok){
 				socket.emit('chooseStorage', {
 					data : data,
@@ -253,8 +254,8 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('storeCrops', function(data){
 		fruit = new Fruits;
-		fruit.storeFruits(user.getId(), data.stor_id, data.fruit_id, data.nb, function(cb){
-			socket.emit('valid', ''+cb.nb+' Crops stored');
+		fruit.storeFruits(user.getId(), data.stor_id, data.fruit_id, data.nb, data.poids, function(cb){
+			socket.emit('valid', ''+cb.nb+' Fruits stored');
 		});
 	});
 

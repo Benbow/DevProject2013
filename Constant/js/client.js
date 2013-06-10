@@ -401,6 +401,7 @@
 		$("#nbFruits").text(data.nb);
 		$("#nameFruits").text(data.nom);
 		$("#prixFruits").text(data.prix);
+		$("#poidsFruits").text(data.poids);
 		$("#instantSell").addClass(""+data.fruit_id+"");
 	});
 
@@ -622,11 +623,13 @@
 		var name = $("#nameFruits").text();
 		var n = $("#nbFruits").text();
 		var p = $("#prixFruits").text();
+		var po = $("#poidsFruits").text();
 		$("#instantSell").css('display','none');
 		socket.emit('instantSellConfirm', {
 			nom : name,
 			nb : parseInt(n),
-			prix : parseInt(p)
+			prix : parseInt(p),
+			poids : parseInt(po)
 		});
 	});
 
@@ -634,11 +637,13 @@
 		var name = $("#nameFruits").text();
 		var n = $("#nbFruits").text();
 		var p = $("#prixFruits").text();
+		var po = $("#poidsFruits").text();
 		$("#instantSell").css('display','none');
 		socket.emit('instantSellStack', {
 			nom : name,
 			nb : parseInt(n),
-			prix : parseInt(p)
+			prix : parseInt(p),
+			poids : parseInt(po)
 		});
 	});
 
@@ -663,13 +668,15 @@
 		var id = $("#instantSell").attr('class');
 		var nb = parseInt($("#nbFruits").text());
 		var name = $("#nameFruits").text();
+		var poids = $("#poidsFruits").text();
 		$("#chooseStorage").css('display', 'none');
 
 		socket.emit('storeCrops', {
 			stor_id : value,
-			fruit_id : id,
-			nb : nb,
-			name : name
+			fruit_id : parseInt(id),
+			nb : parseInt(nb),
+			name : name,
+			poids : parseInt(poids)
 		});
 	});
 
