@@ -36,10 +36,15 @@ var server = http.createServer(function (req, res) { }).listen(1337);
 
 var io = require('socket.io').listen(server);
 
+var f = new Fruits();
+f.updatePourissementFruits();
+
 // Action si un utilisateur arrive sur la page.
 io.sockets.on('connection', function(socket){
 	var user = new User();
 	//user.lvl();
+
+	
 
 	// Action quand un utilisateur essaie de se connecter.
 	socket.on('login', function(datalogin){
@@ -211,12 +216,14 @@ io.sockets.on('connection', function(socket){
 					fruit_spec = new Fruits_sp;
 					fruit_spec.getFruitSpec(cb.fruit, function(c){
 						var p = c.fruits_spec.prix_vente * cb.nb;
+						var po = c.fruits_spec.poids*cb.nb;
 						var d = {
 							nom : c.fruits_spec.name,
 							nb : cb.nb,
 							prix : p, 
 							fruit_id : cb.fruit,
-							poids : c.fruits_spec.poids*cb.nb
+							poids : po,
+							pourissement : c.fruits_spec.stockage_time
 						}
 						socket.emit('instantSell', d);
 					});
@@ -254,7 +261,7 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('storeCrops', function(data){
 		fruit = new Fruits;
-		fruit.storeFruits(user.getId(), data.stor_id, data.fruit_id, data.nb, data.poids, function(cb){
+		fruit.storeFruits(user.getId(), data.stor_id, data.fruit_id, data.nb, data.poids, data.stor_type, data.time, function(cb){
 			socket.emit('valid', ''+cb.nb+' Fruits stored');
 		});
 	});
