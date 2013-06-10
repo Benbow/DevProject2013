@@ -303,8 +303,6 @@
 			}
 			else
 				sendError('Tu ne peux pas conquerir un terrain qui t\'appartient.');
-
-			console.log(tileSelect);
 		}
 		else if(User.isWatering == true){
 			var testTile = false;
@@ -440,6 +438,7 @@
 	$("#menu_select_conquerir").click(function(){
 		if(User.isConquering)
 		{
+			console.log(tileSelect);
 			User.isConquering = false;
 			$.each(tileSelect,function(index,val){
 				socket.emit('newTileSelectConquet',{
@@ -470,7 +469,7 @@
 		if(User.isAttacking)
 		{
 			User.isAttacking = false;
-			$(this).val('Conquerir terrain');
+			$(this).val('Attaquer terrain');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else
