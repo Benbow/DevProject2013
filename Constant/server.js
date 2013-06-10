@@ -36,7 +36,7 @@ var io = require('socket.io').listen(server);
 // Action si un utilisateur arrive sur la page.
 io.sockets.on('connection', function(socket){
 	var user = new User();
-	user.lvl();
+	//user.lvl();
 
 	// Action quand un utilisateur essaie de se connecter.
 	socket.on('login', function(datalogin){

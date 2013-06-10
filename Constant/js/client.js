@@ -225,6 +225,7 @@
 
 	var mouseClick = function(x, y) {
 
+		console.log(User.isHarvesting);
 		if(User.isPlanting)
 		{
 			var testTile = false;
@@ -315,7 +316,7 @@
 					y: y
 				});
 			}else{
-				socket.emit('error', 'Fertilizing only your tiles');
+				socket.emit('error', 'Harvesting only your tiles');
 			}
 		}
 		socket.emit('userMove', {
