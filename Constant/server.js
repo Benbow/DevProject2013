@@ -218,11 +218,13 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('instantSellStack', function(data){
-
 		s = new Stockages();
-		s.GetMyStockages(user.getId(), function(cb){
+		s.GetMyStockages(user.getId(), data.nb, function(cb){
 			if(cb.ok){
-				
+				socket.emit('chooseStorage', {
+					data : data,
+					stockages : cb.stock
+				});
 			}else{
 				u = new User();
 				u.SellCrop(user.getId(), data.prix, function(ok){

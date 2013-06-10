@@ -335,6 +335,27 @@
 		$("#prixFruits").text(data.prix);
 	});
 
+	socket.on('chooseStorage', function(data){
+
+		var nb = data.data.nb;
+		var text = '';
+		var name;
+		$.each(data.stockages, function(index, value) {
+
+			if(value.stockages_spec_id == 1){
+				name = 'Silo';
+			}else if (value.stockages_spec_id == 2){
+				name = 'Grange';
+			}else if (value.stockages_spec_id == 3){
+				name = 'Chambre Froide';
+			}
+			text += '<option value="stock_'+value.id+'">'+name+' '+value.id+' ('+value.stockage_state+')'+'</option>';
+		});
+		console.log(text);
+		$("#chooseStorage").css('display','block');
+		$("#storageList").html(text);
+	});
+
 
 	$(".button_menu").click(function(){
 		var type = $(this).attr('id').substr(12,$(this).attr('id').length);
@@ -467,7 +488,6 @@
 		var n = $("#nbFruits").text();
 		var p = $("#prixFruits").text();
 		$("#instantSell").css('display','none');
-		console.log(name);
 		socket.emit('instantSellStack', {
 			nom : name,
 			nb : parseInt(n),
