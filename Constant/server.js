@@ -128,8 +128,10 @@ io.sockets.on('connection', function(socket){
 		crops = new Plantes();
 		//TODO generate croissance and health
 		map.getIdTile(data.x,data.y,function(id){
-			crops.Add_Plantes(50,50,user.getId(),data.id,id);
-			crops.updatePlante();
+			map.getInfosTile(id,function(infos){
+				crops.Add_Plantes(50,user.getId(),data.id,infos.id,infos.humidite,infos.fertilite);
+				crops.updatePlante();
+			});
 		});
 	});
 

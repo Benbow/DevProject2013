@@ -12,13 +12,20 @@ var Plantes = (function() {
 	var _plantes_spec_id;   //lien vers le bon type de arme INT
 	var _tile_id;           //lien ver la tile de la plante INT
 	var _DB;
+	var _tile_humidite;
+	var _tile_fertilite;
 
 	function Plantes(){
 		_DB = new DB();
 	};
 
-	Plantes.prototype.Add_Plantes = function(croissance, health, user_id, graines_spec_id, tile_id){
+	Plantes.prototype.Add_Plantes = function(croissance, user_id, graines_spec_id, tile_id, humidite, fertilite){
 		var connection = _DB.connection();
+
+		_tile_fertilite = fertilite;
+		_tile_humidite = humidite;
+
+		var health = (humidite + fertilite) / 2;
 
 		this.setCroissance(croissance);
 		this.setHealth(health);
@@ -46,14 +53,19 @@ var Plantes = (function() {
 
 		this.getInfosGraine(function(graine_infos){
 			var refresh = setInterval(function(){
+				_status++;
 				if(_status > 5)
 				{
 					clearInterval(refresh);
 				}
 				else
 				{
-					_status++;
 					connection.query('UPDATE Plantes SET status = '+_status+', updated_at = "'+getTimeDb()+'" WHERE id = ' + _id, function(err,rows,fields){
+			            if(err) throw err;
+			        });
+			        ((_tile_fertilite - 30) < 0) ? 0 : (_tile_fertilite - 30);
+			        ((_tile_humidite - 30) < 0) ? 0 : (_tile_humidite - 30);
+					connection.query('UPDATE Tiles SET fertilite = '+ _tile_fertilite +', humidite = "'+ _tile_humidite +'" WHERE id = ' + _tile_id, function(err,rows,fields){
 			            if(err) throw err;
 			        });
 				}

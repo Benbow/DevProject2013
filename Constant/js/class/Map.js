@@ -245,6 +245,23 @@ var Map = (function() {
         });
     }
 
+    Map.prototype.getInfosTile = function(id,callback){
+        var connection = _DB.connection();
+        var data = new Array();
+
+        connection.query('SELECT * FROM Tiles WHERE id = '+id, function(err,rows,fields){
+            if(err) throw err;
+
+            data = {
+                'fertilite' : rows[0].fertilite,
+                'humidite'  : rows[0].humidite,
+                'id'        : rows[0].id
+            };
+
+            callback(data);
+        });
+    };
+
     
 
 	Map.prototype.canAttack = function(tile_id, user_id, callback)
