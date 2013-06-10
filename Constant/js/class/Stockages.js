@@ -38,9 +38,10 @@ var Stockages = (function() {
         });
     };
 
-    Stockages.prototype.GetMyStockages = function(id, nb, callback){
+    Stockages.prototype.GetMyStockages = function(id, nb, poids, callback){
         var connection = _DB.connection();
-        var query = 'SELECT * FROM Stockages WHERE user_id='+id+' AND stockage_state >= '+nb+';';
+        var n = poids;
+        var query = 'SELECT * FROM Stockages WHERE user_id='+id+' AND stockage_state >= '+n+';';
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
 
