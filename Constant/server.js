@@ -258,6 +258,24 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	socket.on('destroyingCrops', function(data){
+		tile = new Tiles();
+		//TODO generate croissance and health
+		map.getIdTile(data.x,data.y,function(id){
+			tile.DestroyCrops(user.getId(), id, function(cb){
+				if(cb){
+					socket.emit('destroyCrops', {
+						x: data.x,
+						y: data.y
+					});
+					socket.emit('valid', 'Crops Suceesfully destroyed');
+				}else{
+					socket.emit('error', 'Not a Crop !');
+				}
+			});
+		});
+	});
+
 	socket.on('error', function(msg){
 		socket.emit('error', msg);
 	});
