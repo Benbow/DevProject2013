@@ -17,6 +17,9 @@ var User 	   = require("./js/class/User");
 var Tiles 	   = require("./js/class/Tiles");
 var Fruits_sp  = require("./js/class/Fruits_spec");
 var Fruits 	   = require("./js/class/Fruits");
+var Graine     = require("./js/class/Graine")
+
+
 
 var map = new Map();
 //map.initialiseMap();
@@ -256,6 +259,13 @@ io.sockets.on('connection', function(socket){
 					socket.emit('error', 'Not Enough Storage ! You Sell it');
 				});
 			}
+		});
+	});
+
+	socket.on('achat_graine_tomate', function(data){
+		graine = new Graine;
+		graine.buyGraine(data.nb, user.getId(), data.graines_spec_id, function(cb){
+			socket.emit(cb.nb+ 'on bien ete achete');
 		});
 	});
 

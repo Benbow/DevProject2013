@@ -1,14 +1,25 @@
 //Classe qui enregistre les graines de chaque user
+var DB = require('./DB');
 
 var Graines = (function() {
     var _id;                //id unique d'une graine INT
     var _nb;                //nombre de graine de ce type que le joueur dispose INT
     var _user_id;           //lien vers l'user a qui appartient la graine INT
     var _graines_spec_id;   //lien vers le bon type de graine INT
+     var _DB;
 
     function Graines(){
-        
+            _DB = new DB();
     };
+
+     Graines.prototype.buyGraine = function(nb, user_id, graines_spec_id, callback){
+         var connection = _DB.connection();
+       var query = 'INSERT INTO Graines (nb,user_id, graines_spec_id) VALUES(' + nb + ',' + user_id + ','+ graines_spec_id +');';
+        connection.query(query,function(err, r, fields) {
+            if (err) throw err;
+        });
+    };
+ 
 
     //Getters
     Graines.prototype.getId = function() {

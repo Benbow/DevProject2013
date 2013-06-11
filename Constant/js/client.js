@@ -657,6 +657,14 @@
 
 	});
 
+	$(".button_market_tomate").click(function(data){
+		socket.emit('achat_graine_tomate', {
+			nb : 69,
+			graines_spec_id : 1
+		});
+
+	});
+
 	$(".button_menu_plantes").click(function(){
 		User.isPlanting = true;
 		User.isBuilding = false;
