@@ -179,6 +179,7 @@
 	        mousewheel:  true,		// zoom avec la molette
 	        zoom: 		 0.5,		// zoom par default
 	        pathfinding: true,		// chemin auto pour le deplacement de l'avatar
+	        cursorDelay : 1000,
 	        onmoveavatar:function(x, y, mapid) {
 	            mouseClick(x, y);// Fonction que l'on fait quand on clique pour bouger le perso
 	        },
@@ -479,6 +480,10 @@
 		var id = $("#BuildingPropTileId").attr('class');
 		id = parseInt(id);
 		socket.emit('showBuildingPropswithId', id);
+	});
+
+	socket.on('hideBuildingProps', function(data){
+		$("#buildingProps").css('display', 'none');
 	});
 
 

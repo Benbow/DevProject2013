@@ -316,6 +316,7 @@ io.sockets.on('connection', function(socket){
 					});
 				}else{
 					socket.emit('error', 'Empty Building !');
+					socket.emit('hideBuildingProps', 'ok');
 				}
 			});
 		});
@@ -333,6 +334,7 @@ io.sockets.on('connection', function(socket){
 				});
 			}else{
 				socket.emit('error', 'Empty Building !');
+				socket.emit('hideBuildingProps', 'ok');
 			}
 		});
 	});
