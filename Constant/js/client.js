@@ -527,28 +527,36 @@
 			switch(graines_spec_id)
 			{
 				case '1':
-				  $("#menu_select_plantes_pasteque").css('display', 'relative');
+				  $("#menu_select_plantes_pasteque").css('display', 'inline');
+				  $("#menu_select_plantes_pasteque").val('Planter une pasteque ('+nb+')');
 				  break;
 				case '2':
-				  $("#menu_select_plantes_salade").css('display', 'relative');
+				  $("#menu_select_plantes_salade").css('display', 'inline');
+				  $("#menu_select_plantes_salade").val('Planter des salades ('+nb+')');
 				  break;
 				case '3':
-				  $("#menu_select_plantes_ananas").css('display', 'relative');
+				  $("#menu_select_plantes_ananas").css('display', 'inline');
+				  $("#menu_select_plantes_ananas").val('Planter un ananas ('+nb+')');
 				  break;
 				case '4':
-				  $("#menu_select_plantes_tomate").css('display', 'relative');
+				  $("#menu_select_plantes_tomate").css('display', 'inline');
+				  $("#menu_select_plantes_tomate").val('Planter des tomates ('+nb+')');
 				  break;
 				case '5':
-				  $("#menu_select_plantes_mais").css('display', 'relative');
+				  $("#menu_select_plantes_mais").css('display', 'inline');
+				  $("#menu_select_plantes_mais").val('Planter du mais ('+nb+')');
 				  break;
 				case '6':
-				  $("#menu_select_plantes_melon").css('display', 'relative');
+				  $("#menu_select_plantes_melon").css('display', 'inline');
+				  $("#menu_select_plantes_melon").val('Planter un melon ('+nb+')');
 				  break;
 				case '7':
-				  $("#menu_select_plantes_raisin").css('display', 'relative');
+				  $("#menu_select_plantes_raisin").css('display', 'inline');
+				  $("#menu_select_plantes_raisin").val('Planter du raisin ('+nb+')');
 				  break;
 				case '8':
-				  $("#menu_select_plantes_carotte").css('display', 'relative');
+				  $("#menu_select_plantes_carotte").css('display', 'inline');
+				  $("#menu_select_plantes_carotte").val('Planter des carottes ('+nb+')');
 				  break;
 			}
 			
