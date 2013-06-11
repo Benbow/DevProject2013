@@ -239,7 +239,6 @@
 
 	var mouseClick = function(x, y) {
 
-		console.log(User.isHarvesting);
 		if(User.isPlanting)
 		{
 			var testTile = false;
@@ -438,43 +437,48 @@
 				name = 'Chambre Froide';
 			}
 			text += '<option value="'+value.id+'_'+value.stockages_spec_id+'">'+name+' '+value.id+' ('+value.stockage_state+')'+'</option>';
-		});
-		console.log(text);
+		});;
 		$("#chooseStorage").css('display','block');
 		$("#storageList").html(text);
 	});
 
 	socket.on('DisplayBuildingProps', function(data){
 		var text = "Name : "+data.stockages_spec.name+" "+data.stockages.id+"</br>";
-		text += "Free Space : "+data.stockages.stockage_state;
+		text += "Free Space : "+data.stockages.stockage_state+"</br>";
+		text += "<span id='BuildingPropTileId' class='"+data.stockages.tile_id+"' ></span>";
 		$("#buildingInfos").html(text);
 		text = '';
 		$.each(data.fruits, function(index, fruits) {
 			text += '<div class ="fruit_property" id="fruit_'+fruits.id+'">';
 			var fruit_spec_id = fruits.fruits_spec_id;
 			var fruit_sp;
-			console.log(fruit_spec_id);
 			$.each(data.fruits_spec, function(index, fruits_spec) {
 				if(fruits_spec.id == fruit_spec_id){
-					fruit_sp = fruits_spec;
-					console.log(fruit_sp);
+					fruit_sp = fruits_spec;;
 					return false;
 				}
 			});
 			text += '<span class="fruit_name"> Name : '+fruit_sp.name+' '+fruits.id+'</span></br>';
-			text += '<span class="fruit_sante"> Health : '+fruits.pourrissement_state+'</span></br>';
+			text += '<span class="fruit_sante"> Health : '+fruits.pourrissement_state+'/'+fruit_sp.stockage_time+'</span></br>';
 			var percentage = Math.ceil((fruits.pourrissement_state * 100)/fruit_sp.stockage_time);
 			text += '<span class="fruit_per_sante"> Percentage Health : '+percentage+'%</span></br>';
 			text += '<span class="fruit_prix"> Prix : '+fruit_sp.prix_vente+'</span></br>';
 			if(fruits.pourrissement_state > 0){
-				text += '<input id="sell_fruit" class="'+fruits.id+'" type="button" value="Vendre ce fruit"/>';
+				text += '<input class="sell_fruit" id="sell_'+fruits.id+'_'+fruit_sp.poids+'_'+fruit_sp.prix_vente+'_'+data.stockages.id+'" type="button" value="Vendre ce fruit"/>';
 			}
-			text += '<input id="drop_fruit" class="'+fruits.id+'" type="button" value="Jeter ce fruit"/>';
+			text += '<input class="drop_fruit" id="drop_'+fruits.id+'_'+fruit_sp.poids+'_'+fruit_sp.prix_vente+'_'+data.stockages.id+'" type="button" value="Jeter ce fruit"/>';
 			text += '</div>'
 		});
+		$("#fruitsList").html('');
 		$("#fruitsList").html(text);
 		$("#buildingProps").css('display', 'block');
 
+	});
+
+	socket.on('RefreshBuildingProps', function(data){
+		var id = $("#BuildingPropTileId").attr('class');
+		id = parseInt(id);
+		socket.emit('showBuildingPropswithId', id);
 	});
 
 
@@ -562,7 +566,6 @@
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
-			console.log('test');
 			User.isBuilding = false;
 			User.isPlanting = false;
 			User.isWatering = false;
@@ -750,6 +753,49 @@
 			poids : parseInt(poids),
 			time : parseInt(time)
 		});
+	});
+
+	//buildingprop
+	$(".HideBuildingProps").click(function(){
+		$("#buildingProps").css('display', 'none');
+	});
+
+	$(".RefreshBuildingProps").click(function(){
+		alert("coucou");
+		var id = $("#BuildingPropTileId").attr('class');
+		id = parseInt(id);
+		socket.emit('showBuildingPropswithId', id);
+	});
+
+	$("#fruitsList").delegate(".drop_fruit", 'click', function(){
+		var value = $(this).attr('id');
+		var val = value.split("_");
+		var fruit_id = val[1];
+		var stockage_id = val[4];
+		var poids = val[2];
+
+		socket.emit('drop_fruit', {
+			fruit_id : parseInt(fruit_id),
+			stockage_id : parseInt(stockage_id),
+			poids : parseInt(poids)
+		});
+	});	
+
+	$("#fruitsList").delegate(".sell_fruit", 'click', function(){
+		var value = $(this).attr('id');
+		var val = value.split("_");
+		var fruit_id = val[1];
+		var stockage_id = val[4];
+		var poids = val[2];
+		var prix = val[3];
+
+		socket.emit('sell_fruit', {
+			fruit_id : parseInt(fruit_id),
+			stockage_id : parseInt(stockage_id),
+			poids : parseInt(poids),
+			prix : parseInt(prix)
+		});
+
 	});
 
 })(jQuery);

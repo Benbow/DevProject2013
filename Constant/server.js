@@ -315,9 +315,41 @@ io.sockets.on('connection', function(socket){
                         fruits_spec : cb.fruits_spec
 					});
 				}else{
-					socket.emit('error', 'Not a Building !');
+					socket.emit('error', 'Empty Building !');
 				}
 			});
+		});
+	});
+
+	socket.on('showBuildingPropswithId', function(id){
+		stockages = new Stockages();
+		stockages.GetInfos(user.getId(), id, function(cb){
+			if(cb){
+				socket.emit('DisplayBuildingProps', {
+					stockages : cb.stockages,
+                    stockages_spec : cb.stockages_spec,
+                    fruits : cb.fruits,
+                    fruits_spec : cb.fruits_spec
+				});
+			}else{
+				socket.emit('error', 'Empty Building !');
+			}
+		});
+	});
+
+	socket.on('sell_fruit', function(data){
+		var fruit = new Fruits();
+		fruit.SellFruit(data.fruit_id, data.stockage_id, data.poids, data.prix, user.getId(), function(cb){
+			socket.emit('valid', 'Fruit Sell');
+			socket.emit('RefreshBuildingProps', 'ok');
+		});
+	});
+
+	socket.on('drop_fruit', function(data){
+		var fruit = new Fruits();
+		fruit.DropFruit(data.fruit_id, data.stockage_id, data.poids, function(cb){
+			socket.emit('valid', 'Fruit Dropped');
+			socket.emit('RefreshBuildingProps', 'ok');
 		});
 	});
 

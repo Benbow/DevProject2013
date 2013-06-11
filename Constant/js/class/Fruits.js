@@ -45,6 +45,36 @@ var Fruits = (function() {
         },(2000));
     };
 
+    Fruits.prototype.SellFruit = function(fruit_id, stockage_id, poids, prix, user_id, callback){
+        var query = 'DELETE FROM Fruits WHERE id='+fruit_id+';';
+        connection.query(query, function(err,rows,fields){
+            if(err) throw err;
+            query = 'UPDATE Stockages SET stockage_state = stockage_state-'+poids+' WHERE id = '+stockage_id+';';
+            connection.query(query, function(err,rows,fields){
+                if(err) throw err;
+                query = 'UPDATE Users SET argent = argent+'+prix+' WHERE id ='+user_id+';';
+                connection.query(query, function(err,rows,fields){
+                    if(err) throw err;
+                    callback(true);
+                });
+            });
+
+        });
+    };
+
+    Fruits.prototype.DropFruit = function(fruit_id, stockage_id, poids, callback){
+        var query = 'DELETE FROM Fruits WHERE id='+fruit_id+';';
+        connection.query(query, function(err,rows,fields){
+            if(err) throw err;
+            query = 'UPDATE Stockages SET stockage_state = stockage_state-'+poids+' WHERE id = '+stockage_id+';';
+            connection.query(query, function(err,rows,fields){
+                if(err) throw err;
+                callback(true);
+            });
+
+        });
+    };
+
     //Getters
     Fruits.prototype.getId = function() {
         return _id;
