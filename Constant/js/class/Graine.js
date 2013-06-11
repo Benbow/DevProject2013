@@ -14,11 +14,29 @@ var Graines = (function() {
 
      Graines.prototype.buyGraine = function(nb, user_id, graines_spec_id, callback){
          var connection = _DB.connection();
-       var query = 'INSERT INTO Graines (nb,user_id, graines_spec_id) VALUES(' + nb + ',' + user_id + ','+ graines_spec_id +');';
-        connection.query(query,function(err, r, fields) {
+         var query ='SELECT * FROM Graines WHERE user_id= ' + user_id + ' AND  graines_spec_id = ' + graines_spec_id + ';';
+          connection.query(query,function(err, row, fields) {
             if (err) throw err;
-        });
-    };
+            console.log("SELECT return =" +row[0]);
+             if( typeof( row[0]) == "undefined"){
+                console.log("je rentre dans l'insert");
+                var query = 'INSERT INTO Graines (nb,user_id, graines_spec_id) VALUES(' + nb + ',' + user_id + ','+ graines_spec_id +');';
+                connection.query(query,function(err, r, fields) {
+                if (err) throw err;
+                callback(true);
+              });
+
+             }else{
+                console.log("je rentre dans l'update");
+                connection.query('UPDATE Graines SET nb = nb + '+nb+' WHERE user_id = '+user_id +' AND graines_spec_id = ' +graines_spec_id+ ';' ,function(err, r, fields) {
+                            if(err) throw err;
+                            callback(true);
+                     });
+
+                 }
+             });
+        };
+
  
 
     //Getters

@@ -659,7 +659,7 @@
 
 	$(".button_market_tomate").click(function(data){
 		socket.emit('achat_graine_tomate', {
-			nb : 69,
+			nb : 1,
 			graines_spec_id : 1
 		});
 
