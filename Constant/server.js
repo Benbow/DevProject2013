@@ -177,7 +177,6 @@ io.sockets.on('connection', function(socket){
 		{
 			user.getTimerConquet(function(timer){
 				setTimeout(function(){
-					console.log(timer);
 					$.each(saveTiles,function(index, value){
 						user.conquet(value.id);
 						newOptions = {

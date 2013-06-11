@@ -127,7 +127,6 @@
 		$("#menu_username").html(user.pseudo);
 		$("#div_login").slideUp('fast');
 		$("#div_play").fadeIn('slow');
-		$("#div_menu").fadeIn('slow');
 		$("#div_begin").fadeIn('slow');
 		$("#overlay").fadeIn('slow');
 	});
@@ -147,6 +146,7 @@
 	$("#submit_newgame").click(function(){
 		$("#div_begin").fadeOut('slow');
 		$("#overlay").fadeOut('slow');
+		$("#div_menu").fadeIn('slow');
 		socket.emit('newgame', {
 			username : $("#menu_username").html(),
 			difficulty : $('input[name=newgame_difficult]:checked').val()
@@ -157,6 +157,7 @@
 	$("#continue_game").click(function(){
 		$("#div_begin").fadeOut('slow');
 		$("#overlay").fadeOut('slow');
+		$("#div_menu").fadeIn('slow');
 		socket.emit('continue_game', {
 			username : $("#menu_username").html()
 		});
@@ -587,14 +588,18 @@
 	$("#menu_select_conquerir").click(function(){
 		if(User.isConquering)
 		{
-			console.log(tileSelect);
 			User.isConquering = false;
 			$.each(tileSelect,function(index,val){
 				socket.emit('newTileSelectConquet',{
 					'x': val.x,
 					'y': val.y
 				});
+				User.own_tile += {
+					'x': val.x,
+					'y': val.y
+				};
 			});
+			console.log(User.own_tile);
 
 			socket.emit('userConquer',true);
 			$(this).val('Conquerir terrain');
@@ -609,7 +614,7 @@
 			User.isFertilizing = false;
 			User.isHarvesting = false;
 			User.isAttacking = false;
-			$(this).val('Attaquer les terrains selectionnes');
+			$(this).val('Conquerir !');
 			ppmap.changeCursor('images/attackTile.png','images/emptyTile.png',0,0);
 		}
 		
@@ -630,7 +635,7 @@
 			User.isFertilizing = false;
 			User.isHarvesting = false;
 			User.isConquering = false;
-			$(this).val('Arreter d\'attaquer');
+			$(this).val('Attaquer !');
 			ppmap.changeCursor('images/attackTile.png','images/emptyTile.png',0,0);
 		}
 		
