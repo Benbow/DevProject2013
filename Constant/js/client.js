@@ -12,6 +12,7 @@
 		isFertilizing : false,
 		isHarvesting : false,
 		isDestroyCrop:false,
+		isDiplayingInfos : false,
 		isDestroyBuilding : false,
 		own_tile : {},
 		enemi_tile : {},
@@ -190,6 +191,7 @@
 	        	hoverTiles(x, y);
 	        }
 	    });
+	    //ppmap.switchCursorDelay(0);
 
 		//Mise en place des batiments quand tu load la map.
 	    $.each(map.storage, function(index, value) {
@@ -394,18 +396,18 @@
 
 	var buildingProps = function(x, y){
 		var testTile = false;
-			$.each(User.own_tile, function(index, value){
-				if(value.x == x && value.y == y)
-					testTile = true;
-			});
-			if(testTile){
-				socket.emit('showBuildingProps', {
-					x: x,
-					y: y
+		$.each(User.own_tile, function(index, value){
+			if(value.x == x && value.y == y)
+				testTile = true;
+		});
+		if(testTile){
+			socket.emit('showBuildingProps', {
+				x: x,
+				y: y
 				});
-			}else{
-				sendError('This is not your Building');
-			}
+		}else{
+			sendError('This is not your Building');
+		}
 	};
 
 	var hoverTiles = function(x, y){
@@ -726,6 +728,21 @@
 			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',64,0);
 		}
 
+	});
+
+	$("#menu_display_tile_infos").click(function(){
+		if(User.isDiplayingInfos){
+			User.isDiplayingInfos = false;
+			$(this).val('Afficher les infos');
+			//ppmap.switchCursorDelay(0);
+			$("#tileInfo").fadeOut('fast');
+		}
+		else{
+			//ppmap.switchCursorDelay(1);
+			User.isDiplayingInfos = true;
+			$(this).val('Masquer les infos');
+			$("#tileInfo").fadeIn('fast');
+		}
 	});
 
 	$(".button_market_tomate").click(function(data){
