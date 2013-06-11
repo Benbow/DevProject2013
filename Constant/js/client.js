@@ -256,7 +256,6 @@
 			if(testTile)
 			{
 				//ppmap.addObject(x, y, 'images/'+Plantes.sprite[Plantes.name].sprite_id + '.png', 0, 0);
-				ppmap.changeOneMap(x, y, Plantes.sprite[Plantes.name].sprite_id)
 				socket.emit('newCrops', {
 					x: x,
 					y: y,
@@ -276,7 +275,6 @@
 			});
 			if(testTile)
 			{
-				ppmap.addBuilding(x, y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
 				socket.emit('newstorage', {
 					x: x,
 					y: y,
@@ -492,6 +490,14 @@
 		}
 		$("#tileInfo").html(text);
 		$("#tileInfo").fadeIn('fast');
+	});
+
+	socket.on('validStorage', function(data){
+		ppmap.addBuilding(data.x, data.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
+	});
+
+	socket.on('validCrops', function(data){
+		ppmap.changeOneMap(data.x, data.y, Plantes.sprite[Plantes.name].sprite_id);
 	});
 
 	socket.on('destroyCrops', function(data){

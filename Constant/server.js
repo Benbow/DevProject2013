@@ -157,8 +157,19 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('newstorage', function(data){
 		stockage = new Stockages();
+		tile = new Tiles();
 		map.getIdTile(data.x,data.y,function(id){
-			stockage.Add_Stockages(1,user.getId(),data.id,id);
+			tile.checkEmpty(id, function(cb){
+				if(cb){
+					stockage.Add_Stockages(1,user.getId(),data.id,id);
+					socket.emit('validStorage', {
+						x : data.x,
+						y : data.y
+					});
+				}else{
+					socket.emit('error', 'Not an Empty Tile !');
+				}
+			});
 		});
 	});
 
@@ -193,25 +204,38 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('newCrops', function(data){
 		crops = new Plantes();
+		tile = new Tiles();
 		//TODO generate croissance and health
 		map.getIdTile(data.x,data.y,function(id){
-			map.getInfosTile(id,function(infos){
-				crops.Add_Plantes(50,user.getId(),data.id,infos.id,infos.humidite,infos.fertilite);
-				var options = {
-					'status' : 0,
-					'graine_id' : data.id,
-					'type' : 'update_status'
+			tile.checkEmpty(id, function(cb){
+				if(cb){
+					map.getInfosTile(id,function(infos){
+						crops.Add_Plantes(50,user.getId(),data.id,infos.id,infos.humidite,infos.fertilite);
+						var options = {
+							'status' : 0,
+							'graine_id' : data.id,
+							'type' : 'update_status'
+						}
+						updateTile(data.x, data.y, options);
+						crops.updatePlante(function(status, graine_id){
+							var newOptions = {
+								'status' : status,
+								'graine_id' : graine_id,
+								'type' : 'update_status'
+							}
+							updateTile(data.x, data.y, newOptions);
+						});
+						socket.emit('validCrops', {
+							x : data.x,
+							y : data.y
+						});
+					});
+				}else{
+					socket.emit('error', 'Not an Empty Tile !');
 				}
-				updateTile(data.x, data.y, options);
-				crops.updatePlante(function(status, graine_id){
-					var newOptions = {
-						'status' : status,
-						'graine_id' : graine_id,
-						'type' : 'update_status'
-					}
-					updateTile(data.x, data.y, newOptions);
-				});
+				
 			});
+			
 		});
 	});
 

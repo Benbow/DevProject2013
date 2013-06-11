@@ -155,6 +155,23 @@ var Tiles = (function() {
         });
     }
 
+    Tiles.prototype.checkEmpty = function(id, callback){
+        var query = 'SELECT * FROM Tiles WHERE id ='+id+';';
+         connection.query(query,function(err, rows, fields) {
+            if(typeof(rows[0]) != "undefined"){
+                if(rows[0].isEmpty == 0){
+                    callback(true);
+                }
+                else{
+                    callback(false);
+                }
+            }else{
+                callback(false);
+            }
+
+        });
+    }
+
     Tiles.changeSprite = function(x,y,sprite_id){
         connection.query('UPDATE Tiles SET sprite_id = '+sprite_id+' WHERE x = '+x+' AND y = '+y, function(err,rows,fields){
             if(err) throw err;
