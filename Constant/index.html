@@ -19,10 +19,10 @@
 
 			<script language="javascript"> 
 				function checkPassword() { 
-				    if (document.pwForm.newPassword.value != document.pwForm.confirmNewPassword.value) { 
-				        alert ('The passwords do not match!');
-				        return false; 
-				    } 
+					if (document.pwForm.newPassword.value != document.pwForm.confirmNewPassword.value) { 
+						alert ('The passwords do not match!');
+						return false; 
+					} 
 				} 
 				</script>
 
@@ -257,6 +257,7 @@
 					
 				</div>
 				<input class="HideBuildingProps" type="button" value="Hide" /><input class="RefreshBuildingProps" type="button" value="Refresh" />
+				<div id="tileInfo" style="display:none;"></div>
 			</div>
 			<div id="div_menu">
 				<div id="menu_select_type">
@@ -290,6 +291,9 @@
 
 					<div>
 						<input id="menu_market" class="button_menu" type="button" value="Marché" />
+					</div>
+					<div>
+						<input id="menu_display_tile_infos" class="button_menu" type="button" value="Afficher les infos de case" />
 					</div>
 				</div>
 

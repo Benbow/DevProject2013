@@ -55,7 +55,7 @@ io.sockets.on('connection', function(socket){
 		//On va chercher en bdd si le mail existe.
 		user.loginUser(datalogin.mail,datalogin.password,function(socket_user){
 			if(socket_user[1] != null) // true si le mail existe
-            {
+			{
 				if(socket_user[2] == datalogin.password)// On check le password
 				{
 					connected[(socket_user[3])] = socket.id;
@@ -63,20 +63,20 @@ io.sockets.on('connection', function(socket){
 					user.setId(socket_user[3]);
 					user.connected();
 					socket.emit('valid', 'Connected !');
-                    socket.emit('connected', {
-                    	'pseudo': user.getPseudo()
-                    });
-                    if(socket_user[4]){
-                    	if(socket_user[4] == 2){
-                    		socket.emit('isAdmin');
-                    	}
-                    }
+					socket.emit('connected', {
+						'pseudo': user.getPseudo()
+					});
+					if(socket_user[4]){
+						if(socket_user[4] == 2){
+							socket.emit('isAdmin');
+						}
+					}
 				}
 				else
-                    socket.emit('error', 'Wrong password !');
-            }
-            else
-                socket.emit('error', 'Bad mail !');
+					socket.emit('error', 'Wrong password !');
+			}
+			else
+				socket.emit('error', 'Bad mail !');
 		});
 	});
 		
@@ -444,9 +444,9 @@ io.sockets.on('connection', function(socket){
 				if(cb){
 					socket.emit('DisplayBuildingProps', {
 						stockages : cb.stockages,
-                        stockages_spec : cb.stockages_spec,
-                        fruits : cb.fruits,
-                        fruits_spec : cb.fruits_spec
+						stockages_spec : cb.stockages_spec,
+						fruits : cb.fruits,
+						fruits_spec : cb.fruits_spec
 					});
 				}else{
 					socket.emit('error', 'Empty Building !');
@@ -462,9 +462,9 @@ io.sockets.on('connection', function(socket){
 			if(cb){
 				socket.emit('DisplayBuildingProps', {
 					stockages : cb.stockages,
-                    stockages_spec : cb.stockages_spec,
-                    fruits : cb.fruits,
-                    fruits_spec : cb.fruits_spec
+					stockages_spec : cb.stockages_spec,
+					fruits : cb.fruits,
+					fruits_spec : cb.fruits_spec
 				});
 			}else{
 				socket.emit('error', 'Empty Building !');
@@ -592,20 +592,20 @@ getTimeDb = function(){
 };
 
 updateTile = function(x,y,options){
-    if(options.type == 'update_status'){
-	    var sprite_id = options.graine_id+""+options.status;
-	    Tiles.changeSprite(x,y,sprite_id);
-	    io.sockets.emit('newTileSprite', {
-	        'x':x,
-	        'y':y,
-	        'sprite_id': sprite_id
-	    });
-    }
-    else if(options.type == 'conquer'){
-	    io.sockets.emit('newTileConquer', {
-	        'x':x,
-	        'y':y,
-	        'user_id': options.user_id
-	    });
-    }
+	if(options.type == 'update_status'){
+		var sprite_id = options.graine_id+""+options.status;
+		Tiles.changeSprite(x,y,sprite_id);
+		io.sockets.emit('newTileSprite', {
+			'x':x,
+			'y':y,
+			'sprite_id': sprite_id
+		});
+	}
+	else if(options.type == 'conquer'){
+		io.sockets.emit('newTileConquer', {
+			'x':x,
+			'y':y,
+			'user_id': options.user_id
+		});
+	}
 };
