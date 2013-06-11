@@ -40,7 +40,9 @@ var Plantes = (function() {
 
 		connection.query(query,function(err, rows, fields) {
 			if (err) throw err;
-			console.log('Plantes created !');
+			connection.query('UPDATE Tiles SET isEmpty = 1 WHERE id ='+tile_id+';', function(err,rows,fields){
+				console.log('Plantes created !');
+			});
 		});
 
 		connection.query('SELECT id FROM Plantes WHERE tile_id = '+tile_id+';', function(err,rows,fields){
@@ -104,6 +106,18 @@ var Plantes = (function() {
             callback(rows[0]);
         });
     };
+
+    Plantes.prototype.getInfosPlantes = function(tile_id, callback){
+    	var connection = _DB.connection();
+        var query = 'SELECT * FROM Plantes WHERE tile_id = '+tile_id+';';
+        connection.query(query,function(err, rows, fields) {
+            if(typeof(rows[0]) != "undefined"){
+                callback(rows[0]);
+            }else{
+                callback(false);
+            }
+        });
+    }
 
 	//Getters
 	Plantes.prototype.getId = function() {

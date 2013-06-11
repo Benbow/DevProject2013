@@ -185,6 +185,9 @@
 	        },
 	        onclicbuilding:function(x, y, mapid){
 	        	buildingProps(x, y);
+	        },
+	        oncursordelay:function(x, y, mapid){
+	        	hoverTiles(x, y);
 	        }
 	    });
 
@@ -404,6 +407,74 @@
 
 			}
 	};
+
+	var hoverTiles = function(x, y){
+		var testTile = true;
+		$.each(User.enemi_tile, function(index, value){
+			if(value.x == x && value.y == y)
+				testTile = false;
+		});
+		if(testTile){
+			socket.emit('getTileInfos', {
+				x: x,
+				y: y
+			});
+		}else{
+			sendError('Vous ne pouvez pas connaitre les infos d\'une case ennemie');
+		}
+	};
+
+	socket.on('showTileInfos', function(data){
+		$("#tileInfo").html('');
+		var text = 'X : <span id="tile-coord-x">'+data.tile.x+'</span>, Y: <span id="tile-coord-y">'+data.tile.y+'</span></br>';
+		var owner;
+		console.log(data.tile.owner);
+		if(data.tile.owner == null)
+			owner = 'FREE';
+		else if(data.tile.owner == data.user_id)
+			owner = 'ME';
+		else
+			owner = 'ENNEMY';
+
+		text += 'Owner : <span id="tile-owner">'+owner+'</span><br/>';
+		text += 'Humidite : <span id="tile-humidite">'+data.tile.humidite+'</span><br/>';
+		text += 'Fertilite : <span id="tile-fertilite">'+data.tile.fertilite+'</span></br>';
+
+		if(data.type == 'plante'){
+			text += '</br><b>Plante</b></br>';
+			var healthText;
+			if(data.plante.health >=0 && data.plante.health < 20)
+				healthText = 'Very bad';
+			else if(data.plante.health >= 20 && data.plante.health < 40)
+				healthText = 'Bad';
+			else if(data.plante.health >= 40 && data.plante.health < 60)
+				healthText = 'Correct';
+			else if(data.plante.health >= 60 && data.plante.health < 80)
+				healthText = 'Good';
+			else if(data.plante.health >= 80 && data.plante.health <= 100)
+				healthText = 'Very Good';
+			text += 'Health : <span id="tile-plante-health">'+data.plante.health+'%</span> <span id="tile-plante-health-text">'+healthText+'</span></br>';
+
+			var CroissanceText;
+			if(data.plante.croissance >=0 && data.plante.croissance < 20)
+				CroissanceText = 'Semer';
+			else if(data.plante.croissance >= 20 && data.plante.croissance < 40)
+				CroissanceText = 'Germes';
+			else if(data.plante.croissance >= 40 && data.plante.croissance < 60)
+				CroissanceText = 'Pousses';
+			else if(data.plante.croissance >= 60 && data.plante.croissance < 80)
+				CroissanceText = 'Plantes';
+			else if(data.plante.croissance >= 80 && data.plante.croissance <= 100)
+				CroissanceText = 'Mature';
+			text += 'Croissance : <span id="tile-plante-croissance">'+data.plante.croissance+'%</span> <span id="tile-plante-croissance-text">'+CroissanceText+'</span></br>';
+
+		}else if(data.type == 'batiment'){
+			text += '</br><b>Building</b></br>';
+			text += 'Capacite Restante : <span id="tile-stockage-etat">'+data.batiment.stockage_state+'</span></br>';
+		}
+		$("#tileInfo").html(text);
+		$("#tileInfo").fadeIn('fast');
+	});
 
 	socket.on('destroyCrops', function(data){
 		ppmap.changeOneMap(data.x, data.y, '2');

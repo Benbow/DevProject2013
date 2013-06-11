@@ -25,7 +25,10 @@ var Stockages = (function() {
         var query = 'INSERT INTO Stockages (stockage_state, isConstruct, user_id, stockages_spec_id, tile_id) VALUES ('+stockage_state+', '+isConstruct+', '+user_id+', '+stockages_spec_id+', '+tile_id+');';
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
-            console.log("Stockages created");
+            connection.query('UPDATE Tiles SET isEmpty = 2 WHERE id ='+tile_id+';', function(err,rows,fields){
+                console.log("Stockages created");
+            });
+            
         });
     };
 
@@ -100,6 +103,18 @@ var Stockages = (function() {
             }
         });
     };
+
+    Stockages.prototype.getInfosStock = function(tile_id, callback){
+        var connection = _DB.connection();
+        var query = 'SELECT * FROM Stockages WHERE tile_id = '+tile_id+';';
+        connection.query(query,function(err, rows, fields) {
+            if(typeof(rows[0]) != "undefined"){
+                callback(rows[0]);
+            }else{
+                callback(false);
+            }
+        });
+    }
 
     
     //Getters

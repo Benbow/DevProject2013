@@ -116,6 +116,45 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	socket.on('getTileInfos', function(data){
+		tile = new Tiles();
+		tile.getTileInfos(data.x, data.y, function(cb){
+			if(cb){
+				if(cb.isEmpty == 0){
+					socket.emit('showTileInfos', {
+						type : 'empty',
+						user_id : user.getId(),
+						tile : cb
+					});
+				}else if(cb.isEmpty == 1){
+					plantes = new Plantes();
+					plantes.getInfosPlantes(cb.id, function(plante){
+						if(plante){
+							socket.emit('showTileInfos', {
+								type : 'plante',
+								user_id : user.getId(),
+								tile : cb,
+								plante : plante
+							});
+						}
+					});
+				}else if(cb.isEmpty == 2){
+					bat = new Stockages();
+					bat.getInfosStock(cb.id, function(batiment){
+						if(batiment){
+							socket.emit('showTileInfos', {
+								type : 'batiment',
+								user_id : user.getId(),
+								tile : cb,
+								batiment : batiment
+							});
+						}
+					});
+				}
+			}
+		})
+	});
+
 	socket.on('newstorage', function(data){
 		stockage = new Stockages();
 		map.getIdTile(data.x,data.y,function(id){

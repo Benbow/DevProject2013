@@ -139,6 +139,18 @@ var Tiles = (function() {
         }); 
     }
 
+    Tiles.prototype.getTileInfos = function(x, y, callback){
+        var query = 'SELECT * FROM Tiles WHERE x = '+x+' AND y = ' + y + ';';
+        connection.query(query,function(err, rows, fields) {
+            if(typeof(rows[0]) != "undefined"){
+                callback(rows[0]);
+            }else{
+                callback(false);
+            }
+
+        });
+    }
+
     Tiles.changeSprite = function(x,y,sprite_id){
         connection.query('UPDATE Tiles SET sprite_id = '+sprite_id+' WHERE x = '+x+' AND y = '+y, function(err,rows,fields){
             if(err) throw err;
