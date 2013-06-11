@@ -49,7 +49,7 @@ var Fruits = (function() {
         var query = 'DELETE FROM Fruits WHERE id='+fruit_id+';';
         connection.query(query, function(err,rows,fields){
             if(err) throw err;
-            query = 'UPDATE Stockages SET stockage_state = stockage_state-'+poids+' WHERE id = '+stockage_id+';';
+            query = 'UPDATE Stockages SET stockage_state = stockage_state+'+poids+' WHERE id = '+stockage_id+';';
             connection.query(query, function(err,rows,fields){
                 if(err) throw err;
                 query = 'UPDATE Users SET argent = argent+'+prix+' WHERE id ='+user_id+';';
@@ -66,7 +66,7 @@ var Fruits = (function() {
         var query = 'DELETE FROM Fruits WHERE id='+fruit_id+';';
         connection.query(query, function(err,rows,fields){
             if(err) throw err;
-            query = 'UPDATE Stockages SET stockage_state = stockage_state-'+poids+' WHERE id = '+stockage_id+';';
+            query = 'UPDATE Stockages SET stockage_state = stockage_state+'+poids+' WHERE id = '+stockage_id+';';
             connection.query(query, function(err,rows,fields){
                 if(err) throw err;
                 callback(true);

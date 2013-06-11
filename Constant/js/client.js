@@ -761,7 +761,6 @@
 	});
 
 	$(".RefreshBuildingProps").click(function(){
-		alert("coucou");
 		var id = $("#BuildingPropTileId").attr('class');
 		id = parseInt(id);
 		socket.emit('showBuildingPropswithId', id);
