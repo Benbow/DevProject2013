@@ -89,17 +89,15 @@ var Tiles = (function() {
                     query = 'DELETE FROM Plantes WHERE tile_id = ' + tile_id + ';';
                     connection.query(query,function(err, r, fields) {
                         if (err) throw err;
-                        connection.query('UPDATE Tiles SET sprite_id = 1 WHERE id = '+tile_id,function(err, r, fields) {
+                        connection.query('UPDATE Tiles SET sprite_id = 1, isEmpty = 0 WHERE id = '+tile_id,function(err, r, fields) {
                             if(err) throw err;
-                        });
-                        callback({
-                            ok: true,
-                            nb: nb_fruits,
-                            fruit: row[0].graines_spec_id
+                            callback({
+                                ok: true,
+                                nb: nb_fruits,
+                                fruit: row[0].graines_spec_id
+                            });
                         });
                     });
-
-
                 });
             }else{
                 callback(false);
@@ -115,7 +113,10 @@ var Tiles = (function() {
                 query = 'DELETE FROM Plantes WHERE user_id = '+user_id+' AND tile_id = ' + tile_id + ';';
                 connection.query(query,function(err, r, fields) {
                     if (err) throw err;
-                    callback(true);
+                    connection.query('UPDATE Tiles SET sprite_id = 1, isEmpty = 0 WHERE id = '+tile_id,function(err, r, fields) {
+                        if (err) throw err;
+                        callback(true);
+                    });
                 });
             }else{
                 callback(false);
@@ -131,7 +132,10 @@ var Tiles = (function() {
                 query = 'DELETE FROM Stockages WHERE user_id = '+user_id+' AND tile_id = ' + tile_id + ';';
                 connection.query(query,function(err, r, fields) {
                     if (err) throw err;
-                    callback(true);
+                    connection.query('UPDATE Tiles SET sprite_id = 1, isEmpty = 0 WHERE id = '+tile_id,function(err, r, fields) {
+                        if (err) throw err;
+                        callback(true);
+                    });
                 });
             }else{
                 callback(false);

@@ -395,18 +395,34 @@
 	
 
 	var buildingProps = function(x, y){
-		var testTile = false;
-		$.each(User.own_tile, function(index, value){
-			if(value.x == x && value.y == y)
-				testTile = true;
-		});
-		if(testTile){
-			socket.emit('showBuildingProps', {
-				x: x,
-				y: y
-				});
+		if(!User.isDestroyBuilding){
+			var testTile = false;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = true;
+			});
+			if(testTile){
+				socket.emit('showBuildingProps', {
+					x: x,
+					y: y
+					});
+			}else{
+				sendError('This is not your Building');
+			}
 		}else{
-			sendError('This is not your Building');
+			var testTile = false;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = true;
+			});
+			if(testTile){
+				socket.emit('destroyingBuilding', {
+					x: x,
+					y: y
+				});
+			}else{
+				socket.emit('error', 'Destroy Building only on your tiles');
+			}
 		}
 	};
 
@@ -430,9 +446,8 @@
 		$("#tileInfo").html('');
 		var text = 'X : <span id="tile-coord-x">'+data.tile.x+'</span>, Y: <span id="tile-coord-y">'+data.tile.y+'</span></br>';
 		var owner;
-		console.log(data.tile.owner);
 		if(data.tile.owner == null)
-			owner = 'FREE';
+			owner = 'NEUTRAL';
 		else if(data.tile.owner == data.user_id)
 			owner = 'ME';
 		else
