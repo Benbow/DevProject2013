@@ -38,6 +38,7 @@ var saveTiles = new Array();
 var server = http.createServer(function (req, res) { }).listen(1337);
 
 var io = require('socket.io').listen(server);
+var connected = {};
 
 var f = new Fruits();
 f.updatePourissementFruits();
@@ -57,6 +58,7 @@ io.sockets.on('connection', function(socket){
             {
 				if(socket_user[2] == datalogin.password)// On check le password
 				{
+					connected[(socket_user[3])] = socket.id;
 					user.setPseudo(socket_user[0]);
 					user.setId(socket_user[3]);
 					user.connected();
@@ -188,7 +190,20 @@ io.sockets.on('connection', function(socket){
 				'id': id
 			});
 		});
-	})
+	});
+
+	socket.on('newTileSelectAttack',function(value){
+		map.getIdTile(value.x,value.y,function(id){
+			map.getOwnerTile(id,function(owner){
+				saveTiles.push({
+					'x': value.x,
+					'y': value.y,
+					'id': id,
+					'owner': owner
+				});
+			});
+		});
+	});
 
 	socket.on('userConquer',function(check){
 		if(check)
@@ -202,10 +217,38 @@ io.sockets.on('connection', function(socket){
 							'user_id': user.getId()
 						};
 						updateTile(value.x, value.y, newOptions);
-						socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
+						socket.emit('valid', 'La conquete c\'est deroule avec succes !');
 					});
+					saveTiles = new Array();
 				},timer*1000);
 			});
+		}
+	});
+
+	socket.on('userAttackTileBlink',function(data){
+		io.sockets.socket((connected[data.user_id])).emit('error', 'You are attacked !');
+		io.sockets.socket((connected[data.user_id])).emit('tileBlink', {
+			'infos':data.infos
+		});
+	})
+
+	socket.on('userAttack',function(enemi){
+		if(enemi > 0)
+		{
+			setTimeout(function(){
+				user.combat()
+				$.each(saveTiles,function(index, value){
+					user.attack(value.id);
+					newOptions = {
+						'type': 'attack',
+						'user_id': user.getId(),
+						'enemi': enemi
+					};
+					updateTile(value.x, value.y, newOptions);
+					socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
+				});
+				saveTiles = new Array();
+			},10000);
 		}
 	});
 
@@ -445,7 +488,7 @@ io.sockets.on('connection', function(socket){
 	socket.on('disconnect', function(id){
 		if(user.getId() != 0)
 		{
-			user.disconnect();			
+			user.disconnect();
 			socket.broadcast.emit('userDisconnect',{
 				'id' : user.getId()
 			});

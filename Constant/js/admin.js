@@ -26,7 +26,7 @@
 		$(".pre_menu div").removeClass('pre_menu_current');
 		$(".bouton_general").addClass("pre_menu_current");
 		$(".menu_general div").removeClass('sub_menu_current');
-		$(".menu_general .Userlist").addClass('sub_menu_current');
+		$(".menu_general .ListUser").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Users'
@@ -64,7 +64,7 @@
 		$(".bouton_content").removeClass('pre_menu_current');
 		$(".bouton_general").addClass("pre_menu_current");
 		$(".menu_general div").removeClass('sub_menu_current');
-		$(".menu_general .Userlist").addClass('sub_menu_current');
+		$(".menu_general .ListUser").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Users'
@@ -90,7 +90,7 @@
 		$(".bouton_content").removeClass('pre_menu_current');
 		$(".bouton_general").removeClass("pre_menu_current");
 		$(".menu_user div").removeClass('sub_menu_current');
-		$(".menu_user .Alliances").addClass('sub_menu_current');
+		$(".menu_user .AlliancesList").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Alliances'
@@ -116,7 +116,7 @@
 		$(".bouton_content").addClass('pre_menu_current');
 		$(".bouton_general").removeClass("pre_menu_current");
 		$(".menu_content div").removeClass('sub_menu_current');
-		$(".menu_content .ArmesSpec").addClass('sub_menu_current');
+		$(".menu_content .ArmeList").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Armes_spec'
@@ -134,61 +134,61 @@
 			table : 'Users'
 		});
 	});
-	$(".menu_general .UserSpec").click(function(){
+	$(".menu_general .UserSpecM").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .UserSpec").slideDown('slow');
-		$(".menu_general .UserSpec").addClass('sub_menu_current');
+		$(".menu_general .UserSpecM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Users_level_spec'
 		});
 	});
-	$(".menu_general .Tiles").click(function(){
+	$(".menu_general .TilesM").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Tiles").slideDown('slow');
-		$(".menu_general .Tiles").addClass('sub_menu_current');
+		$(".menu_general .TilesM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Tiles'
 		});
 	});
-	$(".menu_general .Pluie").click(function(){
+	$(".menu_general .PluieM").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Pluie").slideDown('slow');
-		$(".menu_general .Pluie").addClass('sub_menu_current');
+		$(".menu_general .PluieM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Pluie'
 		});
 	});
-	$(".menu_general .Tornade").click(function(){
+	$(".menu_general .TornadeM").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Tornade").slideDown('slow');
-		$(".menu_general .Tornade").addClass('sub_menu_current');
+		$(".menu_general .TornadeM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Tornade'
 		});
 	});
-	$(".menu_general .Sauterelle").click(function(){
+	$(".menu_general .SauterelleM").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Sauterelle").slideDown('slow');
-		$(".menu_general .Sauterelle").addClass('sub_menu_current');
+		$(".menu_general .SauterelleM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Sauterelles'
 		});
 	});
-	$(".menu_general .Meteor").click(function(){
+	$(".menu_general .MeteorM").click(function(){
 		$(".display_admin .general div").css('display', 'none');
 		$(".menu_general div").removeClass('sub_menu_current');
 		$(".display_admin .general .Meteor").slideDown('slow');
-		$(".menu_general .Meteor").addClass('sub_menu_current');
+		$(".menu_general .MeteorM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Meteor'
@@ -196,91 +196,91 @@
 	});
 
 	//User Content Actions
-	$(".menu_user .Alliances").click(function(){
+	$(".menu_user .AlliancesList").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .Alliances").slideDown('slow');
-		$(".menu_user .Alliances").addClass('sub_menu_current');
+		$(".menu_user .AlliancesList").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Alliances'
 		});
 	});
-	$(".menu_user .ArmesUser").click(function(){
+	$(".menu_user .ArmesUserM").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .ArmesUser").slideDown('slow');
-		$(".menu_user .ArmesUser").addClass('sub_menu_current');
+		$(".menu_user .ArmesUserM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Armes'
 		});
 	});
-	$(".menu_user .ArrosoirsUser").click(function(){
+	$(".menu_user .ArrosoirsUserM").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .ArrosoirsUser").slideDown('slow');
-		$(".menu_user .ArrosoirsUser").addClass('sub_menu_current');
+		$(".menu_user .ArrosoirsUserM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Arrosoirs'
 		});
 	});
-	$(".menu_user .EnergiesUser").click(function(){
+	$(".menu_user .EnergiesUserM").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .EnergiesUser").slideDown('slow');
-		$(".menu_user .EnergiesUser").addClass('sub_menu_current');
+		$(".menu_user .EnergiesUserM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Energies'
 		});
 	});
-	$(".menu_user .FruitsUser").click(function(){
+	$(".menu_user .FruitsUserM").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .FruitsUser").slideDown('slow');
-		$(".menu_user .FruitsUser").addClass('sub_menu_current');
+		$(".menu_user .FruitsUserM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Fruits'
 		});
 	});
-	$(".menu_user .GrainesUser").click(function(){
+	$(".menu_user .GrainesUserM").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .GrainesUser").slideDown('slow');
-		$(".menu_user .GrainesUser").addClass('sub_menu_current');
+		$(".menu_user .GrainesUserM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Graines'
 		});
 	});
-	$(".menu_user .MaisonsUser").click(function(){
+	$(".menu_user .MaisonsUserM").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .MaisonsUser").slideDown('slow');
-		$(".menu_user .MaisonsUser").addClass('sub_menu_current');
+		$(".menu_user .MaisonsUserM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Maisons'
 		});
 	});
-	$(".menu_user .PlantesUser").click(function(){
+	$(".menu_user .PlantesUserM").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .PlantesUser").slideDown('slow');
-		$(".menu_user .PlantesUser").addClass('sub_menu_current');
+		$(".menu_user .PlantesUserM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Plantes'
 		});
 	});
-	$(".menu_user .StockagesUser").click(function(){
+	$(".menu_user .StockagesUserM").click(function(){
 		$(".display_admin .user div").css('display', 'none');
 		$(".menu_user div").removeClass('sub_menu_current');
 		$(".display_admin .user .StockagesUser").slideDown('slow');
-		$(".menu_user .StockagesUser").addClass('sub_menu_current');
+		$(".menu_user .StockagesUserM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Stockages'
@@ -288,61 +288,61 @@
 	});
 
 	//Content Actions
-	$(".menu_content .ArmesSpec").click(function(){
+	$(".menu_content .ArmeList").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .ArmesSpec").slideDown('slow');
-		$(".menu_content .ArmesSpec").addClass('sub_menu_current');
+		$(".menu_content .ArmeList").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Armes_spec'
 		});
 	});
-	$(".menu_content .ArrosoirsSpec").click(function(){
+	$(".menu_content .ArrosoirsSpecM").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .ArrosoirsSpec").slideDown('slow');
-		$(".menu_content .ArrosoirsSpec").addClass('sub_menu_current');
+		$(".menu_content .ArrosoirsSpecM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Arrosoirs_spec'
 		});
 	});
-	$(".menu_content .EnergiesSpec").click(function(){
+	$(".menu_content .EnergiesSpecM").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .EnergiesSpec").slideDown('slow');
-		$(".menu_content .EnergiesSpec").addClass('sub_menu_current');
+		$(".menu_content .EnergiesSpecM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Energies_spec'
 		});
 	});
-	$(".menu_content .FruitSpec").click(function(){
+	$(".menu_content .FruitSpecM").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .FruitSpec").slideDown('slow');
-		$(".menu_content .FruitSpec").addClass('sub_menu_current');
+		$(".menu_content .FruitSpecM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Fruits_spec'
 		});
 	});
-	$(".menu_content .GrainesSpec").click(function(){
+	$(".menu_content .GrainesSpecM").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .GrainesSpec").slideDown('slow');
-		$(".menu_content .GrainesSpec").addClass('sub_menu_current');
+		$(".menu_content .GrainesSpecM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Graines_spec'
 		});
 	});
-	$(".menu_content .StockagesSpec").click(function(){
+	$(".menu_content .StockagesSpecM").click(function(){
 		$(".display_admin .contenu div").css('display', 'none');
 		$(".menu_content div").removeClass('sub_menu_current');
 		$(".display_admin .contenu .StockagesSpec").slideDown('slow');
-		$(".menu_content .StockagesSpec").addClass('sub_menu_current');
+		$(".menu_content .StockagesSpecM").addClass('sub_menu_current');
 
 		socket.emit('selectDB', {
 			table : 'Stockages_spec'

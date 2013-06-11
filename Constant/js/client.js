@@ -14,7 +14,7 @@
 		isDestroyCrop:false,
 		isDiplayingInfos : false,
 		isDestroyBuilding : false,
-		own_tile : {},
+		own_tile : new Array(),
 		enemi_tile : {},
 		allies : {}
 	};
@@ -258,11 +258,23 @@
 	});
 
 	socket.on('newTileConquer', function(data){
-		console.log(User.allies);
 		if(($.inArray(data.user_id, User.allies)) < 0)
 			ppmap.changeOneMap(data.x,data.y,2);
 		else
 			ppmap.changeOneMap(data.x,data.y,3);
+	});
+
+	socket.on('tileBlink', function(data){
+		clearInterval(blinkTile);
+		var check = true;
+		var sprite = 2;
+		var blinkTile = setInterval(function(){
+			sprite = (check) ? 4 : 2;
+			check = !check;
+			$.each(data.infos, function(index,val){
+				ppmap.changeOneMap(val.x,val.y,sprite);
+			});
+		},500);
 	});
 
 	// socket.on('newTileAttack', function(data){
@@ -274,6 +286,7 @@
 		if(User.isPlanting)
 		{
 			var testTile = false;
+			console.log(User.own_tile);
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
 					testTile = true;
@@ -312,12 +325,38 @@
 		}
 		else if(User.isAttacking)
 		{
-			//if (own_tile.y-1 || own_tile.y+1 || own_tile.x+1 || own_tile.x-1){
-			ppmap.changeOneMap(x, y, '2');
-			socket.emit('userAttack', {
-				x: x,
-				y: y
+			var testTile = true;
+			$.each(User.own_tile, function(index, value){
+				if(value.x == x && value.y == y)
+					testTile = false;
 			});
+			if(testTile)
+			{
+				var testEnemi = false;
+				var id_enemi = 0;
+				$.each(User.enemi_tile, function(i, v){
+					if(v.x == x && v.y == y){
+						testEnemi = true;
+						id_enemi = v.id;
+					}
+				});
+				if(testEnemi)
+				{
+					tileSelect.push({
+						'user_id': id_enemi,
+						'x': x,
+						'y': y
+					});
+					socket.emit('userAttackTileBlink', {
+						'infos': tileSelect,
+						'user_id': id_enemi
+					});
+				}
+				else
+					sendError('Tu ne peux attaquer que des terrains ennemis.');
+			}
+			else
+				sendError('Tu ne peux pas attaquer un terrain qui t\'appartient.');
 		}
 		else if(User.isConquering)
 		{
@@ -671,13 +710,13 @@
 					'x': val.x,
 					'y': val.y
 				});
-				User.own_tile += {
-					'x': val.x,
+				var taille = User.own_tile.length;
+				User.own_tile[(taille + index)] = {
+					'x' : val.x,
 					'y': val.y
 				};
 			});
-			console.log(User.own_tile);
-
+			tileSelect = new Array();
 			socket.emit('userConquer',true);
 			$(this).val('Conquerir terrain');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
@@ -700,6 +739,16 @@
 		if(User.isAttacking)
 		{
 			User.isAttacking = false;
+			var enemi = 0;
+			$.each(tileSelect,function(index,val){
+				socket.emit('newTileSelectAttack',{
+					'x': val.x,
+					'y': val.y
+				});
+				enemi = val.user_id;
+			});
+			tileSelect = new Array();
+			socket.emit('userAttack',enemi);
 			$(this).val('Attaquer terrain');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
@@ -729,7 +778,7 @@
 			User.isFertilizing = false;
 			User.isHarvesting = false;
 			$(this).val('Arreter d\'arroser');
-			ppmap.changeCursor('images/arrosoir.jpg','images/cursor-off.png',64,0);
+			ppmap.changeCursor('images/arrosoir.png','images/cursor-off.png',64,0);
 		}
 	});
 

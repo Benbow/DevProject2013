@@ -154,7 +154,8 @@ var Map = (function() {
 					string_map.map += ((rows[i].sprite_id == 1) ? 3 : rows[i].sprite_id) + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
 					string_map.enemi_tile[enemi_check] = {
 						'x': rows[i].x,
-						'y': rows[i].y
+						'y': rows[i].y,
+                        'id': rows[i].owner
 					};
 					enemi_check++;
 
@@ -215,6 +216,16 @@ var Map = (function() {
         });
 
     };
+
+    Map.prototype.getOwnerTile = function(id,callback)
+    {
+        var connection = _DB.connection();
+        connection.query('SELECT owner FROM Tiles WHERE id = ' + id, function(err,rows,fields){
+            if(err) throw err;
+            
+            callback(rows[0].owner);
+        });
+    }
 
     Map.prototype.getIdTile = function(x,y,callback)
     {
