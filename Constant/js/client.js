@@ -506,7 +506,6 @@
 	};
 
 	socket.on('showTileInfos', function(data){
-		$("#tileInfo").html('');
 		var text = 'X : <span id="tile-coord-x">'+data.tile.x+'</span>, Y: <span id="tile-coord-y">'+data.tile.y+'</span></br>';
 		var owner;
 		if(data.tile.owner == null)
@@ -552,8 +551,7 @@
 			text += '</br><b>Building</b></br>';
 			text += 'Capacite Restante : <span id="tile-stockage-etat">'+data.batiment.stockage_state+'</span></br>';
 		}
-		$("#tileInfo").html(text);
-		$("#tileInfo").fadeIn('fast');
+		ppmap.tipShow(text, 0,0,0);
 	});
 
 	socket.on('cropsButton', function(data){
@@ -921,13 +919,11 @@
 			User.isDiplayingInfos = false;
 			$(this).val('Afficher les infos');
 			//ppmap.switchCursorDelay(0);
-			$("#tileInfo").fadeOut('fast');
 		}
 		else{
 			//ppmap.switchCursorDelay(1);
 			User.isDiplayingInfos = true;
 			$(this).val('Masquer les infos');
-			$("#tileInfo").fadeIn('fast');
 		}
 	});
 

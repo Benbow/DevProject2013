@@ -47,9 +47,7 @@ f.updatePourissementFruits();
 io.sockets.on('connection', function(socket){
 	var user = new User();
 	//user.lvl();
-
 	
-
 	// Action quand un utilisateur essaie de se connecter.
 	socket.on('login', function(datalogin){
 		//On va chercher en bdd si le mail existe.
