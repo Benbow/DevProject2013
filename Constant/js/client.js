@@ -818,7 +818,7 @@
 			User.isFertilizing = false;
 			User.isHarvesting = false;
 			$(this).val('Arreter d\'arroser');
-			ppmap.changeCursor('images/arrosoir.png','images/cursor-off.png',64,0);
+			ppmap.changeCursor('images/arrosoir.png','images/cursor-off.png',-40,-40);
 		}
 	});
 
@@ -836,7 +836,7 @@
 			User.isFertilizing = true;
 			User.isHarvesting = false;
 			$(this).val('Arreter de fertiliser');
-			ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',64,0);
+			ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',0,0);
 		}
 
 	});
@@ -869,7 +869,7 @@
 			User.isFertilizing = false;
 			User.isHarvesting = true;
 			$(this).val('Arreter de Récolter');
-			ppmap.changeCursor('images/harvesting.png','images/cursor-off.png',64,0);
+			ppmap.changeCursor('images/harvesting.png','images/cursor-off.png',0,0);
 		}
 
 	});
@@ -890,7 +890,7 @@
 			User.isDestroyBuilding = false;
 			User.isDestroyCrop = true;
 			$(this).val('Arreter de Détruire');
-			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',64,0);
+			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',0,-30);
 		}
 
 	});
@@ -911,7 +911,7 @@
 			User.isDestroyCrop = false;
 			User.isDestroyBuilding = true;
 			$(this).val('Arreter de Détruire');
-			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',64,0);
+			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',0,-30);
 		}
 
 	});
