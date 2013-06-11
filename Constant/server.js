@@ -85,7 +85,14 @@ io.sockets.on('connection', function(socket){
 		socket.emit('isRegistered');
 	});
 		
-
+	socket.on('checkGrainesOwned', function(ok){
+		graine = new Graine();
+		graine.checkGrainesOwned(user.getId(), function(cb){
+			if(cb){
+				socket.emit('cropsButton', cb);
+			}
+		});
+	})
 
 	socket.on('userMove', function(data){
 		user.move(data.x, data.y);

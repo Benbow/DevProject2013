@@ -42,13 +42,37 @@
 	var Plantes = {
 		name : '',
 		sprite : {
-			tomates : {
+			pasteque : {
 				id : 1,
 				sprite_id : 10
 			},
-			mais : {
+			salade : {
 				id : 2,
 				sprite_id : 20
+			},
+			ananas : {
+				id : 3,
+				sprite_id : 30
+			},
+			tomate : {
+				id : 4,
+				sprite_id : 40
+			},
+			mais : {
+				id : 5,
+				sprite_id : 50
+			},
+			melon : {
+				id : 6,
+				sprite_id : 60
+			},
+			raisin : {
+				id : 7,
+				sprite_id : 70
+			},
+			carotte : {
+				id : 8,
+				sprite_id : 80
 			}
 		}
 	}
@@ -168,6 +192,7 @@
 		User.own_tile = map.own_tile;
 		User.enemi_tile = map.enemi_tile;
 		console.log(User);
+		socket.emit('checkGrainesOwned', '');
 	});
 
 	var loadmap = function(map) {
@@ -490,6 +515,44 @@
 		}
 		$("#tileInfo").html(text);
 		$("#tileInfo").fadeIn('fast');
+	});
+
+	socket.on('cropsButton', function(data){
+		var name = 'undefined';
+		for (var i = 0; i < data.length; i++) {
+			var value = data[i].split("_");
+			var graines_spec_id = value[0];
+			var nb = value[1];
+			console.log(graines_spec_id);
+			switch(graines_spec_id)
+			{
+				case '1':
+				  $("#menu_select_plantes_pasteque").css('display', 'relative');
+				  break;
+				case '2':
+				  $("#menu_select_plantes_salade").css('display', 'relative');
+				  break;
+				case '3':
+				  $("#menu_select_plantes_ananas").css('display', 'relative');
+				  break;
+				case '4':
+				  $("#menu_select_plantes_tomate").css('display', 'relative');
+				  break;
+				case '5':
+				  $("#menu_select_plantes_mais").css('display', 'relative');
+				  break;
+				case '6':
+				  $("#menu_select_plantes_melon").css('display', 'relative');
+				  break;
+				case '7':
+				  $("#menu_select_plantes_raisin").css('display', 'relative');
+				  break;
+				case '8':
+				  $("#menu_select_plantes_carotte").css('display', 'relative');
+				  break;
+			}
+			
+		}
 	});
 
 	socket.on('validStorage', function(data){

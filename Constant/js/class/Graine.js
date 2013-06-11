@@ -6,33 +6,53 @@ var Graines = (function() {
     var _nb;                //nombre de graine de ce type que le joueur dispose INT
     var _user_id;           //lien vers l'user a qui appartient la graine INT
     var _graines_spec_id;   //lien vers le bon type de graine INT
-     var _DB;
+    var _DB;
 
     function Graines(){
-            _DB = new DB();
+      _DB = new DB();
     };
 
-     Graines.prototype.buyGraine = function(nb, user_id, graines_spec_id, callback){
-         var connection = _DB.connection();
-         var query ='SELECT * FROM Graines WHERE user_id= ' + user_id + ' AND  graines_spec_id = ' + graines_spec_id + ';';
-          connection.query(query,function(err, row, fields) {
+    Graines.prototype.buyGraine = function(nb, user_id, graines_spec_id, callback){
+        var connection = _DB.connection();
+        var query ='SELECT * FROM Graines WHERE user_id= ' + user_id + ' AND  graines_spec_id = ' + graines_spec_id + ';';
+        connection.query(query,function(err, row, fields) {
             if (err) throw err;
-             if( typeof( row[0]) == "undefined"){
+            if( typeof( row[0]) == "undefined"){
                 var query = 'INSERT INTO Graines (nb,user_id, graines_spec_id) VALUES(' + nb + ',' + user_id + ','+ graines_spec_id +');';
                 connection.query(query,function(err, r, fields) {
-                if (err) throw err;
-                callback(true);
-              });
-
-             }else{
+                    if (err) throw err;
+                    callback(true);
+                });
+            }else{
                 connection.query('UPDATE Graines SET nb = nb + '+nb+' WHERE user_id = '+user_id +' AND graines_spec_id = ' +graines_spec_id+ ';' ,function(err, r, fields) {
-                            if(err) throw err;
-                            callback(true);
-                     });
+                    if(err) throw err;
+                    callback(true);
+                });
+            }
+        });
+    };
 
-                 }
-             });
-        };
+    Graines.prototype.checkGrainesOwned = function(user_id, callback){
+        var connection = _DB.connection();
+        var query ='SELECT * FROM Graines WHERE user_id= ' + user_id +';';
+            connection.query(query,function(err, row, fields) {
+                if (err) throw err;
+                var result = new Array();
+                var count = 0;
+                if(typeof(row[0]) != 'undefined'){
+                    for (var i = 0; i < row.length; i++) {
+                        if(row[i].nb > 0){
+                            result[count] = row[i].graines_spec_id+"_"+row[i].nb;
+                            count++;
+                        }
+                    };
+                    callback(result);
+                }else{
+                  callback(false);
+                }
+            });
+
+    };
 
  
 
