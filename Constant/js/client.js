@@ -659,11 +659,12 @@
 
 	$(".button_market_tomate").click(function(data){
 		socket.emit('achat_graine_tomate', {
-			nb : 1,
+			nb : $("#graine_tomate").val(),
 			graines_spec_id : 1
 		});
 
 	});
+
 
 	$(".button_menu_plantes").click(function(){
 		User.isPlanting = true;
