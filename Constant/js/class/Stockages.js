@@ -20,16 +20,23 @@ var Stockages = (function() {
     };
 
     //Methodes
-    Stockages.prototype.Add_Stockages = function(stockage_state, isConstruct, user_id, stockages_spec_id, tile_id){
+    Stockages.prototype.Add_Stockages = function(isConstruct, user_id, stockages_spec_id, tile_id){
         var connection = _DB.connection();
-        var query = 'INSERT INTO Stockages (stockage_state, isConstruct, user_id, stockages_spec_id, tile_id) VALUES ('+stockage_state+', '+isConstruct+', '+user_id+', '+stockages_spec_id+', '+tile_id+');';
+        var query = 'SELECT * FROM Stockages_spec WHERE id ='+stockages_spec_id+';';
         connection.query(query,function(err, rows, fields) {
-            if (err) throw err;
-            connection.query('UPDATE Tiles SET isEmpty = 2 WHERE id ='+tile_id+';', function(err,rows,fields){
-                console.log("Stockages created");
-            });
-            
+             if (err) throw err;
+             if(typeof(rows[0]) != 'undefined'){
+                query = 'INSERT INTO Stockages (stockage_state, isConstruct, user_id, stockages_spec_id, tile_id) VALUES ('+rows[0].stockage+', '+isConstruct+', '+user_id+', '+stockages_spec_id+', '+tile_id+');';
+                connection.query(query,function(err, rows, fields) {
+                    if (err) throw err;
+                    connection.query('UPDATE Tiles SET isEmpty = 2 WHERE id ='+tile_id+';', function(err,rows,fields){
+                        console.log("Stockages created");
+                    });
+                    
+                });
+             }
         });
+        
     };
 
     Stockages.prototype.Delete_Stockages = function(id){

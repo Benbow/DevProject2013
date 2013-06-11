@@ -393,10 +393,10 @@
 	
 
 	var buildingProps = function(x, y){
-		var testTile = true;
+		var testTile = false;
 			$.each(User.own_tile, function(index, value){
 				if(value.x == x && value.y == y)
-					testTile = false;
+					testTile = true;
 			});
 			if(testTile){
 				socket.emit('showBuildingProps', {
@@ -404,7 +404,7 @@
 					y: y
 				});
 			}else{
-
+				sendError('This is not your Building');
 			}
 	};
 

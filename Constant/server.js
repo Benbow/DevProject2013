@@ -158,7 +158,7 @@ io.sockets.on('connection', function(socket){
 	socket.on('newstorage', function(data){
 		stockage = new Stockages();
 		map.getIdTile(data.x,data.y,function(id){
-			stockage.Add_Stockages(0,1,user.getId(),data.id,id);
+			stockage.Add_Stockages(1,user.getId(),data.id,id);
 		});
 	});
 
