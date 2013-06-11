@@ -19,7 +19,7 @@ var Plantes = (function() {
 		_DB = new DB();
 	};
 
-	Plantes.prototype.Add_Plantes = function(croissance, user_id, graines_spec_id, tile_id, humidite, fertilite){
+	Plantes.prototype.Add_Plantes = function(croissance, user_id, graines_spec_id, tile_id, humidite, fertilite, callback){
 		var connection = _DB.connection();
 
 		_tile_fertilite = fertilite;
@@ -40,15 +40,12 @@ var Plantes = (function() {
 
 		connection.query(query,function(err, rows, fields) {
 			if (err) throw err;
-			connection.query('UPDATE Tiles SET isEmpty = 1 WHERE id ='+tile_id+';', function(err,rows,fields){
-				console.log('Plantes created !');
+			connection.query('UPDATE Tiles SET isEmpty = 1 WHERE id ='+tile_id+';', function(err,rows,fields){	
+				connection.query('UPDATE Graines SET nb = nb-1 WHERE user_id ='+user_id+' AND graines_spec_id = '+graines_spec_id+';', function(err,rows,fields){
+					callback(true);
+					console.log('Plantes created !');
+				});
 			});
-		});
-
-		connection.query('SELECT id FROM Plantes WHERE tile_id = '+tile_id+';', function(err,rows,fields){
-			if (err) throw err;
-
-			_id = rows[0].id;
 		});
 	};
 

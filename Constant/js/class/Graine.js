@@ -21,12 +21,16 @@ var Graines = (function() {
                 var query = 'INSERT INTO Graines (nb,user_id, graines_spec_id) VALUES(' + nb + ',' + user_id + ','+ graines_spec_id +');';
                 connection.query(query,function(err, r, fields) {
                     if (err) throw err;
-                    callback(true);
+                    callback({
+                        nb : nb
+                    });
                 });
             }else{
                 connection.query('UPDATE Graines SET nb = nb + '+nb+' WHERE user_id = '+user_id +' AND graines_spec_id = ' +graines_spec_id+ ';' ,function(err, r, fields) {
                     if(err) throw err;
-                    callback(true);
+                    callback({
+                        nb : nb
+                    });
                 });
             }
         });
@@ -41,18 +45,15 @@ var Graines = (function() {
                 var count = 0;
                 if(typeof(row[0]) != 'undefined'){
                     for (var i = 0; i < row.length; i++) {
-                        if(row[i].nb > 0){
-                            result[count] = row[i].graines_spec_id+"_"+row[i].nb;
-                            count++;
-                        }
+                        result[count] = row[i].graines_spec_id+"_"+row[i].nb;
+                        count++;
                     };
                     callback(result);
                 }else{
-                  callback(false);
+                    callback(false);
                 }
             });
-
-    };
+        };
 
  
 

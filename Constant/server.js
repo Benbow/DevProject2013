@@ -260,7 +260,14 @@ io.sockets.on('connection', function(socket){
 			tile.checkEmpty(id, function(cb){
 				if(cb){
 					map.getInfosTile(id,function(infos){
-						crops.Add_Plantes(50,user.getId(),data.id,infos.id,infos.humidite,infos.fertilite);
+						crops.Add_Plantes(50,user.getId(),data.id,infos.id,infos.humidite,infos.fertilite, function(ok){
+							var graine = new Graine();
+							graine.checkGrainesOwned(user.getId(), function(cb2){
+								if(cb2){
+									socket.emit('cropsButton', cb2);
+								}
+							});
+						});
 						var options = {
 							'status' : 0,
 							'graine_id' : data.id,
@@ -377,7 +384,12 @@ io.sockets.on('connection', function(socket){
 	socket.on('achat_graine_tomate', function(data){
 		graine = new Graine;
 		graine.buyGraine(data.nb, user.getId(), data.graines_spec_id, function(cb){
-			socket.emit(cb.nb+ 'on bien ete achete');
+			graine.checkGrainesOwned(user.getId(), function(cb2){
+				if(cb2){
+					socket.emit('cropsButton', cb2);
+					socket.emit('valid', cb.nb+ ' graines de tomates on bien ete achete');
+				}
+			});
 		});
 	});
 
