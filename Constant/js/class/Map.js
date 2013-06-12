@@ -129,6 +129,7 @@ var Map = (function() {
 		var string_map = {
 			'map' : '',
 			'storage' : {},
+            'emptyStorage' : {},
             'crops' : {},
 			'user' : {},
 			'all_user' : {},
@@ -169,14 +170,15 @@ var Map = (function() {
 			   check++;
 			}
 		});
-        connection.query('SELECT t.x as x, t.y as y, s.stockages_spec_id as id FROM Stockages as s LEFT JOIN Tiles as t ON s.tile_id = t.id', function(err,rows,fields){
+        connection.query('SELECT t.x as x, t.y as y, s.stockages_spec_id as id, s.origin_tile_id as origin FROM Stockages as s LEFT JOIN Tiles as t ON s.tile_id = t.id', function(err,rows,fields){
             if(err) throw err;
             for(var i = 0;i < rows.length;i++)
             {
                 string_map.storage[i] = {
                     'x': rows[i].x,
                     'y': rows[i].y,
-                    'id': rows[i].id
+                    'id': rows[i].id,
+                    'origin' : rows[i].origin,
                 };
             }
         });

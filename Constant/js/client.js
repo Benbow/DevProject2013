@@ -221,15 +221,19 @@
 
 		//Mise en place des batiments quand tu load la map.
 	    $.each(map.storage, function(index, value) {
-	    	console.log(value.id);
-	    	if(value.id == 1)
-	    		Batiment.name = 'silo';
-	    	else if (value.id == 2)
-	    		Batiment.name = 'grange';
-	    	else if (value.id == 3)
-	    		Batiment.name = 'chambre';
+	    	if(value.origin == null){
+	    		if(value.id == 1)
+		    		Batiment.name = 'silo';
+		    	else if (value.id == 2)
+		    		Batiment.name = 'grange';
+		    	else if (value.id == 3)
+		    		Batiment.name = 'chambre';
 
-		    ppmap.addBuilding(value.x, value.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
+		    	ppmap.addBuilding(value.x, value.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
+	    	}else{
+	    		ppmap.addBuilding(value.x, value.y, 'images/2.png', 0, 0);
+	    	}
+	    	
 		});
 
 		//Mise en place des batiments quand tu load la map.
@@ -306,21 +310,49 @@
 		}
 		else if(User.isBuilding)
 		{
-			var testTile = false;
-			$.each(User.own_tile, function(index, value){
-				if(value.x == x && value.y == y)
-					testTile = true;
-			});
-			if(testTile)
-			{
-				socket.emit('newstorage', {
-					x: x,
-					y: y,
-					id: Batiment.sprite[Batiment.name].id
+			if(Batiment.name == 'silo'){
+				var testTile = false;
+				$.each(User.own_tile, function(index, value){
+					if(value.x == x && value.y == y)
+						testTile = true;
 				});
+				if(testTile)
+				{
+					socket.emit('newstorage', {
+						x: x,
+						y: y,
+						id: Batiment.sprite[Batiment.name].id
+					});
+				}
+				else
+					sendError('Construct only on your tiles');
+			}else if(Batiment.name == 'grange'){
+				var testTile1 = false;
+				var testTile2 = false;
+				var testTile3 = false;
+				var testTile4 = false;
+
+				$.each(User.own_tile, function(index, value){
+					if(value.x == x && value.y == y)
+						testTile1 = true;
+					else if(value.x == x-1 && value.y == y)
+						testTile2 = true;
+					else if(value.x == x-1 && value.y == y-1)
+						testTile3 = true;
+					else if(value.x == x && value.y == y-1)
+						testTile4 = true;
+				});
+				if(testTile1 && testTile2 && testTile3 && testTile4){
+					socket.emit('newstorage', {
+						x: x,
+						y: y,
+						id: Batiment.sprite[Batiment.name].id
+					});
+				}
+				else
+					sendError('Construct only on your tiles');
 			}
-			else
-				sendError('Construct only on your tiles');
+			
 			
 		}
 		else if(User.isAttacking)
@@ -642,6 +674,10 @@
 
 	socket.on('validStorage', function(data){
 		ppmap.addBuilding(data.x, data.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
+	});
+
+	socket.on('validStorageOrigin', function(data){
+		ppmap.addBuilding(data.x, data.y, 'images/2.png', 0, 0);
 	});
 
 	socket.on('validCrops', function(data){

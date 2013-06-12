@@ -165,19 +165,75 @@ io.sockets.on('connection', function(socket){
 	socket.on('newstorage', function(data){
 		stockage = new Stockages();
 		tile = new Tiles();
-		map.getIdTile(data.x,data.y,function(id){
-			tile.checkEmpty(id, function(cb){
-				if(cb){
-					stockage.Add_Stockages(1,user.getId(),data.id,id);
-					socket.emit('validStorage', {
-						x : data.x,
-						y : data.y
-					});
-				}else{
-					socket.emit('error', 'Not an Empty Tile !');
-				}
+		if(data.id == 1){
+			map.getIdTile(data.x,data.y,function(id){
+				tile.checkEmpty(id, function(cb){
+					if(cb){
+						stockage.Add_Stockages(1,user.getId(),data.id,id);
+						socket.emit('validStorage', {
+							x : data.x,
+							y : data.y
+						});
+					}else{
+						socket.emit('error', 'Not an Empty Tile !');
+					}
+				});
 			});
-		});
+		}else if(data.id == 2){
+			map.getIdTile(data.x,data.y,function(id1){
+				tile.checkEmpty(id1, function(cb1){
+					if(cb1){
+						map.getIdTile(data.x-1,data.y,function(id2){
+							tile.checkEmpty(id2, function(cb2){
+								if(cb2){
+									map.getIdTile(data.x,data.y-1,function(id3){
+										tile.checkEmpty(id3, function(cb3){
+											if(cb3){
+												map.getIdTile(data.x-1,data.y-1,function(id4){
+													tile.checkEmpty(id4, function(cb4){
+														if(cb4){
+															stockage.Add_Stockages(1,user.getId(),data.id,id1);
+															stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id2, id1);
+															stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id3, id1);
+															stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id4, id1);
+															socket.emit('validStorage', {
+																x : data.x,
+																y : data.y
+															});
+															socket.emit('validStorageOrigin', {
+																x : data.x-1,
+																y : data.y
+															});
+															socket.emit('validStorageOrigin', {
+																x : data.x,
+																y : data.y-1
+															});
+															socket.emit('validStorageOrigin', {
+																x : data.x-1,
+																y : data.y-1
+															});
+														}
+														else{
+															socket.emit('error', 'Not an Empty Tile !');
+														}
+													});
+												});
+											}else{
+												socket.emit('error', 'Not an Empty Tile !');
+											}
+										});
+									});
+								}else{
+									socket.emit('error', 'Not an Empty Tile !');
+								}
+							});
+						});
+					}else{
+						socket.emit('error', 'Not an Empty Tile !');
+					}
+				});
+			});
+		}	
 	});
 
 	socket.on('newTileSelectConquet',function(value){

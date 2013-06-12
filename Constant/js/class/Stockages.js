@@ -36,7 +36,17 @@ var Stockages = (function() {
                 });
              }
         });
-        
+    };
+
+    Stockages.prototype.Add_StockagesWithOrigin = function(isConstruct, user_id, stockages_spec_id, tile_id, origin_tile_id){
+        var connection = _DB.connection();
+        var query = 'INSERT INTO Stockages (stockage_state, isConstruct, user_id, stockages_spec_id, tile_id, origin_tile_id) VALUES (0, '+isConstruct+', '+user_id+', '+stockages_spec_id+', '+tile_id+', '+origin_tile_id+');';
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            connection.query('UPDATE Tiles SET isEmpty = 2 WHERE id ='+tile_id+';', function(err,rows,fields){
+                console.log("Stockages created");
+            });       
+        }); 
     };
 
     Stockages.prototype.Delete_Stockages = function(id){
