@@ -18,6 +18,7 @@ var Tiles 	   = require("./js/class/Tiles");
 var Fruits_sp  = require("./js/class/Fruits_spec");
 var Fruits 	   = require("./js/class/Fruits");
 var Graine     = require("./js/class/Graine");
+var Graine_sp  = require("./js/class/Graine_spec");
 var Alliance   = require("./js/class/Alliances");
 
 
@@ -295,6 +296,7 @@ io.sockets.on('connection', function(socket){
 																				if(cb6){
 																					user.checkMoneyForStockages(user.getId(), data.id, function(ok){
 																						if(ok){
+																							console.log(id1+" "+id2+" "+id3+" "+id4+" "+id5+" "+id6);
 																							stockage.Add_Stockages(1,user.getId(),data.id,id1);
 																							stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id2, id1);
 																							stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id3, id1);
@@ -588,6 +590,17 @@ io.sockets.on('connection', function(socket){
 					socket.emit('valid', cb.nb+ ' graines de tomates on bien ete achete');
 				}
 			});
+		});
+		u = new User();
+		u.SellCrop(user.getId(), data.prix, function(ok){
+		});
+	});
+
+	socket.on('button_market', function(data){
+		graine_spec = new Graine_spec;
+		graine_spec.Get_Graines(function(cb){
+			console.log(cd);
+			socket.emit('liste_graines', cb);
 		});
 	});
 

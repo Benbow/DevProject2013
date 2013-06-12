@@ -1380,3 +1380,8 @@ margin-bottom: 5px;
 .menu_general, .menu_user, .menu_content{
 	position: absolute;
 }
+
+.list_graines{
+display: block !important;
+
+}

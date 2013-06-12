@@ -37,6 +37,14 @@ var Graines_spec = (function() {
         });
     };
     
+ Graines_spec.prototype.Get_Graines = function(){
+        var query = 'SELECT * FROM Graines_spec;'
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            
+        });
+    };
+
     //Getters
     Graines_spec.prototype.getId = function() {
         return _id;

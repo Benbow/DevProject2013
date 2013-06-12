@@ -65,6 +65,14 @@
 			carotte : {
 				id : 6,
 				sprite_id : 60
+			},
+			raisin : {
+				id : 7,
+				sprite_id : 70
+			},
+			carotte : {
+				id : 8,
+				sprite_id : 80
 			}
 		}
 	}
@@ -661,6 +669,7 @@
 			var value = data[i].split("_");
 			var graines_spec_id = value[0];
 			var nb = value[1];
+			
 			switch(graines_spec_id)
 			{
 				case '1':
@@ -701,6 +710,7 @@
 					}
 				case '5':
 					if(nb == '0'){
+					
 						$("#menu_select_plantes_melon").css('display', 'none');
 						break;
 					}else{
@@ -708,7 +718,7 @@
 						$("#menu_select_plantes_melon").val('Planter un melon ('+nb+')');
 						break;
 					}
-				case '6':
+		
 					if(nb == '0'){
 						$("#menu_select_plantes_carotte").css('display', 'none');
 						break;
@@ -955,8 +965,11 @@
 	});
 
 	$("#menu_market").click(function(){
+		
 		$("#menu_market_panel").fadeIn('slow');
+		
 	});
+
 
 	$("#quit_market").click(function(){	
 		$("#menu_market_panel").fadeOut('fast');
