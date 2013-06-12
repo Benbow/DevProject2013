@@ -616,6 +616,11 @@
 			text += 'Capacite Restante : <span id="tile-stockage-etat">'+data.batiment.stockage_state+'</span></br>';
 		}
 		ppmap.tipShow(text, 0,0,0);
+
+		var upd = setInterval(function(){
+           ppmap.tipHide();
+           clearInterval(upd);
+        },(1500));
 	});
 
 	socket.on('cropsButton', function(data){
