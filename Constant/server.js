@@ -43,6 +43,9 @@ var connected = {};
 var f = new Fruits();
 f.updatePourissementFruits();
 
+var t = new Tiles();
+t.updateFertiliteAndHumidite();
+
 // Action si un utilisateur arrive sur la page.
 io.sockets.on('connection', function(socket){
 	var user = new User();

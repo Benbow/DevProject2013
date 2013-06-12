@@ -217,7 +217,6 @@ var Tiles = (function() {
             }else{
                 callback(false);
             }
-
         });
     }
 
@@ -226,6 +225,19 @@ var Tiles = (function() {
             if(err) throw err;
         });
 
+    };
+
+    Tiles.prototype.updateFertiliteAndHumidite = function(){
+        var upd = setInterval(function(){
+            var query = 'UPDATE Tiles SET fertilite = fertilite+1 WHERE isEmpty  = 0 AND fertilite < 100;';
+            connection.query(query, function(err,rows,fields){
+                if(err) throw err;
+                var query = 'UPDATE Tiles SET humidite = humidite-1 WHERE humidite > 0;';
+                connection.query(query, function(err,rows,fields){
+                    if(err) throw err;
+                });
+            });
+        },(60000));
     };
 
     //Getters
