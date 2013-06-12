@@ -156,6 +156,23 @@ var User = (function() {
         });
     };
 
+    User.prototype.checkMoneyForStockages = function(user_id, stockage_spec_id, callback){
+        var connection = _DB.connection();
+        var query = "SELECT * FROM Users WHERE id ="+user_id+";";
+        connection.query(query, function(err, rows, fields){
+            if(err) throw err;
+            query = 'SELECT * FROM Stockages_spec WHERE id ='+stockage_spec_id+';';
+            connection.query(query, function(err, row, fields){
+                if(err) throw err;
+                if(rows[0].argent >=row[0].prix){
+                    callback(true);
+                }else{
+                    callback(false);
+                }
+            });
+        });
+    };
+
     User.prototype.lvl = function()
     {
         var connection = _DB.connection();

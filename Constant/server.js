@@ -169,10 +169,16 @@ io.sockets.on('connection', function(socket){
 			map.getIdTile(data.x,data.y,function(id){
 				tile.checkEmpty(id, function(cb){
 					if(cb){
-						stockage.Add_Stockages(1,user.getId(),data.id,id);
-						socket.emit('validStorage', {
-							x : data.x,
-							y : data.y
+						user.checkMoneyForStockages(user.getId(), data.id, function(ok){
+							if(ok){
+								stockage.Add_Stockages(1,user.getId(),data.id,id);
+								socket.emit('validStorage', {
+									x : data.x,
+									y : data.y
+								});	
+							}else{
+								socket.emit('error', 'Not enough Gold !');
+							}
 						});
 					}else{
 						socket.emit('error', 'Not an Empty Tile !');
@@ -192,25 +198,31 @@ io.sockets.on('connection', function(socket){
 												map.getIdTile(data.x-1,data.y-1,function(id4){
 													tile.checkEmpty(id4, function(cb4){
 														if(cb4){
-															stockage.Add_Stockages(1,user.getId(),data.id,id1);
-															stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id2, id1);
-															stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id3, id1);
-															stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id4, id1);
-															socket.emit('validStorage', {
-																x : data.x,
-																y : data.y
-															});
-															socket.emit('validStorageOrigin', {
-																x : data.x-1,
-																y : data.y
-															});
-															socket.emit('validStorageOrigin', {
-																x : data.x,
-																y : data.y-1
-															});
-															socket.emit('validStorageOrigin', {
-																x : data.x-1,
-																y : data.y-1
+															user.checkMoneyForStockages(user.getId(), data.id, function(ok){
+																if(ok){
+																	stockage.Add_Stockages(1,user.getId(),data.id,id1);
+																	stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id2, id1);
+																	stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id3, id1);
+																	stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id4, id1);
+																	socket.emit('validStorage', {
+																		x : data.x,
+																		y : data.y
+																	});
+																	socket.emit('validStorageOrigin', {
+																		x : data.x-1,
+																		y : data.y
+																	});
+																	socket.emit('validStorageOrigin', {
+																		x : data.x,
+																		y : data.y-1
+																	});
+																	socket.emit('validStorageOrigin', {
+																		x : data.x-1,
+																		y : data.y-1
+																	});
+																}else{
+																	socket.emit('error', 'Not enough Gold !');
+																}
 															});
 														}
 														else{
@@ -252,36 +264,42 @@ io.sockets.on('connection', function(socket){
 																		map.getIdTile(data.x-1,data.y-2,function(id6){
 																			tile.checkEmpty(id6, function(cb6){
 																				if(cb6){
-																					console.log(id1+" "+id2+" "+id3+" "+id4+" "+id5+" "+id6);
-																					stockage.Add_Stockages(1,user.getId(),data.id,id1);
-																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id2, id1);
-																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id3, id1);
-																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id4, id1);
-																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id5, id1);
-																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id6, id1);
-																					socket.emit('validStorage', {
-																						x : data.x,
-																						y : data.y
-																					});
-																					socket.emit('validStorageOrigin', {
-																						x : data.x-1,
-																						y : data.y
-																					});
-																					socket.emit('validStorageOrigin', {
-																						x : data.x,
-																						y : data.y-1
-																					});
-																					socket.emit('validStorageOrigin', {
-																						x : data.x-1,
-																						y : data.y-1
-																					});
-																					socket.emit('validStorageOrigin', {
-																						x : data.x,
-																						y : data.y-2
-																					});
-																					socket.emit('validStorageOrigin', {
-																						x : data.x-1,
-																						y : data.y-2
+																					user.checkMoneyForStockages(user.getId(), data.id, function(ok){
+																						if(ok){
+																							console.log(id1+" "+id2+" "+id3+" "+id4+" "+id5+" "+id6);
+																							stockage.Add_Stockages(1,user.getId(),data.id,id1);
+																							stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id2, id1);
+																							stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id3, id1);
+																							stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id4, id1);
+																							stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id5, id1);
+																							stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id6, id1);
+																							socket.emit('validStorage', {
+																								x : data.x,
+																								y : data.y
+																							});
+																							socket.emit('validStorageOrigin', {
+																								x : data.x-1,
+																								y : data.y
+																							});
+																							socket.emit('validStorageOrigin', {
+																								x : data.x,
+																								y : data.y-1
+																							});
+																							socket.emit('validStorageOrigin', {
+																								x : data.x-1,
+																								y : data.y-1
+																							});
+																							socket.emit('validStorageOrigin', {
+																								x : data.x,
+																								y : data.y-2
+																							});
+																							socket.emit('validStorageOrigin', {
+																								x : data.x-1,
+																								y : data.y-2
+																							});
+																						}else{
+																							socket.emit('error', 'Not enough Gold !');
+																						}
 																					});
 																				}else{
 																					socket.emit('error', 'Not an Empty Tile !');

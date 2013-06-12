@@ -27,12 +27,13 @@ var Stockages = (function() {
              if (err) throw err;
              if(typeof(rows[0]) != 'undefined'){
                 query = 'INSERT INTO Stockages (stockage_state, isConstruct, user_id, stockages_spec_id, tile_id) VALUES ('+rows[0].stockage+', '+isConstruct+', '+user_id+', '+stockages_spec_id+', '+tile_id+');';
-                connection.query(query,function(err, rows, fields) {
+                connection.query(query,function(err, row, fields) {
                     if (err) throw err;
-                    connection.query('UPDATE Tiles SET isEmpty = 2 WHERE id ='+tile_id+';', function(err,rows,fields){
-                        console.log("Stockages created");
+                    connection.query('UPDATE Tiles SET isEmpty = 2 WHERE id ='+tile_id+';', function(err,row,fields){
+                        connection.query('UPDATE Users SET argent = argent - '+rows[0].prix+' WHERE id ='+user_id+';', function(err,row,fields){
+                            console.log("Stockages created");
+                        })
                     });
-                    
                 });
              }
         });
