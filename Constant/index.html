@@ -3,7 +3,7 @@
 		<title>Farm Warfare</title>
 		<link rel="stylesheet" type="text/css" href="css/global.css">
 		<link rel="stylesheet" type="text/css" href="css/pp3diso.css">
-	
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 
 	</head>
 	<body>
@@ -24,6 +24,25 @@
 						return false; 
 					} 
 				} 
+
+				$(document).ready(function() {
+    $("#content div").hide().eq(0).show(); // show first one
+    $("#tabs li").eq(0).addClass('current'); // set active one
+
+
+    $('#tabs a').click(function(e) {
+        e.preventDefault();
+        if( $(this).closest("li").hasClass('current') ){ //detection for current tab
+         return;      
+        }else{             
+            $("#content div").hide(); //Hide all content
+            $("#tabs li").removeClass('current'); //Reset id's
+            $(this).parent().addClass('current'); // Activate this
+            $('#' + $(this).attr('name')).fadeIn(); // Show content for current tab
+        }
+    });
+});
+
 				</script>
 
 			<div id="div_register">
@@ -44,9 +63,27 @@
 				<div id="market">
 					<input type="button" id="acheter" value="Acheter">
 					<input type="button" id="quit_market" value="Quit">
-						<p>Liste des graines :</p>
-					<input type='number' id='graine_tomate' value="1" />
--            		<input id="market_tomate" class="button_market_tomate" type="button" value="Acheter graine de  tomates"  /> 
+
+				 <ul id="tabs">
+				    <li><a href="#" name="tab1">T1</a></li>
+				    <li><a href="#" name="tab2">T2</a></li>
+				</ul>
+
+				<div id="content"> 
+				    <div id="tab1">
+				   <p>Liste des graines :</p>
+					<div style="display:block !important">
+						<input type='number' id='graine_tomate' value="1" />
+						<input id="market_tomate" class="button_market_tomate" type="button" value="Acheter graine de  tomates"  />
+					</div>
+				    </div>
+
+				    <div id="tab2">
+				   <p>Liste des Armes :</p>
+				    </div>
+				</div>
+				
+						
 
 				</div>
 			</div>
