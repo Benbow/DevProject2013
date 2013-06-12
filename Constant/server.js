@@ -18,7 +18,7 @@ var Tiles 	   = require("./js/class/Tiles");
 var Fruits_sp  = require("./js/class/Fruits_spec");
 var Fruits 	   = require("./js/class/Fruits");
 var Graine     = require("./js/class/Graine");
-var Graine_sp  = require("./js/class/Graine_spec");
+var Graine_sp  = require("./js/class/Graines_spec");
 var Alliance   = require("./js/class/Alliances");
 
 
