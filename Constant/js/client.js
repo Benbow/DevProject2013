@@ -58,21 +58,13 @@
 				id : 4,
 				sprite_id : 40
 			},
-			mais : {
+			melon : {
 				id : 5,
 				sprite_id : 50
 			},
-			melon : {
+			carotte : {
 				id : 6,
 				sprite_id : 60
-			},
-			raisin : {
-				id : 7,
-				sprite_id : 70
-			},
-			carotte : {
-				id : 8,
-				sprite_id : 80
 			}
 		}
 	}
@@ -670,15 +662,6 @@
 					}
 				case '5':
 					if(nb == '0'){
-						$("#menu_select_plantes_mais").css('display', 'none');
-						break;
-					}else{
-						$("#menu_select_plantes_mais").css('display', 'inline');
-						$("#menu_select_plantes_mais").val('Planter du mais ('+nb+')');
-						break;
-					}
-				case '6':
-					if(nb == '0'){
 						$("#menu_select_plantes_melon").css('display', 'none');
 						break;
 					}else{
@@ -686,16 +669,7 @@
 						$("#menu_select_plantes_melon").val('Planter un melon ('+nb+')');
 						break;
 					}
-				case '7':
-					if(nb == '0'){
-						$("#menu_select_plantes_raisin").css('display', 'none');
-						break;
-					}else{
-						$("#menu_select_plantes_raisin").css('display', 'inline');
-						$("#menu_select_plantes_raisin").val('Planter du raisin ('+nb+')');
-						break;
-					}
-				case '8':
+				case '6':
 					if(nb == '0'){
 						$("#menu_select_plantes_carotte").css('display', 'none');
 						break;
