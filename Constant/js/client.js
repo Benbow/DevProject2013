@@ -193,6 +193,7 @@
 		User.enemi_tile = map.enemi_tile;
 		console.log(User);
 		socket.emit('checkGrainesOwned', '');
+		socket.emit('checkBatPrice', '');
 	});
 
 	var loadmap = function(map) {
@@ -700,6 +701,18 @@
 					}
 			}
 			
+		}
+	});
+
+	socket.on ('BatButton', function(data){
+		for (var i = 0; i < data.length; i++) {
+			if(data[i].id == 1){
+				$("#menu_select_batiments_silo").val('Silo '+data[i].prix+'$');
+			}else if (data[i].id == 2){
+				$("#menu_select_batiments_grange").val('Grange '+data[i].prix+'$');
+			}else if(data[i].id == 3){
+				$("#menu_select_batiments_chambre").val('Chambre Froide '+data[i].prix+'$');
+			}
 		}
 	});
 

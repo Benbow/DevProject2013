@@ -106,7 +106,7 @@ var Fruits = (function() {
             query = 'DELETE FROM Fruits WHERE id ='+fruit.id+';';
             connection.query(query, function(err, row, fieds){
                 if(err) throw err;
-                query = 'UPDATE Stockages SET stockage_state = stockage_state +'+rows[0].poids+';';
+                query = 'UPDATE Stockages SET stockage_state = stockage_state +'+rows[0].poids+' WHERE id ='+fruit.stockage_id+';';
                 connection.query(query, function(err, rows, field){
                     if(err) throw err;
                 })
