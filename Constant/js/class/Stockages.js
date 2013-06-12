@@ -182,7 +182,15 @@ var Stockages = (function() {
                 callback(false);
             }
         });
-    }
+    };
+
+    Stockages.prototype.checkBatPrice = function(callback){
+        var connection = _DB.connection();
+        var query = 'SELECT * FROM Stockages_spec ;';
+        connection.query(query, function(err, rows, fields){
+            callback(rows);
+        });
+    };
 
     
     //Getters

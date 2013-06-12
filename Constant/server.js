@@ -95,7 +95,16 @@ io.sockets.on('connection', function(socket){
 				socket.emit('cropsButton', cb);
 			}
 		});
-	})
+	});
+
+	socket.on('checkBatPrice', function(ok){
+		stock = new Stockages();
+		stock.checkBatPrice(function(cb){
+			if(cb){
+				socket.emit('BatButton', cb);
+			}
+		})
+	});
 
 	socket.on('userMove', function(data){
 		user.move(data.x, data.y);
