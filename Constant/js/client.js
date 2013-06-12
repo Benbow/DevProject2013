@@ -780,6 +780,7 @@
 			text += '<input class="drop_fruit" id="drop_'+fruits.id+'_'+fruit_sp.poids+'_'+fruit_sp.prix_vente+'_'+data.stockages.id+'" type="button" value="Jeter ce fruit"/>';
 			text += '</div>'
 		});
+		$("#clearDeadFruits").attr('id', 'stockId_'+data.stockages.id);
 		$("#fruitsList").html('');
 		$("#fruitsList").html(text);
 		$("#buildingProps").css('display', 'block');
@@ -1145,7 +1146,16 @@
 			poids : parseInt(poids),
 			prix : parseInt(prix)
 		});
+	});
 
+	$("#clearDeadFruits").click(function(){
+		var value = $(this).attr('id');
+		var val = value.split("_");
+		var stockage_id = val[1];
+
+		socket.emit('drop_all_dead_fruits', {
+			stockage_id : stockage_id
+		});
 	});
 
 })(jQuery);

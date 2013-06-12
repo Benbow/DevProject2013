@@ -694,6 +694,22 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
+	socket.on('drop_all_dead_fruits', function(data){
+		var fruit = new Fruits();
+		fruit.DropAllDeadFruit(user.getId(), data.stockage_id, function(ok){
+			if(ok){
+				socket.emit('valid', 'Fruits Dropped');
+				var upd = setInterval(function(){
+		            socket.emit('RefreshBuildingProps', 'ok');
+		            clearInterval(upd);
+		        },(2000));
+				
+			}else{
+				socket.emit('valid', 'Building Clear');
+			}
+		});
+	});
+
 	socket.on('error', function(msg){
 		socket.emit('error', msg);
 	});

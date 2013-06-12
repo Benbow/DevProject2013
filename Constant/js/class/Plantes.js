@@ -61,7 +61,6 @@ var Plantes = (function() {
 				var testPresence = true;
 				connection.query('SELECT * FROM Plantes WHERE tile_id = '+idTile, function(err,rows,fields){
 			        if(err) throw err;
-			        console.log(rows.length);
 			        if(rows.length > 0)
 			        {
 						statu++;

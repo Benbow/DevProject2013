@@ -75,6 +75,45 @@ var Fruits = (function() {
         });
     };
 
+    Fruits.prototype.DropAllDeadFruit = function(user_id, stockage_id, callback){
+        var query = 'SELECT * FROM Fruits WHERE stockage_id='+stockage_id+' AND user_id ='+user_id+' AND pourrissement_state <= 0;';
+        connection.query(query, function(err,rows,fields){
+            if(typeof(rows[0]) != 'undefined'){
+                if(err) throw err;
+                DeleteFruits(rows, function(){
+                    callback(true);
+                });
+            }else{
+                callback(false);
+            }
+        });
+    };
+
+    function DeleteFruits(fruits, callback){
+        var nb = fruits.length;
+        var i = 0;
+        while(i < nb){
+            DeleteFruit(fruits[i]);
+            i++;
+        }
+        callback(true);
+    };
+
+    function DeleteFruit(fruit){
+        var query = 'SELECT * FROM Fruits_spec WHERE id = '+fruit.fruits_spec_id+';';
+        connection.query(query, function(err, rows, fields){
+            if(err) throw err;
+            query = 'DELETE FROM Fruits WHERE id ='+fruit.id+';';
+            connection.query(query, function(err, row, fieds){
+                if(err) throw err;
+                query = 'UPDATE Stockages SET stockage_state = stockage_state +'+rows[0].poids+';';
+                connection.query(query, function(err, rows, field){
+                    if(err) throw err;
+                })
+            })
+        });
+    }
+
     //Getters
     Fruits.prototype.getId = function() {
         return _id;
