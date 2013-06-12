@@ -125,8 +125,21 @@ var Stockages = (function() {
         var connection = _DB.connection();
         var query = 'SELECT * FROM Stockages WHERE tile_id = '+tile_id+';';
         connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
             if(typeof(rows[0]) != "undefined"){
-                callback(rows[0]);
+                if(rows[0].origin_tile_id == null){
+                    callback(rows[0]);
+                }else{
+                    query = 'SELECT * FROM Stockages WHERE tile_id = '+rows[0].origin_tile_id+';';
+                    connection.query(query,function(err, row, fields) {
+                        if (err) throw err;
+                        if(typeof(row[0]) != "undefined"){
+                            callback(row[0]);
+                        }else{
+                            callback(false);
+                        }
+                    });
+                }
             }else{
                 callback(false);
             }
