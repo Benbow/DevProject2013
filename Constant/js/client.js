@@ -69,6 +69,10 @@
 		}
 	}
 
+	var x_tip_show = 0;
+	var y_tip_show = 0;
+
+
 
 	$("#buttonRegister").click(function(){
 		$("#div_login").slideUp('fast');	
@@ -609,7 +613,12 @@
 			text += '</br><b>Building</b></br>';
 			text += 'Capacite Restante : <span id="tile-stockage-etat">'+data.batiment.stockage_state+'</span></br>';
 		}
-		ppmap.tipShow(text, 0,0,0);
+		if(data.tile.x == x_tip_show && data.tile.y == y_tip_show){}
+		else
+			ppmap.tipShow(text, 0,0,0);
+		
+		x_tip_show = data.tile.x;
+		y_tip_show = data.tile.y;
 
 		var upd = setInterval(function(){
            ppmap.tipHide();
@@ -699,10 +708,11 @@
 	socket.on('user_props', function(data){
 		$("#user_level").html('Level : '+data.level);
 		$("#user_water").html('Water : '+data.water);
-		$("#user_fertilisant").html('Fertilisant : '+data.fetilisant);
+		$("#user_fertilisant").html('Fertilisant : '+data.fertilisant);
 		$("#user_energie").html('Energies : '+data.energie);
 		$("#user_argent").html('Or : '+data.argent);
 		$("#user_experience").html('XP : '+data.xp);
+		$("#user_next").html('/'+data.next);
 	});
 
 	socket.on('validStorage', function(data){

@@ -399,6 +399,12 @@ io.sockets.on('connection', function(socket){
 						};
 						updateTile(value.x, value.y, newOptions);
 						socket.emit('valid', 'La conquete c\'est deroule avec succes !');
+
+					});
+					user.GetUserProps(user.getId(), function(cb){
+						if(cb){
+							socket.emit('user_props', cb);
+						}
 					});
 					saveTiles = new Array();
 				},timer*1000);
