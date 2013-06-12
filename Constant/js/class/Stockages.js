@@ -84,37 +84,74 @@ var Stockages = (function() {
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
             if(typeof(rows[0]) != 'undefined'){
-                if (err) throw err;     
-                query = 'SELECT * FROM Stockages_spec WHERE id='+rows[0].stockages_spec_id+';';
-                connection.query(query,function(err, row, fields) {
+                if(rows[0].origin_tile_id != null){
                     if (err) throw err;
-                    if(typeof(row[0]) != 'undefined'){
-                        query = 'SELECT * FROM Fruits WHERE stockage_id ='+rows[0].id+';';
-                        connection.query(query,function(err, ro, fields) {
-                             if (err) throw err;
-                             if(typeof(ro[0]) != 'undefined'){
-                                query = 'SELECT * FROM Fruits_spec;';
-                                connection.query(query,function(err, r, fields) {
-                                    if (err) throw err;
-                                    if(typeof(r[0]) != 'undefined'){
-                                        callback({
-                                            stockages : rows[0],
-                                            stockages_spec : row[0],
-                                            fruits : ro,
-                                            fruits_spec : r
+                    query = 'SELECT * FROM Stockages WHERE tile_id='+rows[0].origin_tile_id+';';
+                    connection.query(query,function(err, rows, fields) {
+                        query = 'SELECT * FROM Stockages_spec WHERE id='+rows[0].stockages_spec_id+';';
+                        connection.query(query,function(err, row, fields) {
+                            if (err) throw err;
+                            if(typeof(row[0]) != 'undefined'){
+                                query = 'SELECT * FROM Fruits WHERE stockage_id ='+rows[0].id+';';
+                                connection.query(query,function(err, ro, fields) {
+                                     if (err) throw err;
+                                     if(typeof(ro[0]) != 'undefined'){
+                                        query = 'SELECT * FROM Fruits_spec;';
+                                        connection.query(query,function(err, r, fields) {
+                                            if (err) throw err;
+                                            if(typeof(r[0]) != 'undefined'){
+                                                callback({
+                                                    stockages : rows[0],
+                                                    stockages_spec : row[0],
+                                                    fruits : ro,
+                                                    fruits_spec : r
+                                                });
+                                            }else{
+                                                callback(false);
+                                            }
                                         });
-                                    }else{
+                                     }else{ 
                                         callback(false);
-                                    }
+                                     }
                                 });
-                             }else{ 
+                            }else{
                                 callback(false);
-                             }
+                            }
                         });
-                    }else{
-                        callback(false);
-                    }
-                });
+                    });
+                }else{
+                    if (err) throw err;     
+                    query = 'SELECT * FROM Stockages_spec WHERE id='+rows[0].stockages_spec_id+';';
+                    connection.query(query,function(err, row, fields) {
+                        if (err) throw err;
+                        if(typeof(row[0]) != 'undefined'){
+                            query = 'SELECT * FROM Fruits WHERE stockage_id ='+rows[0].id+';';
+                            connection.query(query,function(err, ro, fields) {
+                                 if (err) throw err;
+                                 if(typeof(ro[0]) != 'undefined'){
+                                    query = 'SELECT * FROM Fruits_spec;';
+                                    connection.query(query,function(err, r, fields) {
+                                        if (err) throw err;
+                                        if(typeof(r[0]) != 'undefined'){
+                                            callback({
+                                                stockages : rows[0],
+                                                stockages_spec : row[0],
+                                                fruits : ro,
+                                                fruits_spec : r
+                                            });
+                                        }else{
+                                            callback(false);
+                                        }
+                                    });
+                                 }else{ 
+                                    callback(false);
+                                 }
+                            });
+                        }else{
+                            callback(false);
+                        }
+                    });
+                }
             }else{
                 callback(false);
             }

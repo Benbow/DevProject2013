@@ -500,7 +500,7 @@
 				socket.emit('showBuildingProps', {
 					x: x,
 					y: y
-					});
+				});
 			}else{
 				sendError('This is not your Building');
 			}
