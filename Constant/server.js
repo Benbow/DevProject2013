@@ -233,7 +233,87 @@ io.sockets.on('connection', function(socket){
 					}
 				});
 			});
-		}	
+		}else if(data.id == 3){
+			map.getIdTile(data.x,data.y,function(id1){
+				tile.checkEmpty(id1, function(cb1){
+					if(cb1){
+						map.getIdTile(data.x-1,data.y,function(id2){
+							tile.checkEmpty(id2, function(cb2){
+								if(cb2){
+									map.getIdTile(data.x,data.y-1,function(id3){
+										tile.checkEmpty(id3, function(cb3){
+											if(cb3){
+												map.getIdTile(data.x-1,data.y-1,function(id4){
+													tile.checkEmpty(id4, function(cb4){
+														if(cb4){
+															map.getIdTile(data.x,data.y-2,function(id5){
+																tile.checkEmpty(id5, function(cb5){
+																	if(cb5){
+																		map.getIdTile(data.x-1,data.y-2,function(id6){
+																			tile.checkEmpty(id6, function(cb6){
+																				if(cb6){
+																					console.log(id1+" "+id2+" "+id3+" "+id4+" "+id5+" "+id6);
+																					stockage.Add_Stockages(1,user.getId(),data.id,id1);
+																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id2, id1);
+																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id3, id1);
+																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id4, id1);
+																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id5, id1);
+																					stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id6, id1);
+																					socket.emit('validStorage', {
+																						x : data.x,
+																						y : data.y
+																					});
+																					socket.emit('validStorageOrigin', {
+																						x : data.x-1,
+																						y : data.y
+																					});
+																					socket.emit('validStorageOrigin', {
+																						x : data.x,
+																						y : data.y-1
+																					});
+																					socket.emit('validStorageOrigin', {
+																						x : data.x-1,
+																						y : data.y-1
+																					});
+																					socket.emit('validStorageOrigin', {
+																						x : data.x,
+																						y : data.y-2
+																					});
+																					socket.emit('validStorageOrigin', {
+																						x : data.x-1,
+																						y : data.y-2
+																					});
+																				}else{
+																					socket.emit('error', 'Not an Empty Tile !');
+																				}
+																			});
+																		});
+																	}else{
+																		socket.emit('error', 'Not an Empty Tile !');
+																	}
+																});
+															});
+														}else{
+															socket.emit('error', 'Not an Empty Tile !');
+														}
+													});
+												});
+											}else{
+												socket.emit('error', 'Not an Empty Tile !');
+											}
+										});
+									});
+								}else{
+									socket.emit('error', 'Not an Empty Tile !');
+								}
+							});
+						});
+					}else{
+						socket.emit('error', 'Not an Empty Tile !');
+					}
+				});
+			});
+		}
 	});
 
 	socket.on('newTileSelectConquet',function(value){
@@ -508,7 +588,35 @@ io.sockets.on('connection', function(socket){
 						});
 					});
 				}else if(cb.type == 3){
-					
+					tile.DestroyBuildingComplex(cb.id, function(ok){
+							map.getCoordTile(cb.id,function(coord){
+								socket.emit('destroyBuilding', {
+								x: coord.x,
+								y: coord.y
+							});
+							socket.emit('destroyBuilding', {
+								x: coord.x-1,
+								y: coord.y
+							});
+							socket.emit('destroyBuilding', {
+								x: coord.x,
+								y: coord.y-1
+							});
+							socket.emit('destroyBuilding', {
+								x: coord.x-1,
+								y: coord.y-1
+							});
+							socket.emit('destroyBuilding', {
+								x: coord.x,
+								y: coord.y-2
+							});
+							socket.emit('destroyBuilding', {
+								x: coord.x-1,
+								y: coord.y-2
+							});
+							socket.emit('valid', 'Building Succesfully destroyed');
+						});
+					});
 				}else{
 					socket.emit('error', 'Not a Building !');
 				}

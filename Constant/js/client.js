@@ -351,6 +351,37 @@
 				}
 				else
 					sendError('Construct only on your tiles');
+			}else if(Batiment.name == 'chambre'){
+				var testTile1 = false;
+				var testTile2 = false;
+				var testTile3 = false;
+				var testTile4 = false;
+				var testTile5 = false;
+				var testTile6 = false;
+
+				$.each(User.own_tile, function(index, value){
+					if(value.x == x && value.y == y)
+						testTile1 = true;
+					else if(value.x == x-1 && value.y == y)
+						testTile2 = true;
+					else if(value.x == x-1 && value.y == y-1)
+						testTile3 = true;
+					else if(value.x == x && value.y == y-1)
+						testTile4 = true;
+					else if(value.x == x && value.y == y-2)
+						testTile5 = true;
+					else if(value.x == x-1 && value.y == y-2)
+						testTile6 = true;
+				});
+				if(testTile1 && testTile2 && testTile3 && testTile4 && testTile5 && testTile6){
+					socket.emit('newstorage', {
+						x: x,
+						y: y,
+						id: Batiment.sprite[Batiment.name].id
+					});
+				}
+				else
+					sendError('Construct only on your tiles');
 			}
 			
 			
