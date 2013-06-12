@@ -70,8 +70,8 @@ var Plantes = (function() {
 						}
 						else
 						{
-							((ferti - 30) < 0) ? 0 : (ferti - 30);
-							((humi - 30) < 0) ? 0 : (humi - 30);
+							((ferti - 30) < 0) ? ferti = 0 : (ferti -= 30);
+							((humi - 30) < 0) ? humi = 0 : (humi -= 30);
 							var health = (humi + ferti) / 2;
 							var croissance = statu * 20;
 							connection.query('UPDATE Tiles SET fertilite = '+ ferti +', humidite = "'+ humi +'" WHERE id = ' + idTile, function(err,rows,fields){
