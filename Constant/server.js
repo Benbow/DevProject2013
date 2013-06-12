@@ -50,7 +50,9 @@ t.updateFertiliteAndHumidite();
 io.sockets.on('connection', function(socket){
 	var user = new User();
 	//user.lvl();
+
 	
+
 	// Action quand un utilisateur essaie de se connecter.
 	socket.on('login', function(datalogin){
 		//On va chercher en bdd si le mail existe.
@@ -374,6 +376,7 @@ io.sockets.on('connection', function(socket){
 		{
 			user.getTimerConquet(function(timer){
 				setTimeout(function(){
+					console.log(timer);
 					$.each(saveTiles,function(index, value){
 						user.conquet(value.id);
 						newOptions = {
