@@ -621,7 +621,6 @@
 			var value = data[i].split("_");
 			var graines_spec_id = value[0];
 			var nb = value[1];
-			console.log(graines_spec_id);
 			switch(graines_spec_id)
 			{
 				case '1':

@@ -42,10 +42,10 @@
 
 #div_menu {
 	position: absolute;
-	background-color: red;
-	top: 9px;
+	background-color: black;
+	top: 8px;
 	left: 810px;
-	height: 580px;
+	height: 583px;
 	width: 200px;
 	display: none;
 	z-index: 110;

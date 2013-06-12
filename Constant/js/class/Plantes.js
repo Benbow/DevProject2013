@@ -70,14 +70,17 @@ var Plantes = (function() {
 						}
 						else
 						{
-							connection.query('UPDATE Plantes SET status = '+statu+', updated_at = "'+getTimeDb()+'" WHERE tile_id = ' + idTile, function(err,rows,fields){
-					            if(err) throw err;
-					        });
-					        ((ferti - 30) < 0) ? 0 : (ferti - 30);
+							((ferti - 30) < 0) ? 0 : (ferti - 30);
 					        ((humi - 30) < 0) ? 0 : (humi - 30);
+					        var health = (humi + ferti) / 2;
+					        var croissance = statu * 20;
 							connection.query('UPDATE Tiles SET fertilite = '+ ferti +', humidite = "'+ humi +'" WHERE id = ' + idTile, function(err,rows,fields){
 					            if(err) throw err;
 					        });
+							connection.query('UPDATE Plantes SET status = '+statu+', updated_at = "'+getTimeDb()+'", health = '+health+', croissance ='+croissance+' WHERE tile_id = ' + idTile, function(err,rows,fields){
+					            if(err) throw err;
+					        });
+					        
 					        callback(statu, graine_infos.id);
 						}	
 			        }

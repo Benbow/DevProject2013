@@ -427,7 +427,7 @@ io.sockets.on('connection', function(socket){
 			tile.checkEmpty(id, function(cb){
 				if(cb){
 					map.getInfosTile(id,function(infos){
-						crops.Add_Plantes(50,user.getId(),data.id,infos.id,infos.humidite,infos.fertilite, function(ok){
+						crops.Add_Plantes(0,user.getId(),data.id,infos.id,infos.humidite,infos.fertilite, function(ok){
 							var graine = new Graine();
 							graine.checkGrainesOwned(user.getId(), function(cb2){
 								if(cb2){
