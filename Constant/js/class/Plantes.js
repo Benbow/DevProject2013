@@ -40,7 +40,7 @@ var Plantes = (function() {
 
 		connection.query(query,function(err, rows, fields) {
 			if (err) throw err;
-			connection.query('UPDATE Tiles SET isEmpty = 1 WHERE id ='+tile_id+';', function(err,rows,fields){	
+			connection.query('UPDATE Tiles SET isEmpty = 1 WHERE id ='+tile_id+';', function(err,rows,fields){  
 				connection.query('UPDATE Graines SET nb = nb-1 WHERE user_id ='+user_id+' AND graines_spec_id = '+graines_spec_id+';', function(err,rows,fields){
 					callback(true);
 					console.log('Plantes created !');
@@ -60,9 +60,9 @@ var Plantes = (function() {
 			var refresh = setInterval(function(){
 				var testPresence = true;
 				connection.query('SELECT * FROM Plantes WHERE tile_id = '+idTile, function(err,rows,fields){
-			        if(err) throw err;
-			        if(rows.length > 0)
-			        {
+					if(err) throw err;
+					if(rows.length > 0)
+					{
 						statu++;
 						if(statu > 5)
 						{
@@ -71,52 +71,92 @@ var Plantes = (function() {
 						else
 						{
 							((ferti - 30) < 0) ? 0 : (ferti - 30);
-					        ((humi - 30) < 0) ? 0 : (humi - 30);
-					        var health = (humi + ferti) / 2;
-					        var croissance = statu * 20;
+							((humi - 30) < 0) ? 0 : (humi - 30);
+							var health = (humi + ferti) / 2;
+							var croissance = statu * 20;
 							connection.query('UPDATE Tiles SET fertilite = '+ ferti +', humidite = "'+ humi +'" WHERE id = ' + idTile, function(err,rows,fields){
-					            if(err) throw err;
-					        });
+								if(err) throw err;
+							});
 							connection.query('UPDATE Plantes SET status = '+statu+', updated_at = "'+getTimeDb()+'", health = '+health+', croissance ='+croissance+' WHERE tile_id = ' + idTile, function(err,rows,fields){
-					            if(err) throw err;
-					        });
-					        
-					        callback(statu, graine_infos.id);
-						}	
-			        }
-				    else
-				    {
-				    	clearInterval(refresh);
-				    }
-			        	
-			    });
+								if(err) throw err;
+							});
+							
+							callback(statu, graine_infos.id);
+						}   
+					}
+					else
+					{
+						clearInterval(refresh);
+					}
+						
+				});
 
-			    
+				
 			},(graine_infos.croissance*1000));
 			
+		});
+	};
+
+	Plantes.prototype.updateCropsHealths = function(callback){
+		var connection = _DB.connection();
+		var query = 'SELECT * FROM Plantes;';
+		connection.query(query, function(err, rows, fields){
+			if(err) throw err;
+			if(typeof(rows[0]) != 'undefined'){
+				updateHealths(rows, function(){
+					callback(true)
+				});
+			}else{
+				callback(false);
+			}
+		});
+	};
+
+	function updateHealths(plantes, callback){
+		var nb = plantes.length;
+		var i = 0;
+		while(i < nb){
+			updateHealth(plantes[i]);
+			i++;
+		}
+		callback(true);
+	};
+
+	function updateHealth(plante){
+		var connection = _DB.connection();
+		var query = 'SELECT * FROM Tiles WHERE id = '+plante.tile_id+';';
+		connection.query(query, function(err, rows, fields){
+			if(err) throw err;
+			if(typeof(rows[0]) != 'undefined'){
+				var health = (rows[0].humidite + rows[0].fertilite) / 2;
+				query = 'UPDATE Plantes SET health = '+health+' WHERE id ='+plante.id+';';
+				connection.query(query, function(err, rows, fields){
+					if(err) throw err;
+				});
+			}
 		});
 	};
 
 	Plantes.prototype.getInfosGraine = function(callback){
 		var connection = _DB.connection();
 		var query = 'SELECT * FROM Graines_spec WHERE id = '+this.getPlantesSpecId();
-        connection.query(query,function(err, rows, fields) {
-            if (err) throw err;
-            callback(rows[0]);
-        });
-    };
+		connection.query(query,function(err, rows, fields) {
+			if (err) throw err;
+			callback(rows[0]);
+		});
+	};
 
-    Plantes.prototype.getInfosPlantes = function(tile_id, callback){
-    	var connection = _DB.connection();
-        var query = 'SELECT * FROM Plantes WHERE tile_id = '+tile_id+';';
-        connection.query(query,function(err, rows, fields) {
-            if(typeof(rows[0]) != "undefined"){
-                callback(rows[0]);
-            }else{
-                callback(false);
-            }
-        });
-    }
+	Plantes.prototype.getInfosPlantes = function(tile_id, callback){
+		var connection = _DB.connection();
+		var query = 'SELECT * FROM Plantes WHERE tile_id = '+tile_id+';';
+		connection.query(query,function(err, rows, fields) {
+			if(typeof(rows[0]) != "undefined"){
+				callback(rows[0]);
+			}else{
+				callback(false);
+			}
+		});
+	}
 
 	//Getters
 	Plantes.prototype.getId = function() {

@@ -46,6 +46,12 @@ f.updatePourissementFruits();
 var t = new Tiles();
 t.updateFertiliteAndHumidite();
 
+var p = new Plantes();
+var interval = setInterval(function(){
+	p.updateCropsHealths(function(clb){
+	});
+},(60000));
+
 // Action si un utilisateur arrive sur la page.
 io.sockets.on('connection', function(socket){
 	var user = new User();
@@ -469,7 +475,10 @@ io.sockets.on('connection', function(socket){
 		map.getIdTile(data.x,data.y,function(id){
 			tile.Watering(id, user.getId(), function(cb){
 				if(cb){
-					socket.emit('valid', 'Watering Succesfull!!');
+					crop = new Plantes();
+					crop.updateCropsHealths(function(ok){
+						socket.emit('valid', 'Watering Succesfull!!');
+					});
 				}else{
 					socket.emit('error', 'Not enough Water !');
 				}
@@ -483,7 +492,10 @@ io.sockets.on('connection', function(socket){
 		map.getIdTile(data.x,data.y,function(id){
 			tile.Fertilizing(id, user.getId(), function(cb){
 				if(cb){
-					socket.emit('valid', 'Fertilizing Succesfull!!');
+					crop = new Plantes();
+					crop.updateCropsHealths(function(ok){
+						socket.emit('valid', 'Fertilizing Succesfull!!');
+					});
 				}else{
 					socket.emit('error', 'Not enough Fertilizer !');
 				}
