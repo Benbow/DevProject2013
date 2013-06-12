@@ -238,6 +238,17 @@ var Map = (function() {
             callback(rows[0].id);
         });
     }
+    Map.prototype.getCoordTile = function(id,callback)
+    {
+        var connection = _DB.connection();
+        connection.query('SELECT * FROM Tiles WHERE id = '+id, function(err,rows,fields){
+            if(err) throw err;
+            callback({
+                x : rows[0].x ,
+                y : rows[0].y
+            });
+        });
+    }
 
     Map.prototype.getUserTile = function(id, callback)
     {

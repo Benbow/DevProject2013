@@ -478,12 +478,37 @@ io.sockets.on('connection', function(socket){
 		//TODO generate croissance and health
 		map.getIdTile(data.x,data.y,function(id){
 			tile.DestroyBuilding(user.getId(), id, function(cb){
-				if(cb){
+				if(cb.type == 1){
 					socket.emit('destroyBuilding', {
 						x: data.x,
 						y: data.y
 					});
 					socket.emit('valid', 'Building Succesfully destroyed');
+				}else if(cb.type == 2){
+
+					tile.DestroyBuildingComplex(cb.id, function(ok){
+							map.getCoordTile(cb.id,function(coord){
+								socket.emit('destroyBuilding', {
+								x: coord.x,
+								y: coord.y
+							});
+							socket.emit('destroyBuilding', {
+								x: coord.x-1,
+								y: coord.y
+							});
+							socket.emit('destroyBuilding', {
+								x: coord.x,
+								y: coord.y-1
+							});
+							socket.emit('destroyBuilding', {
+								x: coord.x-1,
+								y: coord.y-1
+							});
+							socket.emit('valid', 'Building Succesfully destroyed');
+						});
+					});
+				}else if(cb.type == 3){
+					
 				}else{
 					socket.emit('error', 'Not a Building !');
 				}

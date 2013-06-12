@@ -129,19 +129,68 @@ var Tiles = (function() {
         connection.query(query,function(err, r, fields) {
             if (err) throw err;
             if(typeof(r[0]) != 'undefined'){
-                query = 'DELETE FROM Stockages WHERE user_id = '+user_id+' AND tile_id = ' + tile_id + ';';
-                connection.query(query,function(err, r, fields) {
-                    if (err) throw err;
-                    connection.query('UPDATE Tiles SET sprite_id = 1, isEmpty = 0 WHERE id = '+tile_id,function(err, r, fields) {
+                if(r[0].origin_tile_id == null){
+                    console.log('test');
+                    query = 'DELETE FROM Stockages WHERE user_id = '+user_id+' AND tile_id = ' + tile_id + ';';
+                    connection.query(query,function(err, rows, fields) {
                         if (err) throw err;
-                        callback(true);
+                        connection.query('UPDATE Tiles SET sprite_id = 1, isEmpty = 0 WHERE id = '+tile_id,function(err, row, fields) {
+                            if (err) throw err;
+                            callback({
+                                type : r[0].stockages_spec_id,
+                                id : tile_id
+                            });
+                        });
                     });
-                });
+                }else{
+                    query = 'DELETE FROM Stockages WHERE user_id = '+user_id+' AND tile_id = ' + r[0].origin_tile_id + ';';
+                    connection.query(query,function(err, rows, fields) {
+                        if (err) throw err;
+                        connection.query('UPDATE Tiles SET sprite_id = 1, isEmpty = 0 WHERE id = '+r[0].origin_tile_id,function(err, row, fields) {
+                            if (err) throw err;
+                            callback({
+                                type : r[0].stockages_spec_id,
+                                id : r[0].origin_tile_id
+                            });
+                        });
+                    });
+                }
             }else{
                 callback(false);
             }
         }); 
     }
+
+    Tiles.prototype.DestroyBuildingComplex = function(origin_id, callback){
+        var query = 'SELECT * FROM Stockages WHERE origin_tile_id = '+origin_id+';';
+        connection.query(query,function(err, r, fields) {
+            console.log(r);
+            if(typeof(r[0]) != 'undefined'){
+                DestroyForComplexBuilding(origin_id, r.length, r, function(){
+                    callback(true);
+                });
+            }
+        });
+    };
+
+    function DestroyForComplexBuilding(origin_id, nb, stockages, callback){
+        var i = 0;
+        while(i < nb){
+            DestroyForComplexBuilding2(stockages[i].tile_id, origin_id);
+            i++;
+        }
+        callback(true);
+    };
+
+    function DestroyForComplexBuilding2(tile_id, origin_id){
+        query = 'DELETE FROM Stockages WHERE tile_id = ' + tile_id + ';';
+        connection.query(query,function(err, r, fields) {
+            if (err) throw err;
+        });
+        connection.query('UPDATE Tiles SET sprite_id = 1, isEmpty = 0 WHERE id = '+tile_id,function(err, r, fields) {
+            if (err) throw err;
+        });
+    };
 
     Tiles.prototype.getTileInfos = function(x, y, callback){
         var query = 'SELECT * FROM Tiles WHERE x = '+x+' AND y = ' + y + ';';
