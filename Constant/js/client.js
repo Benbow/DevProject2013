@@ -174,6 +174,7 @@
 		$("#div_begin").fadeOut('slow');
 		$("#overlay").fadeOut('slow');
 		$("#div_menu").fadeIn('slow');
+		$("#user_props").fadeIn('slow');
 		socket.emit('continue_game', {
 			username : $("#menu_username").html()
 		});
@@ -186,6 +187,7 @@
 		console.log(User);
 		socket.emit('checkGrainesOwned', '');
 		socket.emit('checkBatPrice', '');
+		socket.emit('GetUserProps', '');
 	});
 
 	var loadmap = function(map) {
@@ -692,6 +694,15 @@
 				$("#menu_select_batiments_chambre").val('Chambre Froide '+data[i].prix+'$');
 			}
 		}
+	});
+
+	socket.on('user_props', function(data){
+		$("#user_level").html('Level : '+data.level);
+		$("#user_water").html('Water : '+data.water);
+		$("#user_fertilisant").html('Fertilisant : '+data.fetilisant);
+		$("#user_energie").html('Energies : '+data.energie);
+		$("#user_argent").html('Or : '+data.argent);
+		$("#user_experience").html('XP : '+data.xp);
 	});
 
 	socket.on('validStorage', function(data){

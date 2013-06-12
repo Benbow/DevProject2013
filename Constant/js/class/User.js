@@ -173,6 +173,26 @@ var User = (function() {
         });
     };
 
+    User.prototype.GetUserProps = function(user_id, callback){
+        var connection = _DB.connection();
+        var query = "SELECT * FROM Users WHERE id ="+user_id+";";
+        connection.query(query, function(err, rows, fields){
+            if(err) throw err;
+            query = 'SELECT * FROM Arrosoirs WHERE user_id = '+user_id+' AND isActive = 1;';
+            connection.query(query, function(err, row, fields){
+                if(err) throw err;
+                callback({
+                    level : rows[0].level,
+                    water : row[0].current,
+                    fertilisant : rows[0].nb_fertilisants,
+                    energie : rows[0].energie,
+                    argent : rows[0].argent,
+                    xp : rows[0].experience
+                });
+            });
+        });
+    };
+
     User.prototype.lvl = function()
     {
         var connection = _DB.connection();

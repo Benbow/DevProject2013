@@ -210,6 +210,16 @@ opacity: 0;
 
 }
 
+#user_props{
+	background-color: black;
+	color : white;
+	text-align: center;
+	margin : auto;
+}
+#user_props div{
+	display: inline;
+}
+
 #liste_difficult {
 	display:none;
 	margin-left: 10px;

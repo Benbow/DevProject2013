@@ -114,6 +114,14 @@ io.sockets.on('connection', function(socket){
 		})
 	});
 
+	socket.on('GetUserProps', function(ok){
+		user.GetUserProps(user.getId(), function(cb){
+			if(cb){
+				socket.emit('user_props', cb);
+			}
+		});
+	})
+
 	socket.on('userMove', function(data){
 		user.move(data.x, data.y);
 		socket.broadcast.emit('userMoveBroad',{
