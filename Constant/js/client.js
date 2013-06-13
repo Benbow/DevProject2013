@@ -210,7 +210,7 @@
 	        ty: 		 128,       // dimension y des tuiles
 	        prefix: 	 '',		// prefix avant les nom d'images
 	        auto_size:   false,		// aggrandissement auto de la fenetre
-	        mousewheel:  true,		// zoom avec la molette
+	        mousewheel:  false,		// zoom avec la molette
 	        zoom: 		 0.5,		// zoom par default
 	        pathfinding: true,		// chemin auto pour le deplacement de l'avatar
 	        cursorDelay : 2000,
