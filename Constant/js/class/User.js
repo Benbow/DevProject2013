@@ -143,14 +143,15 @@ var User = (function() {
 
     User.prototype.conquet = function(tile_id){
         var connection = _DB.connection();
-        connection.query('UPDATE Tiles SET owner = '+ this._id +' WHERE id = '+ tile_id, function(err,rows,fields){
+        var id = this._id;
+        connection.query('UPDATE Tiles SET owner = '+ id +' WHERE id = '+id+';', function(err,rows,fields){
             if(err) throw err;
-            connection.query('UPDATE Users SET experience = experience+1 WHERE id = '+ this.id, function(err,rows,fields){
+            connection.query('UPDATE Users SET experience = experience+1 WHERE id='+id+';', function(err,rows,fields){
                 if(err) throw err;
-                connection.query('SELECT uspec.tile_next_level, u.niveau, u.experience FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+this.id, function(err,rows,fields){
+                connection.query('SELECT uspec.tile_next_level, u.niveau, u.experience FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';', function(err,rows,fields){
                     if(err) throw err;
                     if(rows[0].experience >= rows[0].tile_next_level){
-                        connection.query('UPDATE Users SET level = level+1 WHERE id = '+ this.id, function(err,row,fields){
+                        connection.query('UPDATE Users SET niveau = niveau+1 WHERE id = '+id+';', function(err,row,fields){
                             if(err) throw err;
                         });
                     }
@@ -161,7 +162,7 @@ var User = (function() {
 
     User.prototype.getTimerConquet = function(callback){
         var connection = _DB.connection();
-        connection.query('SELECT uspec.conquete_timer as conquete_timer FROM Users_level_spec as uspec LEFT JOIN Users as u ON u.niveau = uspec.id WHERE u.id='+this.id, function(err,rows,fields){
+        connection.query('SELECT uspec.conquete_timer as conquete_timer FROM Users_level_spec as uspec LEFT JOIN Users as u ON u.niveau = uspec.id WHERE u.id='+this._id, function(err,rows,fields){
             if(err) throw err;
             callback(rows[0].conquete_timer);
         });

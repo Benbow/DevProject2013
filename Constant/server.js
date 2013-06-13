@@ -401,11 +401,13 @@ io.sockets.on('connection', function(socket){
 						socket.emit('valid', 'La conquete c\'est deroule avec succes !');
 
 					});
-					user.GetUserProps(user.getId(), function(cb){
-						if(cb){
-							socket.emit('user_props', cb);
-						}
-					});
+					setTimeout(function(){
+						user.GetUserProps(user.getId(), function(cb){
+							if(cb){
+								socket.emit('user_props', cb);
+							}
+						});
+					},1000);
 					saveTiles = new Array();
 				},timer*1000);
 			});
