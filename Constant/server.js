@@ -205,7 +205,12 @@ io.sockets.on('connection', function(socket){
 								socket.emit('validStorage', {
 									x : data.x,
 									y : data.y
-								});	
+								});
+								user.GetUserProps(user.getId(), function(cb2){
+									if(cb2){
+										socket.emit('user_props', cb2);
+									}
+								});
 							}else{
 								socket.emit('error', 'Not enough Gold !');
 							}
@@ -249,6 +254,11 @@ io.sockets.on('connection', function(socket){
 																	socket.emit('validStorageOrigin', {
 																		x : data.x-1,
 																		y : data.y-1
+																	});
+																	user.GetUserProps(user.getId(), function(cb5){
+																	if(cb5){
+																			socket.emit('user_props', cb5);
+																		}
 																	});
 																}else{
 																	socket.emit('error', 'Not enough Gold !');
@@ -326,6 +336,10 @@ io.sockets.on('connection', function(socket){
 																							socket.emit('validStorageOrigin', {
 																								x : data.x-1,
 																								y : data.y-2
+																							});
+																							if(cb7){
+																									socket.emit('user_props', cb7);
+																								}
 																							});
 																						}else{
 																							socket.emit('error', 'Not enough Gold !');
@@ -499,6 +513,11 @@ io.sockets.on('connection', function(socket){
 					crop = new Plantes();
 					crop.updateCropsHealths(function(ok){
 						socket.emit('valid', 'Watering Succesfull!!');
+						user.GetUserProps(user.getId(), function(cb2){
+							if(cb2){
+								socket.emit('user_props', cb2);
+							}
+						});
 					});
 				}else{
 					socket.emit('error', 'Not enough Water !');
@@ -516,6 +535,11 @@ io.sockets.on('connection', function(socket){
 					crop = new Plantes();
 					crop.updateCropsHealths(function(ok){
 						socket.emit('valid', 'Fertilizing Succesfull!!');
+						user.GetUserProps(user.getId(), function(cb2){
+							if(cb2){
+								socket.emit('user_props', cb2);
+							}
+						});
 					});
 				}else{
 					socket.emit('error', 'Not enough Fertilizer !');
@@ -559,7 +583,11 @@ io.sockets.on('connection', function(socket){
 	socket.on('instantSellConfirm', function(data){
 		u = new User();
 		u.SellCrop(user.getId(), data.prix, function(ok){
-			//here, update l'affichage de l'argent du player
+			user.GetUserProps(user.getId(), function(cb2){
+				if(cb2){
+					socket.emit('user_props', cb2);
+				}
+			});
 		});
 	});
 
@@ -575,6 +603,11 @@ io.sockets.on('connection', function(socket){
 				u = new User();
 				u.SellCrop(user.getId(), data.prix, function(ok){
 					//here, update l'affichage de l'argent du player
+					user.GetUserProps(user.getId(), function(cb2){
+						if(cb2){
+							socket.emit('user_props', cb2);
+						}
+					});
 					socket.emit('error', 'Not Enough Storage ! You Sell it');
 				});
 			}
@@ -742,6 +775,11 @@ io.sockets.on('connection', function(socket){
 		fruit.SellFruit(data.fruit_id, data.stockage_id, data.poids, data.prix, user.getId(), function(cb){
 			socket.emit('valid', 'Fruit Sell');
 			socket.emit('RefreshBuildingProps', 'ok');
+			user.GetUserProps(user.getId(), function(cb2){
+				if(cb2){
+					socket.emit('user_props', cb2);
+				}
+			});
 		});
 	});
 

@@ -213,7 +213,7 @@
 	        mousewheel:  true,		// zoom avec la molette
 	        zoom: 		 0.5,		// zoom par default
 	        pathfinding: true,		// chemin auto pour le deplacement de l'avatar
-	        cursorDelay : 1000,
+	        cursorDelay : 2000,
 	        onmoveavatar:function(x, y, mapid) {
 	            mouseClick(x, y);// Fonction que l'on fait quand on clique pour bouger le perso
 	        },
