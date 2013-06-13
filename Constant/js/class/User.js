@@ -40,8 +40,6 @@ var User = (function() {
 
             newUserInfo[0] = rows[0].pseudo;
             newUserInfo[1] = rows[0].mail;
-           
-               console.log(newUserInfo[0] + " lol " +newUserInfo[1])
 
         });
        
@@ -143,20 +141,57 @@ var User = (function() {
 
     User.prototype.conquet = function(tile_id){
         var connection = _DB.connection();
-        var id = this._id;
-        connection.query('UPDATE Tiles SET owner = '+ id +' WHERE id = '+id+';', function(err,rows,fields){
+        var id = this._id; 
+        connection.query('UPDATE Tiles SET owner = '+ id +' WHERE id = '+tile_id+';', function(err,rows,fields){
+            if(err) throw err;         
+        });
+    };
+
+    User.prototype.updateLevel = function(nb, callback){
+        var connection = _DB.connection();
+        var id = this._id; 
+        connection.query('SELECT uspec.tile_next_level, u.niveau, u.experience FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';', function(err,rows,fields){
             if(err) throw err;
-            connection.query('UPDATE Users SET experience = experience+1 WHERE id='+id+';', function(err,rows,fields){
+            connection.query('UPDATE Users SET experience = experience+'+nb+' WHERE id='+id+';', function(err,row,fields){
                 if(err) throw err;
-                connection.query('SELECT uspec.tile_next_level, u.niveau, u.experience FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';', function(err,rows,fields){
-                    if(err) throw err;
-                    if(rows[0].experience >= rows[0].tile_next_level){
-                        connection.query('UPDATE Users SET niveau = niveau+1 WHERE id = '+id+';', function(err,row,fields){
-                            if(err) throw err;
-                        });
-                    }
-                });
             });
+            if(rows[0].experience+nb >= rows[0].tile_next_level){
+                connection.query('UPDATE Users SET niveau = niveau+1 WHERE id = '+id+';', function(err,row,fields){
+                    if(err) throw err;
+                    callback(true);
+                });
+            }else{
+                callback(true);
+            }
+        });
+    };
+
+    User.prototype.checkLevel=function(callback){
+        var connection = _DB.connection();
+        var id = this._id; 
+        connection.query('SELECT uspec.tile_next_level, u.niveau, u.experience FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';', function(err,rows,fields){
+            if(err) throw err;
+            if(rows[0].experience >= rows[0].tile_next_level){
+                connection.query('UPDATE Users SET niveau = niveau+1 WHERE id = '+id+';', function(err,row,fields){
+                    if(err) throw err;
+                    callback(true);
+                });
+            }else{
+                callback(true);
+            }
+        });
+    }
+
+    User.prototype.checkNbMaxTile = function(nb, callback){
+        var connection = _DB.connection();
+        var id = this._id; 
+        connection.query('SELECT uspec.tile_max FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';', function(err,rows,fields){
+             if(err) throw err;
+             if(rows[0].tile_max > nb){
+                callback(true);
+             }else{
+                callback(false);
+             }
         });
     };
 
@@ -200,7 +235,8 @@ var User = (function() {
                     energie : rows[0].energies,
                     argent : rows[0].argent,
                     xp : rows[0].experience,
-                    next : rows[0].tile_next_level
+                    next : rows[0].tile_next_level,
+                    max : rows[0].tile_max
                 });
             });
         });

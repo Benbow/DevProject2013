@@ -294,7 +294,6 @@ io.sockets.on('connection', function(socket){
 																				if(cb6){
 																					user.checkMoneyForStockages(user.getId(), data.id, function(ok){
 																						if(ok){
-																							console.log(id1+" "+id2+" "+id3+" "+id4+" "+id5+" "+id6);
 																							stockage.Add_Stockages(1,user.getId(),data.id,id1);
 																							stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id2, id1);
 																							stockage.Add_StockagesWithOrigin(1, user.getId(), data.id, id3, id1);
@@ -390,7 +389,6 @@ io.sockets.on('connection', function(socket){
 		{
 			user.getTimerConquet(function(timer){
 				setTimeout(function(){
-					console.log(timer);
 					$.each(saveTiles,function(index, value){
 						user.conquet(value.id);
 						newOptions = {
@@ -398,16 +396,20 @@ io.sockets.on('connection', function(socket){
 							'user_id': user.getId()
 						};
 						updateTile(value.x, value.y, newOptions);
-						socket.emit('valid', 'La conquete c\'est deroule avec succes !');
+						socket.emit('valid', 'La conquete s\'est deroule avec succes !');
 
 					});
-					setTimeout(function(){
-						user.GetUserProps(user.getId(), function(cb){
-							if(cb){
-								socket.emit('user_props', cb);
-							}
-						});
-					},1000);
+					user.updateLevel(saveTiles.length, function(cb){
+						if(cb){
+							user.checkLevel(function(cb2){
+								user.GetUserProps(user.getId(), function(cb){
+									if(cb2){
+										socket.emit('user_props', cb);
+									}
+								});
+							});
+						}
+					})
 					saveTiles = new Array();
 				},timer*1000);
 			});

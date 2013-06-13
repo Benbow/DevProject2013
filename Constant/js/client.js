@@ -428,11 +428,40 @@
 					testTile = false;
 			});
 			if(testTile)
-			{
-				tileSelect.push({
-					'x': x,
-					'y': y
+			{	
+				var testTile2 = true;
+				$.each(tileSelect, function(index, value){
+					if(value.x == x && value.y == y)
+						testTile2 = false;
 				});
+				if(testTile2){
+					nb = $("#user_max").attr('class');
+					nb = parseInt(nb);
+
+					if(tileSelect.length < nb){
+						tileSelect.push({
+							'x': x,
+							'y': y
+						});
+						ppmap.changeOneMap(x, y, '4');
+					}else{
+						sendError('Tile Limit Reach !');
+					}
+				}else{
+					var temp = new Array();
+					$.each(tileSelect, function(index, value){
+						if(value.x == x && value.y == y){
+							ppmap.changeOneMap(x, y, '1');
+						}
+						else{
+							temp.push({
+								'x': value.x,
+								'y': value.y
+							});
+						}	
+					});
+					tileSelect = temp;
+				}
 			}
 			else
 				sendError('Tu ne peux pas conquerir un terrain qui t\'appartient.');
@@ -712,7 +741,9 @@
 		$("#user_energie").html('Energies : '+data.energie);
 		$("#user_argent").html('Or : '+data.argent);
 		$("#user_experience").html('XP : '+data.xp);
-		$("#user_next").html('/'+data.next);
+		$("#user_next").html('/ '+data.next);
+		$("#user_max").html('Max :'+data.max);
+		$("#user_max").attr('class', data.max);
 	});
 
 	socket.on('validStorage', function(data){
