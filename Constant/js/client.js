@@ -744,6 +744,7 @@
 		$("#user_next").html('/ '+data.next);
 		$("#user_max").html('Max :'+data.max);
 		$("#user_max").attr('class', data.max);
+		$("#user_alliance").html('Alliance : '+data.alliance);
 	});
 
 	socket.on('validStorage', function(data){
@@ -840,6 +841,9 @@
 		$("#buildingProps").css('display', 'none');
 	});
 
+	socket.on('newAlliance', function(data){
+		socket.sendValid('new Alliance '+data);
+	});
 
 	$(".button_menu").click(function(){
 		var type = $(this).attr('id').substr(12,$(this).attr('id').length);
@@ -951,16 +955,25 @@
 	});
 
 	$("#menu_market").click(function(){
-		
 		$("#menu_market_panel").fadeIn('slow');
-		
 	});
-
 
 	$("#quit_market").click(function(){	
 		$("#menu_market_panel").fadeOut('fast');
+	});
 
-		
+	$("#content div").hide().eq(0).show(); // show first one
+		$("#tabs li").eq(0).addClass('current'); // set active one
+		$('#tabs a').click(function(e) {
+		e.preventDefault();
+		if( $(this).closest("li").hasClass('current') ){ //detection for current tab
+			return;      
+		}else{             
+			$("#content div").hide(); //Hide all content
+			$("#tabs li").removeClass('current'); //Reset id's
+			$(this).parent().addClass('current'); // Activate this
+			$('#' + $(this).attr('name')).fadeIn(); // Show content for current tab
+		}
 	});
 
 
@@ -1038,12 +1051,30 @@
 		}
 	});
 
-	$(".button_market_tomate").click(function(data){
+	$(".button_market_tomate").click(function(){
 		socket.emit('achat_graine_tomate', {
 			nb : $("#graine_tomate").val(),
 			graines_spec_id : 1
 		});
 
+	});
+
+	$("#menu_create_alliance").click(function(){
+		$("#menu_create_alliance_panel").fadeIn('slow');
+	});
+
+	$("#create_alliance_button").click(function(){
+		var name = $("#input_alliance_name").val();
+		if(name.length > 0 && name.length <= 20){
+			socket.emit('newAlliances', name);
+			$("#menu_create_alliance_panel").fadeOut('fast');
+		}else{
+			sendError('Name Invalid');
+		}
+	});
+
+	$("#menu_quit_alliance").click(function(){
+		socket.emit('quitAlliance', '');
 	});
 
 

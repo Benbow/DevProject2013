@@ -1,3 +1,4 @@
+var DB = require('./DB');
 //Classe qui enregistre les Alliances de chaque user
 
 var Alliances = (function() {
@@ -6,7 +7,21 @@ var Alliances = (function() {
     var _master_user_id;    //lien vers le user maitre de l'alliance INT
 
     function Alliances(){
-        
+        _DB = new DB();
+    };
+
+    Alliances.prototype.Add_Alliance = function(alliance_name, user_id, callback){
+        var connection = _DB.connection();
+        var query = 'INSERT INTO Alliances (name, master_user_id) VALUES ("'+alliance_name+'", '+user_id+');';
+        console.log(query);
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            query = 'Update Users SET alliance_id = LAST_INSERT_ID() WHERE id ='+user_id+';';
+            connection.query(query,function(err, rows, fields) {
+                if (err) throw err;
+                callback(true);
+            });
+        });
     };
 
     //Getters
@@ -35,7 +50,4 @@ var Alliances = (function() {
     return Alliances;
 })();
 
-exports.Alliances = function(){
-	var a = new Alliances();
-	return a;
-}
+module.exports = Alliances;

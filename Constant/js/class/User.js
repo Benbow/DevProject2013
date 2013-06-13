@@ -195,6 +195,27 @@ var User = (function() {
         });
     };
 
+    User.prototype.checkAlliance = function(callback){
+        var connection = _DB.connection();
+        var id = this._id;
+        connection.query('SELECT alliance_id FROM Users WHERE id ='+id+';', function(err, rows, fields){
+            if(err) throw err;
+            if(rows[0].alliance_id == null){
+                callback(true);
+            }else{ 
+                callback(false);
+            }
+        });
+    };
+
+    User.prototype.quitAlliance = function(callback){
+        var connection = _DB.connection();
+        var id = this._id;
+        connection.query('UPDATE Users SET alliance_id = NULL WHERE id='+id+';', function(err, rows, fields){
+            callback(true);
+        });
+    }
+
     User.prototype.getTimerConquet = function(callback){
         var connection = _DB.connection();
         connection.query('SELECT uspec.conquete_timer as conquete_timer FROM Users_level_spec as uspec LEFT JOIN Users as u ON u.niveau = uspec.id WHERE u.id='+this._id, function(err,rows,fields){
@@ -228,16 +249,49 @@ var User = (function() {
             query = 'SELECT * FROM Arrosoirs WHERE user_id = '+user_id+' AND isActive = 1;';
             connection.query(query, function(err, row, fields){
                 if(err) throw err;
-                callback({
-                    level : rows[0].niveau,
-                    water : row[0].current,
-                    fertilisant : rows[0].nb_fertilisants,
-                    energie : rows[0].energies,
-                    argent : rows[0].argent,
-                    xp : rows[0].experience,
-                    next : rows[0].tile_next_level,
-                    max : rows[0].tile_max
-                });
+                if(rows[0].alliance_id != null){
+                    query = 'SELECT * FROM Alliances WHERE id = '+rows[0].alliance_id+';';
+                    connection.query(query, function(err, ro, fields){
+                        if(err) throw err;
+                        if(typeof(ro[0])!= 'undefined'){
+                           callback({
+                                level : rows[0].niveau,
+                                water : row[0].current,
+                                fertilisant : rows[0].nb_fertilisants,
+                                energie : rows[0].energies,
+                                argent : rows[0].argent,
+                                xp : rows[0].experience,
+                                next : rows[0].tile_next_level,
+                                max : rows[0].tile_max,
+                                alliance : ro[0].name
+                            }); 
+                       }else{
+                            callback({
+                                level : rows[0].niveau,
+                                water : row[0].current,
+                                fertilisant : rows[0].nb_fertilisants,
+                                energie : rows[0].energies,
+                                argent : rows[0].argent,
+                                xp : rows[0].experience,
+                                next : rows[0].tile_next_level,
+                                max : rows[0].tile_max,
+                                alliance : 'Undefined'
+                            });
+                       }    
+                    });
+                }else{
+                    callback({
+                        level : rows[0].niveau,
+                        water : row[0].current,
+                        fertilisant : rows[0].nb_fertilisants,
+                        energie : rows[0].energies,
+                        argent : rows[0].argent,
+                        xp : rows[0].experience,
+                        next : rows[0].tile_next_level,
+                        max : rows[0].tile_max,
+                        alliance : 'None'
+                    });
+                }
             });
         });
     };

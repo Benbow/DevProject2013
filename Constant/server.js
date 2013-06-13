@@ -17,7 +17,8 @@ var User 	   = require("./js/class/User");
 var Tiles 	   = require("./js/class/Tiles");
 var Fruits_sp  = require("./js/class/Fruits_spec");
 var Fruits 	   = require("./js/class/Fruits");
-var Graine     = require("./js/class/Graine")
+var Graine     = require("./js/class/Graine");
+var Alliance   = require("./js/class/Alliances");
 
 
 
@@ -751,6 +752,41 @@ io.sockets.on('connection', function(socket){
 				
 			}else{
 				socket.emit('valid', 'Building Clear');
+			}
+		});
+	});
+
+	socket.on("newAlliances", function(data){
+		user.checkAlliance(function(cb){
+			if(cb){
+				alliance = new Alliance();
+				alliance.Add_Alliance(data, user.getId(), function(){
+					user.GetUserProps(user.getId(), function(cb2){
+						if(cb2){
+							socket.emit('user_props', cb2);
+							socket.emit('newAlliance', cb2);
+						}
+					});
+				});
+			}else{
+				socket.emit('error', 'You already have an alliance');
+			}
+		});
+	});
+
+	socket.on('quitAlliance', function(ok){
+		user.checkAlliance(function(cb){
+			if(!cb){
+				user.quitAlliance(function(back){
+					user.GetUserProps(user.getId(), function(cb2){
+						if(cb2){
+							socket.emit('user_props', cb2);
+							socket.emit('valid', 'you quit your alliance');
+						}
+					});
+				});
+			}else{
+				socket.emit('error', 'You Have No Alliance');
 			}
 		});
 	});
