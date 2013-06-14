@@ -1268,12 +1268,13 @@
 
 	});
 
-	/*$("#fertilizant").delegate(".button_market_fertilizant",'click',function(){
+	$("#fertilizant").delegate(".button_market_fertilizant",'click',function(){
 		socket.emit('achat_fertilizant', {
-			nb : 1
+			nb : 1 ,
+			prix : 1
 		});
 
-	});*/
+	});
 
 
 	$("#fruitsList").delegate(".drop_fruit", 'click', function(){

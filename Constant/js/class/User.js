@@ -223,6 +223,25 @@ var User = (function() {
        
     };
 
+    User.prototype.buy_fertilizant = function(nb, id, prix, callback) {
+        var connection = _DB.connection();   
+                connection.query('SELECT argent FROM Users WHERE id = ' + id + ';',function(err,row,fields){
+                if(err) throw err;
+                if(row[0].argent >= prix){                                                         
+                   var query = 'UPDATE  Users SET argent = argent-'+prix+' , nb_fertilisants = nb_fertilisants + '+nb+ ' WHERE id = ' + id;
+                    connection.query(query, function(err,row,fields){
+                    if(err) throw err;
+                    callback(true);
+                 
+                    });
+                }else{
+                    console.log("t'es un pauvre");
+                    callback(false);
+                }
+            });                    
+       
+    };
+
 
    
 

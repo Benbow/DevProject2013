@@ -120,7 +120,6 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('GetUserProps', function(ok){
-		console.log("dcvfev");
 		user.GetUserProps(user.getId(), function(cb){
 			if(cb){
 				socket.emit('user_props', cb);
@@ -634,6 +633,11 @@ io.sockets.on('connection', function(socket){
 				u.buy_graines(data.nb, data.graines_spec_id, user.getId(), function(ok){
 					if(ok == true){
 						if(cb2){
+								user.GetUserProps(user.getId(), function(cb){
+									if(cb){
+										socket.emit('user_props', cb);
+									}
+								});
 								socket.emit('cropsButton', cb2);
 								socket.emit('valid', cb.nb+ ' graines achete');
 						}
@@ -655,6 +659,11 @@ io.sockets.on('connection', function(socket){
 			u.buy_armes(data.nb, data.armes_spec_id, user.getId(), function(ok){
 				if(ok == true){
 					if(ok == true){
+							user.GetUserProps(user.getId(), function(cb){
+								if(cb){
+									socket.emit('user_props', cb);
+								}
+							});
 							socket.emit('valid', 'arme achete');
 					}
 
@@ -674,6 +683,11 @@ io.sockets.on('connection', function(socket){
 			u.buy_energie(data.nb, data.prix, user.getId(), function(ok){
 				if(ok == true){
 					if(ok == true){
+							user.GetUserProps(user.getId(), function(cb){
+								if(cb){
+									socket.emit('user_props', cb);
+								}
+							});
 							socket.emit('valid', 'energie achete');
 					}
 
@@ -684,6 +698,26 @@ io.sockets.on('connection', function(socket){
 			});
 		});
 
+	});
+
+	socket.on('achat_fertilizant', function(data){
+		u = new User();	
+		u.buy_fertilizant(data.nb, data.prix, user.getId(), function(ok){
+			if(ok == true){
+				if(ok == true){
+						user.GetUserProps(user.getId(), function(cb){
+							if(cb){
+								socket.emit('user_props', cb);
+							}
+						});
+						socket.emit('valid', 'fertilizant achete');
+				}
+
+			}else{
+				socket.emit('error', "Pas assez d'argent !")
+			
+			}
+		});
 	});
 
 	
