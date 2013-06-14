@@ -31,23 +31,7 @@ var User = (function() {
         });
     };
 
-    User.prototype.existMail = function(mail,callback) {
-        var connection = _DB.connection();
-        var newUserInfo = new Array();
-       
-        var user = connection.query('SELECT * FROM Users WHERE mail = "' + mail + '";',function(err,rows,fields){
-            if(err) throw err;
-
-            newUserInfo[0] = rows[0].pseudo;
-            newUserInfo[1] = rows[0].mail;
-
-        });
-       
-            if(newUserInfo[0] != null)
-                return true;
-            else 
-                return false;
-    };
+   
 
     User.prototype.combat = function(user_id,enemi, callback) {
         var connection = _DB.connection();
@@ -119,32 +103,49 @@ var User = (function() {
         });
     };
 
-    User.prototype.registerUser = function(mail, pseudo, password) {
+    User.prototype.registerUser = function(mail, pseudo, password, callback) {
+        var connection = _DB.connection();
+
+            connection.query('SELECT mail FROM Users WHERE mail = "' + mail + '";',function(err,row,fields){
+            if(err) throw err;
+            if(typeof (row[0]) == "undefined"){
+                        connection.query('SELECT pseudo FROM Users WHERE pseudo = "' + pseudo + '";',function(err,row,fields){
+                        if(err) throw err;
+                        if(typeof (row[0]) == "undefined"){
+                                connection.query('INSERT INTO Users (id,pseudo,password,mail) VALUES ("","' + pseudo + '","' + password + '","' + mail + '");',function(err,row,fields){
+                                if(err) throw err;                                 
+                                });
+                                }else{
+                                    console.log("pseudo existe deja");                                  
+                                }
+                        });  
+            }else{
+                console.log("email existe deja");              
+            }
+             
+        });
+
+    };
+
+
+ User.prototype.existMail = function(mail,callback) {
         var connection = _DB.connection();
         var newUserInfo = new Array();
-        var newUser = connection.query('INSERT INTO Users (id,pseudo,password,mail) VALUES ("","' + pseudo + '","' + password + '","' + mail + '");',function(err,row,fields){
+       
+        var user = connection.query('SELECT * FROM Users WHERE mail = "' + mail + '";',function(err,rows,fields){
             if(err) throw err;
 
-             
+            newUserInfo[0] = rows[0].pseudo;
+            newUserInfo[1] = rows[0].mail;
+
         });
-
+       
+            if(newUserInfo[0] != null)
+                return true;
+            else 
+                return false;
     };
-
-     User.prototype.checkArgent = function(id, nb, prix, callback) {
-        var connection = _DB.connection();
-        var argentUser = connection.query('SELECT argent FROM Users WHERE id = ' + id + ';',function(err,row,fields){
-            if(err) throw err;
-                var sommes =nb*prix;
-                console.log("looooooooooooool"+sommes);
-                if(argentUser < sommes){
-                     callback(false); 
-                }else{
-                     callback(true); 
-                }
-             
-        });
-
-    };
+    
 
     User.prototype.buy_graines = function(nb,graines_spec_id, id, callback) {
         var connection = _DB.connection();
