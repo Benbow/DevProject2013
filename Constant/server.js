@@ -618,6 +618,7 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('achat_graine_tomate', function(data){
+		console.log("lol");
 		graine = new Graine;
 		graine.buyGraine(data.nb, user.getId(), data.graines_spec_id, function(cb){
 			graine.checkGrainesOwned(user.getId(), function(cb2){
@@ -645,6 +646,8 @@ io.sockets.on('connection', function(socket){
 		});
 
 	});
+
+	
 
 	socket.on('storeCrops', function(data){
 		fruit = new Fruits;

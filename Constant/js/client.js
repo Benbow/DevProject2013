@@ -886,22 +886,22 @@
 	});
 
 	socket.on('liste_graines', function(data){
-		   var html = '<ul class="lol">';
+		   var html = '<ul>';
 			for (var n in data) 
 			{ 
 				html += '<li>' + data[n].name + "<input type='number' id='graine_"+ data[n].name + "'" + 'value="1"/>' + "<input id='market_"+data[n].name+"'"+ "class='button_market_"+data[n].name+"'"+ "type='button' value='Acheter graine de "+data[n].name+" ' /></li> ";    
 		    }
-			    html += '</ul>';7
+			  html += '</ul>';
 			    $('#liste_graines').html(html);
 	});
 
 	socket.on('liste_armes', function(data){
-		   var html = '<ul class="lol">';
+		   var html = '<ul>';
 			for (var n in data) 
 			{ 
 				html += '<li>' + data[n].name +  "<input id='market_"+data[n].name+"'"+ "class='button_market_"+data[n].name+"'"+ "type='button' value='Acheter "+data[n].name+" ' /></li>";    
 		    }
-			    html += '</ul>';7
+			    html += '</ul>';
 			    $('#liste_armes').html(html);
 	});
 
@@ -1106,13 +1106,28 @@
 		}
 	});
 
-	$(".button_market_tomate").click(function(){
+	$("#market_tomate").delegate(".button_market_tomate",'click',function(){
+		console.log("lol1111");
 		socket.emit('achat_graine_tomate', {
 			nb : $("#graine_tomate").val(),
 			graines_spec_id : 1
 		});
 
 	});
+
+	$("#fruitsList").delegate(".drop_fruit", 'click', function(){
+		var value = $(this).attr('id');
+		var val = value.split("_");
+		var fruit_id = val[1];
+		var stockage_id = val[4];
+		var poids = val[2];
+
+		socket.emit('drop_fruit', {
+			fruit_id : parseInt(fruit_id),
+			stockage_id : parseInt(stockage_id),
+			poids : parseInt(poids)
+		});
+	});	
 
 	$(".button_market").click(function(data){
 		socket.emit('button_market', {

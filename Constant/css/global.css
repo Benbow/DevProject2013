@@ -507,7 +507,7 @@ font-family: Arial, Helvetica, sans-serif;
         transition-timing-function: cubic-bezier(0.250, 0.250, 0.750, 0.750); /* linear */
 	}
 
-#new_game,#continue_game,#acheter,#quit_market,#market_tomate,#button_admin{
+#new_game,#continue_game,#acheter,#quit_market,#button_admin{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	color: #ffffff;
@@ -538,7 +538,7 @@ font-family: Arial, Helvetica, sans-serif;
 		0px 1px 0px rgba(255,255,255,0.3);
 }
 
-#new_game:hover, #continue_game:hover,#acheter:hover,#quit_market:hover,#market_tomate:hover,#button_admin:hover{
+#new_game:hover, #continue_game:hover,#acheter:hover,#quit_market:hover,#button_admin:hover{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	color: #ffffff;
