@@ -130,6 +130,29 @@ var User = (function() {
 
     };
 
+    User.prototype.buy_graines = function(nb,graines_spec_id, id, callback) {
+        var connection = _DB.connection();
+        var prix;
+        var query ='SELECT prix  FROM Graines_spec WHERE id ='+graines_spec_id;
+        connection.query(query, function(err,row,fields){
+            if(err) throw err;
+            if(typeof (row[0]) != "undefined"){
+                prix = row[0].prix;
+                console.log(id);
+                var query = 'UPDATE  Users SET argent = argent-'+nb*prix+' WHERE id = ' + id;
+                connection.query(query, function(err,row,fields){
+                if(err) throw err;
+                callback(true);
+             
+                 });
+            }else{
+                callback(false);
+            }                        
+        });
+    };
+
+   
+
     User.prototype.SellCrop = function(id, prix, callback) {
         var connection = _DB.connection();
         var query = 'SELECT * FROM Users WHERE id = ' + id;

@@ -624,18 +624,19 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
-	socket.on('achat_graine_tomate', function(data){
+	socket.on('achat_graine', function(data){
 		graine = new Graine;
 		graine.buyGraine(data.nb, user.getId(), data.graines_spec_id, function(cb){
 			graine.checkGrainesOwned(user.getId(), function(cb2){
 				if(cb2){
 					socket.emit('cropsButton', cb2);
-					socket.emit('valid', cb.nb+ ' graines de tomates on bien ete achete');
+					socket.emit('valid', cb.nb+ ' graines achete');
 				}
 			});
 		});
 		u = new User();
-		u.SellCrop(user.getId(), data.prix, function(ok){
+		u.buy_graines(data.nb, data.graines_spec_id, user.getId(), function(ok){
+
 		});
 	});
 

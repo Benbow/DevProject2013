@@ -916,7 +916,7 @@
 	});
 
 	socket.on('liste_graines', function(data){
-		   var html = '<ul>';
+		   var html = '<ul style="display:block !important">';
 			for (var n in data) 
 			{ 
 				html += '<li>' + data[n].name + "<input type='number' id='graine_"+ data[n].name + "'" + 'value="1"/>' + "<input id='market_"+data[n].name+"'"+ "class='button_market_"+data[n].name+"'"+ "type='button' value='Acheter graine de "+data[n].name+" ' /></li> ";    
@@ -1136,18 +1136,59 @@
 		}
 	});
 
-	$("#market_tomate").delegate(".button_market_tomate",'click',function(){
-		console.log("lol1111");
-		socket.emit('achat_graine_tomate', {
-			nb : $("#graine_tomate").val(),
+	
+
+	$("#liste_graines").delegate(".button_market_pasteque",'click',function(){
+		socket.emit('achat_graine', {
+			nb : $("#graine_pasteque").val(),
 			graines_spec_id : 1
 		});
 
 	});
 
+	$("#liste_graines").delegate(".button_market_salade",'click',function(){
+		socket.emit('achat_graine', {
+			nb : $("#graine_salade").val(),
+			graines_spec_id : 2
+		});
+
+	});
+
+	$("#liste_graines").delegate(".button_market_ananas",'click',function(){
+		socket.emit('achat_graine', {
+			nb : $("#graine_ananas").val(),
+			graines_spec_id : 3
+		});
+
+	});
+
+	$("#liste_graines").delegate(".button_market_tomate",'click',function(){
+		socket.emit('achat_graine', {
+			nb : $("#graine_tomate").val(),
+			graines_spec_id : 4
+		});
+
+	});
+
+	$("#liste_graines").delegate(".button_market_melon",'click',function(){
+		socket.emit('achat_graine', {
+			nb : $("#graine_melon").val(),
+			graines_spec_id : 5
+		});
+
+	});
+
+	$("#liste_graines").delegate(".button_market_carotte",'click',function(){
+		socket.emit('achat_graine', {
+			nb : $("#graine_carotte").val(),
+			graines_spec_id : 6
+		});
+
+	});
 	$("#fruitsList").delegate(".drop_fruit", 'click', function(){
 		var value = $(this).attr('id');
 		var val = value.split("_");
+
 		var fruit_id = val[1];
 		var stockage_id = val[4];
 		var poids = val[2];
