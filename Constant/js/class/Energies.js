@@ -49,7 +49,4 @@ var Energies = (function() {
     return Energies;
 })();
 
-exports.Energies = function(){
-	var a = new Energies();
-	return a;
-}
+module.exports = Energies;

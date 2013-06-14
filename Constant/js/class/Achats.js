@@ -35,7 +35,4 @@ var Achats = (function() {
     return Achats;
 })();
 
-exports.Achats = function(){
-	var a = new Achats();
-	return a;
-}
+module.exports = Achats;

@@ -85,7 +85,4 @@ var Tornades = (function() {
     return Tornades;
 })();
 
-exports.Tornades = function(){
-	var a = new Tornades();
-	return a;
-}
+module.exports = Tornades;

@@ -35,7 +35,4 @@ var Armes = (function() {
     return Armes;
 })();
 
-exports.Armes = function(){
-	var a = new Armes();
-	return a;
-}
+module.exports = Armes;

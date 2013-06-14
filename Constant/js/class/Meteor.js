@@ -71,7 +71,4 @@ var Meteor = (function() {
     return Meteor;
 })();
 
-exports.Meteor = function(){
-	var a = new Meteor();
-	return a;
-}
+module.exports = Meteor;

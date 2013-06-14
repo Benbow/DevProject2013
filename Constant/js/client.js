@@ -65,14 +65,6 @@
 			carotte : {
 				id : 6,
 				sprite_id : 60
-			},
-			raisin : {
-				id : 7,
-				sprite_id : 70
-			},
-			carotte : {
-				id : 8,
-				sprite_id : 80
 			}
 		}
 	}
@@ -248,7 +240,7 @@
 		    ppmap.addObject(value.x, value.y, 'images/avatar.png', 0, 0, value.pseudo, value.pseudo, 'char_'+value.id);
 		});
 
-		ppmap.avatar(map.user.x, map.user.y, 'images/sprite.png', 15, -30, true, 4); //notre avatar
+		ppmap.avatar(map.user.x, map.user.y, 'images/sprite.png', 70, -70, true, 4); //notre avatar
 		ppmap.cursor('images/cursor-on.png', 'images/cursor-off.png', 0, 0); //notre curseur
 	};
 
@@ -714,7 +706,6 @@
 					}
 				case '5':
 					if(nb == '0'){
-					
 						$("#menu_select_plantes_melon").css('display', 'none');
 						break;
 					}else{
@@ -722,7 +713,7 @@
 						$("#menu_select_plantes_melon").val('Planter un melon ('+nb+')');
 						break;
 					}
-		
+				case '6':
 					if(nb == '0'){
 						$("#menu_select_plantes_carotte").css('display', 'none');
 						break;
@@ -732,6 +723,7 @@
 						break;
 					}
 			}
+			
 		}
 	});
 
@@ -1095,6 +1087,7 @@
 			$(this).val('Arreter de Détruire');
 			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',0,-30);
 		}
+
 	});
 
 	$("#menu_display_tile_infos").click(function(){

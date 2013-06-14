@@ -49,7 +49,4 @@ var Energies_spec = (function() {
     return Energies_spec;
 })();
 
-exports.Energies_spec = function(){
-	var a = new Energies_spec();
-	return a;
-}
+module.exports = Energies_spec;

@@ -32,7 +32,7 @@ var User = (function() {
     };
 
     User.prototype.existMail = function(mail,callback) {
-         var connection = _DB.connection();
+        var connection = _DB.connection();
         var newUserInfo = new Array();
        
         var user = connection.query('SELECT * FROM Users WHERE mail = "' + mail + '";',function(err,rows,fields){
@@ -47,8 +47,76 @@ var User = (function() {
                 return true;
             else 
                 return false;
+    };
+
+    User.prototype.combat = function(user_id,enemi, callback) {
+        var connection = _DB.connection();
+        this.getArmeInfos(user_id,function(infos_user_arme){
+            connection.query('SELECT spec.`puissance`, spec.`precision`, spec.`vitesse` FROM `Armes_spec` as spec LEFT JOIN Armes as arme ON spec.id = arme.armes_spec_id WHERE arme.user_id = '+ enemi,function(err,rows,fields){
+                if (err) throw err;
+                var infos_enemi_arme = rows[0];
+                console.log('enemi : '+user_id);
+                connection.query('SELECT spec.resistance as health, user.id as id FROM `Users_level_spec` as spec LEFT JOIN Users as user ON spec.id = user.niveau WHERE user.id = '+ user_id +' OR user.id = '+enemi,function(err,rows,fields){
+                    if (err) throw err;
+
+                    if (user_id == rows[0].id) {
+                        infos_user_arme.health = rows[0].health;
+                        infos_enemi_arme.health = rows[1].health;
+                    }
+                    else {
+                        infos_user_arme.health = rows[1].health;
+                        infos_enemi_arme.health = rows[0].health;
+                    }
+                    console.log(infos_user_arme);
+                    console.log(infos_enemi_arme);
+
+                    var user_combat = setInterval(function(){
+                        if(infos_enemi_arme.health == 0 || infos_user_arme.health == 0){
+                            clearInterval(user_combat);
+                            if(infos_enemi_arme.health == 0)
+                                callback(true);
+                            else
+                                callback(false);
+                        }
+                        else {
+                            var random = Math.floor((Math.random()*100)+1);
+                            if(random < infos_user_arme.precision) {
+                                console.log('user touche');
+                                infos_enemi_arme.health -= infos_user_arme.puissance;
+                            }
+                        }
+                    },infos_user_arme.vitesse*1000);
+
+                    var enemi_combat = setInterval(function(){
+                        if(infos_enemi_arme.health == 0 || infos_user_arme.health == 0){
+                            clearInterval(enemi_combat);
+                            if(infos_enemi_arme.health == 0)
+                                callback(true);
+                            else
+                                callback(false);
+                        }
+                        else {
+                            var random = Math.floor((Math.random()*100)+1);
+                            if(random < infos_enemi_arme.precision) {
+                                console.log('enemi touche');
+                                infos_user_arme.health -= infos_enemi_arme.puissance;  
+                            }                          
+                        }
+                    },infos_enemi_arme.vitesse*1000);
+                    
+                });
+            });
+        });
+    };
 
 
+
+    User.prototype.getArmeInfos = function(callback) {
+        var connection = _DB.connection();
+        connection.query('SELECT spec.`puissance` as puissance, spec.`precision` as precision, spec.`vitesse` as vitesse FROM `Armes_spec` as spec LEFT JOIN Armes as arme ON spec.id = arme.armes_spec_id WHERE arme.user_id = '+ _id,function(err,rows,fields){
+            if (err) throw err;
+            callback(rows[0]);
+        });
     };
 
     User.prototype.registerUser = function(mail, pseudo, password) {

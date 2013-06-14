@@ -42,7 +42,4 @@ var Arrosoirs_spec = (function() {
     return Arrosoirs_spec;
 })();
 
-exports.Arrosoirs_spec = function(){
-	var a = new Arrosoirs_spec();
-	return a;
-}
+module.exports = Arrosoirs_spec;

@@ -99,9 +99,4 @@ var Stockages_spec = (function() {
     return Stockages_spec;
 })();
 
-exports.Stockages_spec = function(){
-	//var a = new Stockages_spec();
-    //a.Add_Stockages_spec("test",1,1,1,1,1,1,1);
-    //a.Delete_Stockages_spec(1);
-	//return a;
-}
+module.exports = Stockages_spec;

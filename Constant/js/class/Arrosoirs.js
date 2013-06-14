@@ -35,7 +35,4 @@ var Arrosoirs = (function() {
     return Arrosoirs;
 })();
 
-exports.Arrosoirs = function(){
-	var a = new Arrosoirs();
-	return a;
-}
+module.exports = Arrosoirs;

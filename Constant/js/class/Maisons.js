@@ -36,7 +36,4 @@ var Maisons = (function() {
     return Maisons;
 })();
 
-exports.Maisons = function(){
-	var a = new Maisons();
-	return a;
-}
+module.exports = Maisons;

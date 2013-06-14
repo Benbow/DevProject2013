@@ -71,7 +71,4 @@ var Pluie = (function() {
     return Pluie;
 })();
 
-exports.Pluie = function(){
-	var a = new Pluie();
-	return a;
-}
+module.exports = Pluie;

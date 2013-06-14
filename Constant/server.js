@@ -447,16 +447,23 @@ io.sockets.on('connection', function(socket){
 		if(enemi > 0)
 		{
 			setTimeout(function(){
-				user.combat()
-				$.each(saveTiles,function(index, value){
-					user.attack(value.id);
-					newOptions = {
-						'type': 'attack',
-						'user_id': user.getId(),
-						'enemi': enemi
-					};
-					updateTile(value.x, value.y, newOptions);
-					socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
+				user.combat(enemi,function(result){
+					if(result) 
+					{
+						$.each(saveTiles,function(index, value){
+							newOptions = {
+								'type': 'attack',
+								'user_id': user.getId(),
+								'enemi': enemi
+							};
+							updateTile(value.x, value.y, newOptions);
+						});
+						socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
+					}
+					else
+					{
+						socket.emit('valid', 'Vous avez perdu votre attaque');
+					}
 				});
 				saveTiles = new Array();
 			},10000);
@@ -618,7 +625,6 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('achat_graine_tomate', function(data){
-		console.log("lol");
 		graine = new Graine;
 		graine.buyGraine(data.nb, user.getId(), data.graines_spec_id, function(cb){
 			graine.checkGrainesOwned(user.getId(), function(cb2){
@@ -1028,4 +1034,23 @@ updateTile = function(x,y,options){
 			'user_id': options.user_id
 		});
 	}
+	else if (options.type == 'attack') {
+		io.sockets.emit('newTileAttack', {
+			'x':x,
+			'y':y,
+			'user_id': options.user_id
+		});
+
+		io.sockets.socket(options.enemi).emit('loseAttack', 'Tu as perdu l\'attaque contre ton territoire.');
+	}
+};
+
+initialise = function(){
+	map.initialiseMap();
+	Fruits_sp.initialise();
+	Armes_sp.initialise();
+	Graines_sp.initialise();
+	Stockages_sp.initialise();
+	Arrosoirs_sp.initialise();
+	Users_level_sp.initialise();
 };

@@ -85,7 +85,4 @@ var Sauterelles = (function() {
     return Sauterelles;
 })();
 
-exports.Sauterelles = function(){
-	var a = new Sauterelles();
-	return a;
-}
+module.exports = Sauterelles;

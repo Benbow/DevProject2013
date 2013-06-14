@@ -72,7 +72,4 @@ var Users_level_spec = (function() {
     return Users_level_spec;
 })();
 
-exports.Users_level_spec = function(){
-	var a = new Users_level_spec();
-	return a;
-}
+module.exports = Users_level_spec;
