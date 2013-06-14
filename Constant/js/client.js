@@ -437,38 +437,42 @@
 			});
 			if(testTile)
 			{	
-				var testTile2 = true;
-				$.each(tileSelect, function(index, value){
-					if(value.x == x && value.y == y)
-						testTile2 = false;
-				});
-				if(testTile2){
-					nb = $("#user_max").attr('class');
-					nb = parseInt(nb);
+				if(checkTileIsNear({x : x, y : y})){
+					var testTile2 = true;
+					$.each(tileSelect, function(index, value){
+						if(value.x == x && value.y == y)
+							testTile2 = false;
+					});
+					if(testTile2){
+						nb = $("#user_max").attr('class');
+						nb = parseInt(nb);
 
-					if(tileSelect.length < nb){
-						tileSelect.push({
-							'x': x,
-							'y': y
-						});
-						ppmap.changeOneMap(x, y, '4');
+						if(tileSelect.length < nb){
+							tileSelect.push({
+								'x': x,
+								'y': y
+							});
+							ppmap.changeOneMap(x, y, '4');
+						}else{
+							sendError('Tile Limit Reach !');
+						}
 					}else{
-						sendError('Tile Limit Reach !');
+						var temp = new Array();
+						$.each(tileSelect, function(index, value){
+							if(value.x == x && value.y == y){
+								ppmap.changeOneMap(x, y, '1');
+							}
+							else{
+								temp.push({
+									'x': value.x,
+									'y': value.y
+								});
+							}	
+						});
+						tileSelect = temp;
 					}
 				}else{
-					var temp = new Array();
-					$.each(tileSelect, function(index, value){
-						if(value.x == x && value.y == y){
-							ppmap.changeOneMap(x, y, '1');
-						}
-						else{
-							temp.push({
-								'x': value.x,
-								'y': value.y
-							});
-						}	
-					});
-					tileSelect = temp;
+					sendError('Tu ne peux conquerir que des tiles a cotés de tiennes');
 				}
 			}
 			else
@@ -1369,5 +1373,32 @@
 			stockage_id : stockage_id
 		});
 	});
+
+	checkTileIsNear = function(data){
+		var testTile = false;
+		$.each(User.own_tile, function(index, value){
+			if(value.x == data.x-1 && value.y == data.y)
+				testTile = true;
+			else if(value.x == data.x+1 && value.y == data.y)
+				testTile = true;
+			else if(value.x == data.x && value.y == data.y-1)
+				testTile = true;
+			else if(value.x == data.x && value.y == data.y+1)
+				testTile = true;
+		});
+		if(!testTile){
+			$.each(tileSelect, function(index, value){
+				if(value.x == data.x-1 && value.y == data.y)
+					testTile = true;
+				else if(value.x == data.x+1 && value.y == data.y)
+					testTile = true;
+				else if(value.x == data.x && value.y == data.y-1)
+					testTile = true;
+				else if (value.x == data.x && value.y == data.y+1)
+					testTile = true;
+			});
+		}
+		return testTile;
+	};
 
 })(jQuery);
