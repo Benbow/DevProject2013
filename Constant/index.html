@@ -47,6 +47,8 @@
 					 <ul id="tabs">
 						<li><a href="#" name="tab1">Graines</a></li>
 						<li><a href="#" name="tab2">Armes</a></li>
+						<li><a href="#" name="tab3">Energie</a></li>
+						<li><a href="#" name="tab4">Fertilizant</a></li>
 					</ul>
 					<div id="content"> 
 						<div id="tab1">
@@ -61,9 +63,24 @@
 							
 							</div>
 						</div>
+					
+						<div id="tab3">
+					   		<div style="display:block !important" id="energie" class="energie">
+							<input type='number' id='number_energie' value="1" />
+-               		    <input id="market_energie" class="button_market_energie" type="button" value="Acheter energie"  />
+							</div>
+						</div>	
+						<div id="tab4">
+					   		<div style="display:block !important" id="fertilizant" class="fertilizant">
+					   			<input type='number' id='number_fertilizant' value="1" />
+-              				    <input id="market_fertilizant" class="button_market_fertilizant" type="button" value="Acheter fertilizant"  />
+							
+							</div>
+						</div>
 					</div>	
-				</div>
+				</div>	
 			</div>
+
 			
 
 			<div id="menu_create_alliance_panel" style="display:none;">
@@ -74,6 +91,16 @@
 				Player Name : <input type ="text" id="input_player_name" maxlength="15"/></br/>
 				<input type="button" id="invit_alliance_button" value="Inviter !"/>
 				<input type="button" id="hide_invit_alliance_button" value="Hide"/>
+			</div>
+
+			<div id="money">
+				
+
+			</div>
+
+			<div id="energie">
+				
+
 			</div>
 			
 			<div id="div_admin">

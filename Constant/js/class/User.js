@@ -129,6 +129,22 @@ var User = (function() {
 
     };
 
+     User.prototype.get_money = function(id,callback) {
+        var connection = _DB.connection();       
+        var money = connection.query('SELECT argent FROM Users WHERE id = "' + id + '";',function(err,rows,fields){
+            if(err) throw err;
+             callback(rows[0]);
+        });
+    };
+
+    User.prototype.get_energie = function(id,callback) {
+        var connection = _DB.connection();       
+        var energie = connection.query('SELECT energies FROM Users WHERE id = "' + id + '";',function(err,rows,fields){
+            if(err) throw err;
+             callback(rows[0]);
+        });
+    };
+
 
  User.prototype.existMail = function(mail,callback) {
         var connection = _DB.connection();
@@ -202,6 +218,25 @@ var User = (function() {
                 });
             }                     
         });
+    };
+
+     User.prototype.buy_energie = function(nb, id, prix, callback) {
+        var connection = _DB.connection();   
+                connection.query('SELECT argent FROM Users WHERE id = ' + id + ';',function(err,row,fields){
+                if(err) throw err;
+                if(row[0].argent >= prix){                                                         
+                   var query = 'UPDATE  Users SET argent = argent-'+prix+' WHERE id = ' + id;
+                    connection.query(query, function(err,row,fields){
+                    if(err) throw err;
+                    callback(true);
+                 
+                    });
+                }else{
+                    console.log("t'es un pauvre");
+                    callback(false);
+                }
+            });                    
+       
     };
 
 

@@ -1,4 +1,5 @@
 //Classe qui enregistre les batiments Energies de chaque user
+var DB = require('./DB');
 
 var Energies = (function() {
     var _id;                //id unique d'une arme INT
@@ -8,7 +9,18 @@ var Energies = (function() {
     var _tile_id            //Lien vers la tile ou le bâtiment se trouve
 
     function Energies(){
-        
+        _DB = new DB();
+    };
+
+     Energies.prototype.buyEnergie = function(nb, user_id, callback){
+        var connection = _DB.connection();
+        var query = 'UPDATE Users SET energies = energies + '+nb+' WHERE id = '+user_id +';';
+        connection.query(query,function(err, r, fields) {
+            if (err) throw err;
+            callback({
+                nb : nb
+            });
+        }); 
     };
 
     //Getters

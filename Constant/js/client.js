@@ -851,6 +851,25 @@
 		$("#buildingProps").css('display', 'none');
 	});
 
+
+	socket.on('money', function(data){
+		var text = "";
+		text += '<div>';
+		text += 'Argent : '+data;
+		text += '</div>';
+
+		$("#money").html(text);
+	});
+
+	socket.on('energie', function(data){
+		var text = "";
+		text += '<div>';
+		text += 'Energie : '+data;
+		text += '</div>';
+
+		$("#energie").html(text);
+	});
+
 	socket.on('newAlliance', function(data){
 		socket.SendValid('new Alliance '+data);
 	});
@@ -1232,6 +1251,21 @@
 		});
 
 	});
+
+	$("#energie").delegate(".button_market_energie",'click',function(){
+		socket.emit('achat_energie', {
+			nb : 1,
+			prix : 1
+		});
+
+	});
+
+	/*$("#fertilizant").delegate(".button_market_fertilizant",'click',function(){
+		socket.emit('achat_fertilizant', {
+			nb : 1
+		});
+
+	});*/
 
 
 	$("#fruitsList").delegate(".drop_fruit", 'click', function(){

@@ -23,7 +23,8 @@ var Alliance   = require("./js/class/Alliances");
 var Alliances_invit  = require("./js/class/Alliances_invit");
 var Armes_sp   = require("./js/class/Armes_spec")	
 var Armes  	   = require("./js/class/Armes")
-
+var Energies_sp   = require("./js/class/Energies_spec")	
+var Energies  	   = require("./js/class/Energies")
 
 var map = new Map();
 //map.initialiseMap();
@@ -158,6 +159,12 @@ io.sockets.on('connection', function(socket){
 				});	
 			}
 		});
+		user.get_money(user.getId(), function(data){
+			socket.emit('money', data.argent )
+		});
+		user.get_energie(user.getId(), function(data){
+			socket.emit('energie', data.energies )
+		});
 	});
 
 	socket.on('continue_game', function(data){
@@ -171,6 +178,12 @@ io.sockets.on('connection', function(socket){
 				'x'      : user_tile.x,
 				'y'		 : user_tile.y
 			});
+		});
+		user.get_money(user.getId(), function(data){
+			socket.emit('money', data.argent )
+			});
+		user.get_energie(user.getId(), function(data){
+			socket.emit('energie', data.energies )
 		});
 	});
 
@@ -658,6 +671,9 @@ io.sockets.on('connection', function(socket){
 				u.buy_graines(data.nb, data.graines_spec_id, user.getId(), function(ok){
 					if(ok == true){
 						if(cb2){
+								u.get_money(user.getId(), function(data){
+									socket.emit('money', data.argent )
+								});
 								socket.emit('cropsButton', cb2);
 								socket.emit('valid', cb.nb+ ' graines achete');
 						}
@@ -679,6 +695,9 @@ io.sockets.on('connection', function(socket){
 			u.buy_armes(data.nb, data.armes_spec_id, user.getId(), function(ok){
 				if(ok == true){
 					if(ok == true){
+						u.get_money(user.getId(), function(data){
+									socket.emit('money', data.argent )
+								});
 							socket.emit('valid', 'arme achete');
 					}
 
@@ -690,6 +709,35 @@ io.sockets.on('connection', function(socket){
 		});
 
 	});
+
+	socket.on('achat_energie', function(data){
+		energies = new Energies;
+		u = new User();
+		energies.buyEnergie(data.nb, user.getId(), function(cb){	
+			u.buy_energie(data.nb, data.prix, user.getId(), function(ok){
+				if(ok == true){
+					if(ok == true){
+						u.get_money(user.getId(), function(data){
+									socket.emit('money', data.argent )
+								});
+						u.get_energie(user.getId(), function(data){
+									socket.emit('energie', data.energies )
+								});
+							socket.emit('valid', 'energie achete');
+					}
+
+				}else{
+					socket.emit('error', "Pas assez d'argent !")
+			
+				}
+			});
+		});
+
+	});
+
+	
+
+
 
 	socket.on('button_market', function(data){
 		graine_spec = new Graine_sp;
