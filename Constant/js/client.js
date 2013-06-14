@@ -1195,6 +1195,40 @@
 		});
 
 	});
+
+	$("#liste_armes").delegate(".button_market_Fork",'click',function(){
+		socket.emit('achat_arme', {
+			nb : 1,
+			armes_spec_id : 1
+		});
+
+	});
+
+	$("#liste_armes").delegate(".button_market_BaseBallBat",'click',function(){
+		socket.emit('achat_arme', {
+			nb : 1,
+			armes_spec_id : 2
+		});
+
+	});
+
+	$("#liste_armes").delegate(".button_market_Chainsaw",'click',function(){
+		socket.emit('achat_arme', {
+			nb : 1,
+			armes_spec_id : 3
+		});
+
+	});
+
+	$("#liste_armes").delegate(".button_market_AK-47",'click',function(){
+		socket.emit('achat_arme', {
+			nb : 1,
+			armes_spec_id : 4
+		});
+
+	});
+
+
 	$("#fruitsList").delegate(".drop_fruit", 'click', function(){
 		var value = $(this).attr('id');
 		var val = value.split("_");

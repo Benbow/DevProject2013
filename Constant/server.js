@@ -646,6 +646,25 @@ io.sockets.on('connection', function(socket){
 
 	});
 
+	socket.on('achat_arme', function(data){
+		armes = new Armes;
+		u = new User();
+		armes.buyArme(user.getId(), data.armes_spec_id, function(cb){	
+			u.buy_armes(data.nb, data.armes_spec_id, user.getId(), function(ok){
+				if(ok == true){
+					if(ok == true){
+							socket.emit('valid', 'arme achete');
+					}
+
+				}else{
+					socket.emit('error', "Pas assez d'argent !")
+			
+				}
+			});
+		});
+
+	});
+
 	socket.on('button_market', function(data){
 		graine_spec = new Graine_sp;
 		arme_spec = new Armes_sp;

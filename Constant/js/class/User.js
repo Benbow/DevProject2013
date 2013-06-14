@@ -115,6 +115,7 @@ var User = (function() {
                                 connection.query('INSERT INTO Users (id,pseudo,password,mail) VALUES ("","' + pseudo + '","' + password + '","' + mail + '");',function(err,row,fields){
                                 if(err) throw err;                                 
                                 });
+
                                 }else{
                                     console.log("pseudo existe deja");                                  
                                 }
@@ -159,7 +160,6 @@ var User = (function() {
                     sommes =nb*prix;
                     connection.query('SELECT argent FROM Users WHERE id = ' + id + ';',function(err,row,fields){
                     if(err) throw err;
-                    console.log(row[0].argent +" et " + sommes);
                     if(row[0].argent >= sommes){                                                         
                        var query = 'UPDATE  Users SET argent = argent-'+nb*prix+' WHERE id = ' + id;
                         connection.query(query, function(err,row,fields){
@@ -175,6 +175,34 @@ var User = (function() {
             }                     
         });
     };
+
+
+    User.prototype.buy_armes = function(nb,armes_spec_id, id, callback) {
+        var connection = _DB.connection();
+        var prix;
+        var query ='SELECT prix  FROM Armes_spec WHERE id ='+armes_spec_id;
+        connection.query(query, function(err,row,fields){
+            if(err) throw err;
+                if(typeof (row[0]) != "undefined"){
+                    prix = row[0].prix;
+                    connection.query('SELECT argent FROM Users WHERE id = ' + id + ';',function(err,row,fields){
+                    if(err) throw err;
+                    if(row[0].argent >= prix){                                                         
+                       var query = 'UPDATE  Users SET argent = argent-'+prix+' WHERE id = ' + id;
+                        connection.query(query, function(err,row,fields){
+                        if(err) throw err;
+                        callback(true);
+                     
+                        });
+                    }else{
+                        console.log("t'es un pauvre");
+                        callback(false);
+                    }
+                });
+            }                     
+        });
+    };
+
 
    
 

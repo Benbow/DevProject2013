@@ -1,4 +1,5 @@
 //Classe qui enregistre les Armes de chaque user
+var DB = require('./DB');
 
 var Armes = (function() {
     var _id;            //id unique d'une arme INT
@@ -6,7 +7,30 @@ var Armes = (function() {
     var _armes_spec_id; //lien vers le bon type de arme INT
 
     function Armes(){
+    _DB = new DB();
+    };
+
+     Armes.prototype.buyArme = function(user_id, armes_spec_id, callback){
+        var connection = _DB.connection();
+        var query ='SELECT * FROM Armes WHERE user_id= ' + user_id + ';';
+        connection.query(query,function(err, row, fields) {
+            console.log(row);
+            if (err) throw err;
+            if(typeof( row[0]) != "undefined"){
+                console.log("lol");
+               var query = connection.query('UPDATE Armes SET armes_spec_id = '+armes_spec_id+' WHERE user_id = '+user_id + ';' ,function(err, r, fields) {
+                    console.log(query);
+                    if(err) throw err;
+                    callback(true);
+                });
+            }else{
+                 connection.query('INSERT INTO Armes (user_id, armes_spec_id) VALUES ('+user_id+' , '+armes_spec_id+');' ,function(err, r, fields) {
+                    if(err) throw err;
+                    callback(true);
+                });
+            }
         
+        });
     };
 
     //Getters
