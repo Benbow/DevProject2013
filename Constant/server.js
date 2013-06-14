@@ -626,18 +626,24 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('achat_graine', function(data){
 		graine = new Graine;
+		u = new User();
 		graine.buyGraine(data.nb, user.getId(), data.graines_spec_id, function(cb){
-			graine.checkGrainesOwned(user.getId(), function(cb2){
-				if(cb2){
-					socket.emit('cropsButton', cb2);
-					socket.emit('valid', cb.nb+ ' graines achete');
-				}
+			graine.checkGrainesOwned(user.getId(), function(cb2){	
+				u.buy_graines(data.nb, data.graines_spec_id, user.getId(), function(ok){
+					if(ok == true){
+						if(cb2){
+								socket.emit('cropsButton', cb2);
+								socket.emit('valid', cb.nb+ ' graines achete');
+						}
+
+					}else{
+						socket.emit('error', "Pas assez d'argent !")
+				
+					}
+				});
 			});
 		});
-		u = new User();
-		u.buy_graines(data.nb, data.graines_spec_id, user.getId(), function(ok){
 
-		});
 	});
 
 	socket.on('button_market', function(data){
