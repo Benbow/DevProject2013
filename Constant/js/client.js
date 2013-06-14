@@ -867,7 +867,7 @@
 		text += 'Energie : '+data;
 		text += '</div>';
 
-		$("#energie").html(text);
+		$(".energie_sum").html(text);
 	});
 
 	socket.on('newAlliance', function(data){
