@@ -728,7 +728,6 @@
 						break;
 					}
 			}
-			
 		}
 	});
 
@@ -755,6 +754,7 @@
 		$("#user_max").html('Max :'+data.max);
 		$("#user_max").attr('class', data.max);
 		$("#user_alliance").html('Alliance : '+data.alliance);
+		$("#user_alliance").attr('class', data.alliance_id);
 	});
 
 	socket.on('validStorage', function(data){
@@ -852,7 +852,28 @@
 	});
 
 	socket.on('newAlliance', function(data){
-		socket.sendValid('new Alliance '+data);
+		socket.SendValid('new Alliance '+data);
+	});
+
+	socket.on('displayInvit', function(data){
+		var text = "";
+		$.each(data, function(index, invit) {
+			text += '<div class="invitation" id="alliance_invit_'+invit.id+'_'+invit.alliance_id+'">';
+			text += invit.pseudo+' vous a invité a rejoindre son alliance : '+invit.name+' !<br/>';
+			text += '<input class="accept_invit" id="alliance_invit_accept_'+invit.id+'_'+invit.alliance_id+'" type="button" value="Accepter"/>';
+			text += '<input class="refus_invit" id="alliance_invit_refus_'+invit.id+'_'+invit.alliance_id+'" type="button" value="Refuser"/>';
+			text += '</div>';
+		});
+		$("#invitList").html(text);
+		$("#alliance_invit_list").fadeIn('slow');
+	});
+
+	socket.on('hideInvit', function(data){
+		$("#alliance_invit_list").fadeOut('fast');
+	});
+
+	socket.on('refreshInvitList', function(data){
+		socket.emit('getInvitList', '');
 	});
 
 	$(".button_menu").click(function(){
@@ -1070,7 +1091,6 @@
 			$(this).val('Arreter de Détruire');
 			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',0,-30);
 		}
-
 	});
 
 	$("#menu_display_tile_infos").click(function(){
@@ -1119,6 +1139,67 @@
 		socket.emit('quitAlliance', '');
 	});
 
+	$("#menu_invit_alliance").click(function(){
+		$("#menu_invit_alliance_panel").fadeIn('slow');
+	});
+
+	$("#invit_alliance_button").click(function(){
+		var name = $("#input_player_name").val();
+		var id = $("#user_alliance").attr('class');
+		id = parseInt(id);
+		if(id != null){
+			if(name.length > 0 && name.length <= 20){
+				socket.emit('newAlliancesInvite', {name : name, alliance_id : id});
+				$("#menu_invit_alliance_panel").fadeOut('fast');
+			}else{
+				sendError('Name Invalid');
+			}
+		}else{
+			sendError('You Have No Alliance');
+			$("#menu_invit_alliance_panel").fadeOut('fast');
+		}
+	});
+
+	$("#menu_get_invit_alliance").click(function(){
+		socket.emit('getInvitList', '');
+	});
+
+
+
+	$(".HideInvitList").click(function(){
+		$("#alliance_invit_list").fadeOut('fast');
+
+	});
+
+	$(".RefreshInvitList").click(function(){
+		socket.emit('getInvitList', '');
+	});
+
+	$("#invitList").delegate(".accept_invit", 'click', function(){
+		var value = $(this).attr('id');
+		console.log(value);
+		var val = value.split("_");
+		var invit_id = val[3];
+		var alliance_id = val[4];
+
+		socket.emit('accept_invit', {
+			invit_id : parseInt(invit_id),
+			alliance_id : parseInt(alliance_id),
+		});
+	});
+
+	$("#invitList").delegate(".refus_invit", 'click', function(){
+		var value = $(this).attr('id');
+		console.log(value);
+		var val = value.split("_");
+		var invit_id = val[3];
+		var alliance_id = val[4];
+
+		socket.emit('refus_invit', {
+			invit_id : parseInt(invit_id),
+			alliance_id : parseInt(alliance_id),
+		});
+	});
 
 	$(".button_menu_plantes").click(function(){
 		User.isPlanting = true;

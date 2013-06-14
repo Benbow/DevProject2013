@@ -20,6 +20,7 @@ var Fruits 	   = require("./js/class/Fruits");
 var Graine     = require("./js/class/Graine");
 var Graine_sp  = require("./js/class/Graines_spec");
 var Alliance   = require("./js/class/Alliances");
+var Alliances_invit  = require("./js/class/Alliances_invit");
 var Armes_sp   = require("./js/class/Armes_spec")	
 var Armes  	   = require("./js/class/Armes")
 
@@ -338,7 +339,8 @@ io.sockets.on('connection', function(socket){
 																								x : data.x-1,
 																								y : data.y-2
 																							});
-																							if(cb7){
+																							user.GetUserProps(user.getId(), function(cb5){
+																								if(cb7){
 																									socket.emit('user_props', cb7);
 																								}
 																							});
@@ -644,8 +646,6 @@ io.sockets.on('connection', function(socket){
 
 	});
 
-	
-
 	socket.on('storeCrops', function(data){
 		fruit = new Fruits;
 		fruit.storeFruits(user.getId(), data.stor_id, data.fruit_id, data.nb, data.poids, data.stor_type, data.time, function(cb){
@@ -824,7 +824,7 @@ io.sockets.on('connection', function(socket){
 					user.GetUserProps(user.getId(), function(cb2){
 						if(cb2){
 							socket.emit('user_props', cb2);
-							socket.emit('newAlliance', cb2);
+							socket.emit('newAlliance', cb2.alliance);
 						}
 					});
 				});
@@ -848,6 +848,61 @@ io.sockets.on('connection', function(socket){
 			}else{
 				socket.emit('error', 'You Have No Alliance');
 			}
+		});
+	});
+
+	socket.on('newAlliancesInvite', function(data){
+		if(data.alliance_id != null){
+			user.checkName(data.name, function(cb){
+				if(cb){
+					invit = new Alliances_invit();
+					invit.Add_Alliance_invit(user.getId(), cb.id, data.alliance_id, function(back){
+						if(back)
+							socket.emit('valid', 'Invitation send!');
+					});
+				}else{
+					socket.emit('error', 'Unknown Name!');
+				}
+			});
+		}else{
+			socket.emit('error', 'You Have No Alliance!');
+		}
+	});
+
+	socket.on('getInvitList', function(data){
+		invit = new Alliances_invit();
+		invit.getInvitList(user.getId(), function(cb){
+			if(cb){
+				socket.emit('displayInvit', cb);
+			}else{
+				socket.emit('error', 'You have no Invitation');
+				socket.emit('hideInvit', '');
+			}
+		});
+	});
+
+	socket.on('accept_invit', function(data){
+		user.checkAlliance(function(cb){
+			if(cb){
+				user.enterAlliance(data.invit_id, data.alliance_id, function(back){
+					user.GetUserProps(user.getId(), function(cb2){
+						if(cb2){
+							socket.emit('user_props', cb2);
+							socket.emit('refreshInvitList', '');
+							socket.emit('valid', 'Welcome in your new Alliance!');
+						}
+					});
+				});
+			}else{
+				socket.emit('error', 'You Have already an Alliance');
+			}
+		});
+	});
+
+	socket.on('refus_invit', function(data){
+		invit = new Alliances_invit();
+		invit.refus_invit(data.invit_id, function(back){
+			socket.emit('refreshInvitList', '');
 		});
 	});
 

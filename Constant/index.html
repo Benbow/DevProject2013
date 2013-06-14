@@ -24,9 +24,7 @@
 						return false; 
 					} 
 				} 
-
-				
-				</script>
+			</script>
 
 			<div id="div_register">
 					<form action="" id="registerform" method="post" name="pwForm">
@@ -38,7 +36,7 @@
 						<input type="submit" value="" id="backRegister">
 
 				</form> 
-			</div>		
+			</div>
 
 			<div id="menu_market_panel">
 				<div id="market">
@@ -50,10 +48,11 @@
 					</ul>
 					<div id="content"> 
 						<div id="tab1">
-					   <p>Liste des graines :</p>
-						<div style="display:block !important" id="liste_graines">
-							
-						</div>
+						   	<p>Liste des graines :</p>
+							<div style="display:block !important">
+								<input type='number' id='graine_tomate' value="1" />
+								<input id="market_tomate" class="button_market_tomate" type="button" value="Acheter graine de  tomates"  />
+							</div>
 						</div>
 						<div id="tab2">
 					   <p>Liste des Armes :</p>
@@ -64,11 +63,14 @@
 					</div>
 				    </div>
 				</div>
-			
-
+			</div>
 			<div id="menu_create_alliance_panel" style="display:none;">
 				Alliance Name : <input type ="text" id="input_alliance_name" maxlength="15"/></br/>
 				<input type="button" id="create_alliance_button" value="Créer une Alliance"/>
+			</div>
+			<div id="menu_invit_alliance_panel" style="display:none;">
+				Player Name : <input type ="text" id="input_player_name" maxlength="15"/></br/>
+				<input type="button" id="invit_alliance_button" value="Inviter !"/>
 			</div>
 			
 			<div id="div_admin">
@@ -296,6 +298,14 @@
 					
 				</div>
 				<input class="HideBuildingProps" type="button" value="Hide" /><input class="RefreshBuildingProps" type="button" value="Refresh" />
+			</div>
+			<div id="alliance_invit_list" style="display:none;">
+				<input class="HideInvitList" type="button" value="Hide" /><input class="RefreshInvitList" type="button" value="Refresh" />
+				</br>
+				<div id="invitList">
+					
+				</div>
+				<input class="HideInvitList" type="button" value="Hide" /><input class="RefreshInvitList" type="button" value="Refresh" />
 			</div> 
 			<div id="div_menu">
 				<div id="menu_select_type">
@@ -338,6 +348,12 @@
 					</div>
 					<div>
 						<input id="menu_quit_alliance" class="button_menu" type="button" value="Quitter Alliance" />
+					</div>
+					<div>
+						<input id="menu_invit_alliance" class="button_menu" type="button" value="Invitation Alliance" />
+					</div>
+					<div>
+						<input id="menu_get_invit_alliance" class="button_menu" type="button" value="My Invitation Alliance" />
 					</div> 
 				</div>
 

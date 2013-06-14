@@ -13,7 +13,6 @@ var Alliances = (function() {
     Alliances.prototype.Add_Alliance = function(alliance_name, user_id, callback){
         var connection = _DB.connection();
         var query = 'INSERT INTO Alliances (name, master_user_id) VALUES ("'+alliance_name+'", '+user_id+');';
-        console.log(query);
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
             query = 'Update Users SET alliance_id = LAST_INSERT_ID() WHERE id ='+user_id+';';

@@ -208,13 +208,41 @@ var User = (function() {
         });
     };
 
+    User.prototype.enterAlliance = function(invit_id, alliance_id, callback){
+        var connection = _DB.connection();
+        var id = this._id;
+        console.log(alliance_id);
+        var query = 'DELETE FROM Alliance_invit WHERE id='+invit_id+';';
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            query = 'Update Users SET alliance_id = '+alliance_id+' WHERE id ='+id+';';
+            connection.query(query,function(err, rows, fields) {
+                if (err) throw err;
+                callback(true);
+            });
+        });
+    };
+
     User.prototype.quitAlliance = function(callback){
         var connection = _DB.connection();
         var id = this._id;
         connection.query('UPDATE Users SET alliance_id = NULL WHERE id='+id+';', function(err, rows, fields){
             callback(true);
         });
-    }
+    };
+
+    User.prototype.checkName = function(name, callback){
+        var connection = _DB.connection();
+        var id = this._id;
+        connection.query('SELECT * FROM Users WHERE pseudo = "'+name+'";', function(err, rows, fields){
+            if(err) throw err;
+            if(rows[0] != null){
+                callback(rows[0]);
+            }else{
+                callback(false);
+            }
+        });
+    };
 
     User.prototype.getTimerConquet = function(callback){
         var connection = _DB.connection();
@@ -263,7 +291,8 @@ var User = (function() {
                                 xp : rows[0].experience,
                                 next : rows[0].tile_next_level,
                                 max : rows[0].tile_max,
-                                alliance : ro[0].name
+                                alliance : ro[0].name,
+                                alliance_id : ro[0].id
                             }); 
                        }else{
                             callback({
@@ -275,7 +304,8 @@ var User = (function() {
                                 xp : rows[0].experience,
                                 next : rows[0].tile_next_level,
                                 max : rows[0].tile_max,
-                                alliance : 'Undefined'
+                                alliance : 'Undefined',
+                                alliance_id : null
                             });
                        }    
                     });
@@ -289,7 +319,8 @@ var User = (function() {
                         xp : rows[0].experience,
                         next : rows[0].tile_next_level,
                         max : rows[0].tile_max,
-                        alliance : 'None'
+                        alliance : 'None',
+                        alliance_id : null
                     });
                 }
             });
