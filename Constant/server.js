@@ -120,6 +120,7 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('GetUserProps', function(ok){
+		console.log("dcvfev");
 		user.GetUserProps(user.getId(), function(cb){
 			if(cb){
 				socket.emit('user_props', cb);
@@ -137,33 +138,8 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('newgame', function(data){
-		tile = new Tiles();
-		tile.deleteGame(user.getId(), function(delet){
-			if(delet){
-				tile.createGame(user.getId(), data.difficulty, function(cb){
-					if(cb){
-						map.getMap(user,function(socket_map){
-							socket.emit('loadmap', socket_map);
-						});
-						map.getUserTile(user.getId(),function(user_tile){
-							socket.broadcast.emit('new_user_connected',{
-								'pseudo' : user.getPseudo(),
-								'id'     : user.getId(),
-								'x'      : user_tile.x,
-								'y'		 : user_tile.y
-							});
-						});
-					}else{
-						socket.emit('error', 'Server Full');
-					}
-				});	
-			}
-		});
-		user.get_money(user.getId(), function(data){
-			socket.emit('money', data.argent )
-		});
-		user.get_energie(user.getId(), function(data){
-			socket.emit('energie', data.energies )
+		map.getMap(user,function(socket_map){
+			socket.emit('loadmap', socket_map);
 		});
 	});
 
@@ -178,12 +154,6 @@ io.sockets.on('connection', function(socket){
 				'x'      : user_tile.x,
 				'y'		 : user_tile.y
 			});
-		});
-		user.get_money(user.getId(), function(data){
-			socket.emit('money', data.argent )
-			});
-		user.get_energie(user.getId(), function(data){
-			socket.emit('energie', data.energies )
 		});
 	});
 
@@ -439,39 +409,32 @@ io.sockets.on('connection', function(socket){
 	socket.on('userConquer',function(check){
 		if(check)
 		{
-			if(user.getCanConquet()) {
-				user.getTimerConquet(function(timer){
-					setTimeout(function(){
-						$.each(saveTiles,function(index, value){
-							user.conquet(value.id);
-							newOptions = {
-								'type': 'conquer',
-								'user_id': user.getId()
-							};
-							updateTile(value.x, value.y, newOptions);
-							socket.emit('valid', 'La conquete s\'est deroule avec succes !');
+			user.getTimerConquet(function(timer){
+				setTimeout(function(){
+					$.each(saveTiles,function(index, value){
+						user.conquet(value.id);
+						newOptions = {
+							'type': 'conquer',
+							'user_id': user.getId()
+						};
+						updateTile(value.x, value.y, newOptions);
+						socket.emit('valid', 'La conquete s\'est deroule avec succes !');
 
-						});
-						user.conquetGraceTime();
-						user.updateLevel(saveTiles.length, function(cb){
-							if(cb){
-								user.checkLevel(function(cb2){
-									user.GetUserProps(user.getId(), function(cb){
-										if(cb2){
-											socket.emit('user_props', cb);
-										}
-									});
+					});
+					user.updateLevel(saveTiles.length, function(cb){
+						if(cb){
+							user.checkLevel(function(cb2){
+								user.GetUserProps(user.getId(), function(cb){
+									if(cb2){
+										socket.emit('user_props', cb);
+									}
 								});
-							}
-						})
-						saveTiles = new Array();
-					},timer*1000);
-				});
-			}
-			else {
-				socket.emit('error', 'Vous devez attendre avant de conquerir.');
-			}
-			
+							});
+						}
+					})
+					saveTiles = new Array();
+				},timer*1000);
+			});
 		}
 	});
 
@@ -671,9 +634,6 @@ io.sockets.on('connection', function(socket){
 				u.buy_graines(data.nb, data.graines_spec_id, user.getId(), function(ok){
 					if(ok == true){
 						if(cb2){
-								u.get_money(user.getId(), function(data){
-									socket.emit('money', data.argent )
-								});
 								socket.emit('cropsButton', cb2);
 								socket.emit('valid', cb.nb+ ' graines achete');
 						}
@@ -695,9 +655,6 @@ io.sockets.on('connection', function(socket){
 			u.buy_armes(data.nb, data.armes_spec_id, user.getId(), function(ok){
 				if(ok == true){
 					if(ok == true){
-						u.get_money(user.getId(), function(data){
-									socket.emit('money', data.argent )
-								});
 							socket.emit('valid', 'arme achete');
 					}
 
@@ -717,12 +674,6 @@ io.sockets.on('connection', function(socket){
 			u.buy_energie(data.nb, data.prix, user.getId(), function(ok){
 				if(ok == true){
 					if(ok == true){
-						u.get_money(user.getId(), function(data){
-									socket.emit('money', data.argent )
-								});
-						u.get_energie(user.getId(), function(data){
-									socket.emit('energie', data.energies )
-								});
 							socket.emit('valid', 'energie achete');
 					}
 

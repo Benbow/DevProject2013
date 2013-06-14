@@ -129,22 +129,6 @@ var User = (function() {
 
     };
 
-     User.prototype.get_money = function(id,callback) {
-        var connection = _DB.connection();       
-        var money = connection.query('SELECT argent FROM Users WHERE id = "' + id + '";',function(err,rows,fields){
-            if(err) throw err;
-             callback(rows[0]);
-        });
-    };
-
-    User.prototype.get_energie = function(id,callback) {
-        var connection = _DB.connection();       
-        var energie = connection.query('SELECT energies FROM Users WHERE id = "' + id + '";',function(err,rows,fields){
-            if(err) throw err;
-             callback(rows[0]);
-        });
-    };
-
 
  User.prototype.existMail = function(mail,callback) {
         var connection = _DB.connection();

@@ -852,24 +852,6 @@
 	});
 
 
-	socket.on('money', function(data){
-		var text = "";
-		text += '<div>';
-		text += 'Argent : '+data;
-		text += '</div>';
-
-		$("#money").html(text);
-	});
-
-	socket.on('energie', function(data){
-		var text = "";
-		text += '<div>';
-		text += 'Energie : '+data;
-		text += '</div>';
-
-		$(".energie_sum").html(text);
-	});
-
 	socket.on('newAlliance', function(data){
 		socket.SendValid('new Alliance '+data);
 	});
