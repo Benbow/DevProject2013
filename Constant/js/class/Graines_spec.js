@@ -1,10 +1,4 @@
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'toor',
-    database : 'farmDB',
-});
+var DB = require('./DB');
 
 //Classe indexant les différents types de graines du jeu
 
@@ -25,7 +19,7 @@ var Graines_spec = (function() {
 
     //Constructeurs
     function Graines_spec(){
-        
+        _DB = new DB();
     };
 
     //Methodes
@@ -37,10 +31,12 @@ var Graines_spec = (function() {
         });
     };
     
- Graines_spec.prototype.Get_Graines = function(){
+ Graines_spec.prototype.Get_Graines = function(callback){
+        var connection = _DB.connection();
         var query = 'SELECT * FROM Graines_spec;'
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
+            callback(rows);
             
         });
     };
@@ -119,9 +115,4 @@ var Graines_spec = (function() {
     return Graines_spec;
 })();
 
-exports.Graines_spec = function(){
-	var a = new Graines_spec();
-    a.Add_Graines("test",1,1,1,1,1,1,1,1,1);
-    //a.Add_Graines("test");
-	return a;
-}
+module.exports = Graines_spec;

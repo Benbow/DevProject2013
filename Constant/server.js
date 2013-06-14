@@ -20,7 +20,8 @@ var Fruits 	   = require("./js/class/Fruits");
 var Graine     = require("./js/class/Graine");
 var Graine_sp  = require("./js/class/Graines_spec");
 var Alliance   = require("./js/class/Alliances");
-
+var Armes_sp   = require("./js/class/Armes_spec")	
+var Armes  	   = require("./js/class/Armes")
 
 
 var map = new Map();
@@ -630,12 +631,20 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('button_market', function(data){
-		graine_spec = new Graine_spec;
-		graine_spec.Get_Graines(function(cb){
-			console.log(cd);
-			socket.emit('liste_graines', cb);
+		graine_spec = new Graine_sp;
+		arme_spec = new Armes_sp;
+		graine_spec.Get_Graines(function(graine){
+			if(graine)
+			socket.emit('liste_graines', graine);
 		});
+		arme_spec.Get_Armes(function(armes){
+			if(armes)
+			socket.emit('liste_armes', armes);
+		});
+
 	});
+
+	
 
 	socket.on('storeCrops', function(data){
 		fruit = new Fruits;

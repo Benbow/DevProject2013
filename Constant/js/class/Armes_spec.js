@@ -1,3 +1,4 @@
+var DB = require('./DB');
 //Classe indexant les différents types d'armes du jeu
 
 var Armes_spec = (function() {
@@ -9,7 +10,18 @@ var Armes_spec = (function() {
     var _prix;		//prix de l'arme INT
 
     function Armes_spec(){
-        
+        _DB = new DB();
+    };
+
+
+    Armes_spec.prototype.Get_Armes = function(callback){
+        var connection = _DB.connection();
+        var query = 'SELECT * FROM Armes_spec;'
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            callback(rows);
+            
+        });
     };
 
     //Getters
@@ -56,7 +68,4 @@ var Armes_spec = (function() {
     return Armes_spec;
 })();
 
-exports.Armes_spec = function(){
-	var a = new Armes_spec();
-	return a;
-}
+module.exports = Armes_spec;

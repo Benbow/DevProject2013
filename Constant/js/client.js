@@ -864,6 +864,28 @@
 		}
 	});
 
+	socket.on('liste_graines', function(data){
+		   var html = '<ul class="lol">';
+			for (var n in data) 
+			{ 
+				html += '<li>' + data[n].name + "<input type='number' id='graine_"+ data[n].name + "'" + 'value="1"/>' + "<input id='market_"+data[n].name+"'"+ "class='button_market_"+data[n].name+"'"+ "type='button' value='Acheter graine de "+data[n].name+" ' /></li> ";    
+		    }
+			    html += '</ul>';7
+			    $('#liste_graines').html(html);
+	});
+
+	socket.on('liste_armes', function(data){
+		   var html = '<ul class="lol">';
+			for (var n in data) 
+			{ 
+				html += '<li>' + data[n].name +  "<input id='market_"+data[n].name+"'"+ "class='button_market_"+data[n].name+"'"+ "type='button' value='Acheter "+data[n].name+" ' /></li>";    
+		    }
+			    html += '</ul>';7
+			    $('#liste_armes').html(html);
+	});
+
+	
+
 	$("#menu_select_conquerir").click(function(){
 		if(User.isConquering)
 		{
@@ -1068,6 +1090,13 @@
 		socket.emit('achat_graine_tomate', {
 			nb : $("#graine_tomate").val(),
 			graines_spec_id : 1
+		});
+
+	});
+
+	$(".button_market").click(function(data){
+		socket.emit('button_market', {
+			
 		});
 
 	});
