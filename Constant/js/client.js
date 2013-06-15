@@ -167,6 +167,7 @@
 		$("#div_begin").fadeOut('slow');
 		$("#overlay").fadeOut('slow');
 		$("#div_menu").fadeIn('slow');
+		$("#user_props").fadeIn('slow');
 		socket.emit('newgame', {
 			username : $("#menu_username").html(),
 			difficulty : $('input[name=newgame_difficult]:checked').val()

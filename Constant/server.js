@@ -136,8 +136,27 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('newgame', function(data){
-		map.getMap(user,function(socket_map){
-			socket.emit('loadmap', socket_map);
+		tile = new Tiles();
+		tile.deleteGame(user.getId(), function(delet){
+			if(delet){
+				tile.createGame(user.getId(), data.difficulty, function(cb){
+					if(cb){
+						map.getMap(user,function(socket_map){
+							socket.emit('loadmap', socket_map);
+						});
+						map.getUserTile(user.getId(),function(user_tile){
+							socket.broadcast.emit('new_user_connected',{
+								'pseudo' : user.getPseudo(),
+								'id'     : user.getId(),
+								'x'      : user_tile.x,
+								'y'		 : user_tile.y
+							});
+						});
+					}else{
+						socket.emit('error', 'Server Full');
+					}
+				});	
+			}
 		});
 	});
 

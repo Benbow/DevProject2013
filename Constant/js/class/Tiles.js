@@ -240,6 +240,66 @@ var Tiles = (function() {
         },(60000));
     };
 
+    Tiles.prototype.createGame = function(user_id,difficulty, callback){
+        var query = 'SELECT * FROM Tiles WHERE owner IS NULL';
+        connection.query(query, function(err, rows, fields){
+            if(err) throw err;
+            if(typeof(rows[0]) != 'undefined'){
+                var rand = Math.floor((Math.random()*(rows.length))+1);
+                console.log(rows[rand].id);
+                query = 'UPDATE Tiles SET owner = '+user_id+', user_id='+user_id+' WHERE id ='+rows[rand].id+';';
+                connection.query(query, function(err, row, fields){
+                    if(err) throw err;
+                    var argent = 300/difficulty;
+                    query = 'UPDATE Users SET argent = '+argent+', energies=50  WHERE id ='+user_id+';';
+                    connection.query(query, function(err, row, fields){
+                        if(err) throw err;
+                        connection.query('INSERT INTO Armes (armes_spec_id, user_id) VALUES(1,' + user_id +');', function(err, row, fields){if(err) throw err;});
+                        connection.query('INSERT INTO Maisons (tile_id, user_id) VALUES('+rows[rand].id+',' + user_id +');', function(err, row, fields){if(err) throw err;});
+                        connection.query('INSERT INTO Arrosoirs (arrosoirs_spec_id, isActive, current, user_id) VALUES(1,1,0,' + user_id +');', function(err, row, fields){
+                            if(err) throw err;
+                            callback(true);
+                        });
+                    });
+                });
+            }else{
+                callback(false);
+            }
+        });
+    };
+
+    Tiles.prototype.deleteGame = function(user_id, callback){
+        var query = 'DELETE FROM Alliance_invit WHERE to_user_id = '+user_id+';';
+        connection.query(query, function(err, rows, fields){
+            var query = 'DELETE FROM Armes WHERE user_id = '+user_id+';';
+            connection.query(query, function(err, rows, fields){
+                var query = 'DELETE FROM Arrosoirs WHERE user_id = '+user_id+';';
+                connection.query(query, function(err, rows, fields){
+                    var query = 'DELETE FROM Fruits WHERE user_id = '+user_id+';';
+                    connection.query(query, function(err, rows, fields){
+                        var query = 'DELETE FROM Graines WHERE user_id = '+user_id+';';
+                        connection.query(query, function(err, rows, fields){
+                            var query = 'DELETE FROM Maisons WHERE user_id = '+user_id+';';
+                            connection.query(query, function(err, rows, fields){
+                                var query = 'DELETE FROM Stockages WHERE user_id = '+user_id+';';
+                                connection.query(query, function(err, rows, fields){
+                                    var query = 'UPDATE Tiles SET user_id = NULL, owner = NULL WHERE user_id = '+user_id+' OR owner='+user_id+';';
+                                    connection.query(query, function(err, rows, fields){
+                                        var query = 'UPDATE Users SET nb_fertilisants = 0, energies = 0, niveau = 1, alliance_id = NULL, argent = 0, experience = 0  WHERE id = '+user_id+';';
+                                        connection.query(query, function(err, rows, fields){
+                                            if(err) throw err;
+                                            callback(true);
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    };
+
     //Getters
     Tiles.prototype.getId = function() {
         return _id;
