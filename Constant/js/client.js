@@ -236,6 +236,10 @@
 	    	
 		});
 
+		$.each(map.maison, function(index, value) {
+	    	ppmap.addBuilding(value.x, value.y, 'images/house.png', 0, 0);
+		});
+
 		//Mise en place des batiments quand tu load la map.
 	    $.each(map.all_user, function(index, value) {
 		    ppmap.addObject(value.x, value.y, 'images/avatar.png', 0, 0, value.pseudo, value.pseudo, 'char_'+value.id);

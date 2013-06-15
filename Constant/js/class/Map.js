@@ -129,6 +129,7 @@ var Map = (function() {
 		var string_map = {
 			'map' : '',
 			'storage' : {},
+            'maison' : {},
             'emptyStorage' : {},
             'crops' : {},
 			'user' : {},
@@ -179,6 +180,17 @@ var Map = (function() {
                     'y': rows[i].y,
                     'id': rows[i].id,
                     'origin' : rows[i].origin,
+                };
+            }
+        });
+
+         connection.query('SELECT t.x as x, t.y as y FROM Maisons as m LEFT JOIN Tiles as t ON m.tile_id = t.id', function(err,rows,fields){
+            if(err) throw err;
+            for(var i = 0;i < rows.length;i++)
+            {
+                string_map.maison[i] = {
+                    'x': rows[i].x,
+                    'y': rows[i].y
                 };
             }
         });
