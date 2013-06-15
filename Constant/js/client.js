@@ -237,7 +237,7 @@
 		});
 
 		$.each(map.maison, function(index, value) {
-	    	ppmap.addBuilding(value.x, value.y, 'images/house.png', 0, 0);
+	    	ppmap.addBuilding(value.x, value.y, 'images/house.png', 0, -64);
 		});
 
 		//Mise en place des batiments quand tu load la map.
@@ -1009,7 +1009,7 @@
 			User.isHarvesting = false;
 			User.isAttacking = false;
 			$(this).val('Conquerir !');
-			ppmap.changeCursor('images/attackTile.png','images/emptyTile.png',0,0);
+			ppmap.changeCursor('images/conquer.png','images/emptyTile.png',0,0);
 		}
 		
 	});
