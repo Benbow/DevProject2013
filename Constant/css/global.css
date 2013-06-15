@@ -6,7 +6,7 @@
 	border-bottom-right-radius: 5px;
 	border-bottom-left-radius: 5px;
 	position: absolute;
-	top: 9px;
+	top: 29px;
 	left: 300px;
 	display: none;
 	padding: 5px;
@@ -19,7 +19,7 @@
 	border-bottom-right-radius: 5px;
 	border-bottom-left-radius: 5px;
 	position: absolute;
-	top: 9px;
+	top: 29px;
 	left: 300px;
 	display: none;
 	padding: 5px;
@@ -45,7 +45,7 @@
 	background-color: black;
 	top: 8px;
 	left: 810px;
-	height: 583px;
+	height: 602px;
 	width: 200px;
 	display: none;
 	z-index: 110;
@@ -215,6 +215,7 @@ opacity: 0;
 	color : white;
 	text-align: center;
 	margin : auto;
+	width: 802px;
 }
 #user_props div{
 	display: inline;
@@ -521,7 +522,7 @@ font-family: Arial, Helvetica, sans-serif;
         transition-timing-function: cubic-bezier(0.250, 0.250, 0.750, 0.750); /* linear */
 	}
 
-#new_game,#continue_game,#acheter,#quit_market,#button_admin{
+#new_game,#continue_game,#acheter,#quit_market,#button_admin,#create_alliance_button,#hide_create_alliance_button,#invit_alliance_button,#hide_invit_alliance_button,#market_energie,#market_fertilizant,#button_market_pasteque,#button_market_salade,#button_market_ananas,#button_market_tomate,#button_market_melon,#button_market_carotte,#choosingStorage,#Sell,#Stack{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	color: #ffffff;
@@ -552,7 +553,7 @@ font-family: Arial, Helvetica, sans-serif;
 		0px 1px 0px rgba(255,255,255,0.3);
 }
 
-#new_game:hover, #continue_game:hover,#acheter:hover,#quit_market:hover,#button_admin:hover{
+#new_game:hover, #continue_game:hover,#acheter:hover,#quit_market:hover,#button_admin:hover,#create_alliance_button:hover,#hide_create_alliance_button:hover,#invit_alliance_button:hover,#hide_invit_alliance_button:hover,#market_energie:hover,#market_fertilizant:hover,#button_market_pasteque:hover,#button_market_salade:hover,#button_market_ananas:hover,#button_market_tomate:hover,#button_market_melon:hover,#button_market_carotte:hover,#choosingStorage:hover,#Sell:hover,#Stack:hover{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	color: #ffffff;
@@ -1409,12 +1410,22 @@ display: block !important;
 	height: 600px;
 	z-index: 2000;
 	background-color: rgba(0, 0, 0, 0.56);
-
+}
+#chooseStorage{
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 2000;
+	background: rgba(0, 0, 0, 0.56);
+	color: white;
+	padding: 170px;
+	width: 460px;
+	height: 280px;
 }
 
 .sellMsg{
 	color: black;
-	width: 500px;
+	width: 430px;
 	padding: 15px;
 	top: 225px;
 	position: absolute;
@@ -1445,4 +1456,15 @@ display: block !important;
 
 .fertilizant{
 	display :block !important;
+}
+
+#menu_create_alliance_panel,#menu_invit_alliance_panel{
+	position: absolute;
+	z-index: 2000;
+	color: white;
+	background: rgba(0, 0, 0, 0.61);
+	padding: 250px;
+	left: 9px;
+	height: 102px;
+	width: 301px;
 }

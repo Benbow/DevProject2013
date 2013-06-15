@@ -6,6 +6,7 @@ var User = (function() {
     var _pseudo;
     var _DB;
     var canConquet = true;
+    var canAttack = 0;
 
 
     // constructor
@@ -294,6 +295,17 @@ var User = (function() {
         return canConquet;
     }
 
+    User.prototype.getCanAttack = function(enemi_id){
+        if(canAttack > 0) {
+            if(canAttack == enemi_id) {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }            
+    }
+
     User.prototype.connected = function(){
         var connection = _DB.connection();
 
@@ -326,6 +338,13 @@ var User = (function() {
         });
     };
 
+    User.prototype.isConnected = function(enemi_id){
+        var connection = _DB.connection();
+        connection.query('SELECT isConnected FROM Users_Connected WHERE user_id = '+enemi_id, function(err,rows,fields){
+            if(err) throw err;
+        });
+    };
+
     User.prototype.conquet = function(tile_id){
         var connection = _DB.connection();
         var id = this._id; 
@@ -340,10 +359,20 @@ var User = (function() {
         canConquet = false;
         connection.query('SELECT uspec.wait_conquetes_timer as timer FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';',function(err,rows,fields){
             if(err) throw err;
-            console.log(canConquet);
             setTimeout(function(){
                 canConquet = true;
-                console.log('new conquet :'+canConquet);
+            },rows[0].timer*1000);
+        });
+    };
+
+    User.prototype.attackGraceTime = function(enemi_id){
+        var connection = _DB.connection();
+        var id = this._id;
+        canAttack = enemi_id;
+        connection.query('SELECT uspec.victory_timer as timer FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';',function(err,rows,fields){
+            if(err) throw err;
+            setTimeout(function(){
+                canAttack = 0;
             },rows[0].timer*1000);
         });
     };

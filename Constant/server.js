@@ -137,8 +137,33 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('newgame', function(data){
-		map.getMap(user,function(socket_map){
-			socket.emit('loadmap', socket_map);
+		tile = new Tiles();
+		tile.deleteGame(user.getId(), function(delet){
+			if(delet){
+				tile.createGame(user.getId(), data.difficulty, function(cb){
+					if(cb){
+						map.getMap(user,function(socket_map){
+							socket.emit('loadmap', socket_map);
+						});
+						map.getUserTile(user.getId(),function(user_tile){
+							socket.broadcast.emit('new_user_connected',{
+								'pseudo' : user.getPseudo(),
+								'id'     : user.getId(),
+								'x'      : user_tile.x,
+								'y'		 : user_tile.y
+							});
+						});
+					}else{
+						socket.emit('error', 'Server Full');
+					}
+				});	
+			}
+		});
+		user.get_money(user.getId(), function(data){
+			socket.emit('money', data.argent )
+		});
+		user.get_energie(user.getId(), function(data){
+			socket.emit('energie', data.energies )
 		});
 	});
 
@@ -153,6 +178,12 @@ io.sockets.on('connection', function(socket){
 				'x'      : user_tile.x,
 				'y'		 : user_tile.y
 			});
+		});
+		user.get_money(user.getId(), function(data){
+			socket.emit('money', data.argent )
+			});
+		user.get_energie(user.getId(), function(data){
+			socket.emit('energie', data.energies )
 		});
 	});
 
@@ -408,32 +439,42 @@ io.sockets.on('connection', function(socket){
 	socket.on('userConquer',function(check){
 		if(check)
 		{
-			user.getTimerConquet(function(timer){
-				setTimeout(function(){
-					$.each(saveTiles,function(index, value){
-						user.conquet(value.id);
-						newOptions = {
-							'type': 'conquer',
-							'user_id': user.getId()
-						};
-						updateTile(value.x, value.y, newOptions);
-						socket.emit('valid', 'La conquete s\'est deroule avec succes !');
-
-					});
-					user.updateLevel(saveTiles.length, function(cb){
-						if(cb){
-							user.checkLevel(function(cb2){
-								user.GetUserProps(user.getId(), function(cb){
-									if(cb2){
-										socket.emit('user_props', cb);
-									}
-								});
+			if(user.getCanConquet()) {
+				user.getTimerConquet(function(timer){
+					setTimeout(function(){
+						$.each(saveTiles,function(index, value){
+							user.conquet(value.id);
+							newOptions = {
+								'type': 'conquer',
+								'user_id': user.getId()
+							};
+							updateTile(value.x, value.y, newOptions);
+							io.sockets.socket(connected[user.getId()]).emit('newTileOwner', {
+								'x':value.x,
+								'y':value.y
 							});
-						}
-					})
-					saveTiles = new Array();
-				},timer*1000);
-			});
+						});
+						socket.emit('valid', 'La conquete s\'est deroule avec succes !');
+						user.conquetGraceTime();
+						user.updateLevel(saveTiles.length, function(cb){
+							if(cb){
+								user.checkLevel(function(cb2){
+									user.GetUserProps(user.getId(), function(cb){
+										if(cb2){
+											socket.emit('user_props', cb);
+										}
+									});
+								});
+							}
+						})
+						saveTiles = new Array();
+					},timer*1000);
+				});
+			}
+			else {
+				socket.emit('error', 'Vous devez attendre avant de conquerir.');
+			}
+			
 		}
 	});
 
@@ -445,29 +486,39 @@ io.sockets.on('connection', function(socket){
 	})
 
 	socket.on('userAttack',function(enemi){
-		if(enemi > 0)
+		if(enemi > 0 && user.isConnected(enemi))
 		{
-			setTimeout(function(){
-				user.combat(enemi,function(result){
-					if(result) 
-					{
-						$.each(saveTiles,function(index, value){
-							newOptions = {
-								'type': 'attack',
-								'user_id': user.getId(),
-								'enemi': enemi
-							};
-							updateTile(value.x, value.y, newOptions);
-						});
-						socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
-					}
-					else
-					{
-						socket.emit('valid', 'Vous avez perdu votre attaque');
-					}
-				});
-				saveTiles = new Array();
-			},10000);
+			if(user.getCanAttack(enemi)) {
+				setTimeout(function(){
+					user.combat(enemi,function(result){
+						if(result) 
+						{
+							$.each(saveTiles,function(index, value){
+								newOptions = {
+									'type': 'attack',
+									'user_id': user.getId(),
+									'enemi': enemi
+								};
+								updateTile(value.x, value.y, newOptions);
+							});
+							user.attackGraceTime(enemi);
+							socket.emit('valid', 'L\'attaque c\'est deroule avec succes !');
+						}
+						else
+						{
+							socket.emit('valid', 'Vous avez perdu votre attaque');
+						}
+					});
+					saveTiles = new Array();
+				},10000);
+			}
+			else {
+				socket.emit('error', 'Vous ne pouvez pas attaquer cet enemi !');
+			}
+			
+		}
+		else {
+			socket.emit('error', 'Vous ne pouvez pas attaquer cet enemi !');
 		}
 	});
 
@@ -1136,7 +1187,7 @@ updateTile = function(x,y,options){
 			'user_id': options.user_id
 		});
 
-		io.sockets.socket(options.enemi).emit('loseAttack', 'Tu as perdu l\'attaque contre ton territoire.');
+		io.sockets.socket(connected[options.enemi]).emit('error', 'Tu as perdu l\'attaque contre ton territoire.');
 	}
 };
 

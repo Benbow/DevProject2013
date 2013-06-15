@@ -189,7 +189,7 @@
 		loadmap(map);
 		User.own_tile = map.own_tile;
 		User.enemi_tile = map.enemi_tile;
-		console.log(User);
+		User.allies = map.allies;
 		socket.emit('checkGrainesOwned', '');
 		socket.emit('checkBatPrice', '');
 		socket.emit('GetUserProps', '');
@@ -266,7 +266,7 @@
 	});
 
 	socket.on('newTileConquer', function(data){
-		if(($.inArray(data.user_id, User.allies)) < 0)
+		if(User.allies[data.user_id] != null)
 			ppmap.changeOneMap(data.x,data.y,2);
 		else
 			ppmap.changeOneMap(data.x,data.y,3);
@@ -285,9 +285,23 @@
 		},500);
 	});
 
-	// socket.on('newTileAttack', function(data){
-	// 	ppmap.changeOneMap(data.x,data.y,data.sprite_id);
-	// });
+	socket.on('newTileAttack', function(data){
+		if(User.allies[data.user_id] != null)
+			ppmap.changeOneMap(data.x,data.y,2);
+		else
+			ppmap.changeOneMap(data.x,data.y,3);
+	});
+
+	socket.on('newTileOwner', function(infos){
+		var index = 1;
+		$.each(User.own_tile, function(k,v){
+			index++;
+		});
+		User.own_tile[index] = {
+			'x':infos.x,
+			'y':infos.y
+		};
+	});
 
 	var mouseClick = function(x, y) {
 
@@ -988,15 +1002,11 @@
 					'x': val.x,
 					'y': val.y
 				});
-				var taille = User.own_tile.length;
-				User.own_tile[(taille + index)] = {
-					'x' : val.x,
-					'y': val.y
-				};
 			});
 			tileSelect = new Array();
 			socket.emit('userConquer',true);
 			$(this).val('Conquerir terrain');
+			$(this).css('background','rgb(15, 138, 204)');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else
@@ -1009,6 +1019,7 @@
 			User.isHarvesting = false;
 			User.isAttacking = false;
 			$(this).val('Conquerir !');
+			$(this).css('background','orange');
 			ppmap.changeCursor('images/attackTile.png','images/emptyTile.png',0,0);
 		}
 		
@@ -1028,6 +1039,7 @@
 			tileSelect = new Array();
 			socket.emit('userAttack',enemi);
 			$(this).val('Attaquer terrain');
+			$(this).css('background','rgb(15, 138, 204)');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else
@@ -1040,6 +1052,7 @@
 			User.isHarvesting = false;
 			User.isConquering = false;
 			$(this).val('Attaquer !');
+			$(this).css('background','orange');
 			ppmap.changeCursor('images/attackTile.png','images/emptyTile.png',0,0);
 		}
 		
@@ -1048,6 +1061,7 @@
 		if(User.isWatering){
 			User.isWatering =false;
 			$(this).val('Arroser une plante');
+			$(this).css('background','rgb(15, 138, 204)');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);		
 		}else{
 			User.isBuilding = false;
@@ -1056,6 +1070,7 @@
 			User.isFertilizing = false;
 			User.isHarvesting = false;
 			$(this).val('Arreter d\'arroser');
+			$(this).css('background','orange');
 			ppmap.changeCursor('images/arrosoir.png','images/cursor-off.png',-40,-40);
 		}
 	});
@@ -1065,6 +1080,7 @@
 		if(User.isFertilizing){
 			User.isFertilizing = false;
 			$(this).val('Fertiliser une plante');
+			$(this).css('background','rgb(15, 138, 204)');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
@@ -1074,6 +1090,7 @@
 			User.isFertilizing = true;
 			User.isHarvesting = false;
 			$(this).val('Arreter de fertiliser');
+			$(this).css('background','orange');
 			ppmap.changeCursor('images/fertilizing.png','images/cursor-off.png',0,0);
 		}
 
@@ -1110,6 +1127,7 @@
 		if(User.isHarvesting){
 			User.isHarvesting = false;
 			$(this).val('Récolter une plante');
+			$(this).css('background','rgb(15, 138, 204)');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
@@ -1119,6 +1137,7 @@
 			User.isFertilizing = false;
 			User.isHarvesting = true;
 			$(this).val('Arreter de Récolter');
+			$(this).css('background','orange');
 			ppmap.changeCursor('images/harvesting.png','images/cursor-off.png',0,0);
 		}
 
@@ -1129,6 +1148,7 @@
 		if(User.isDestroyCrop){
 			User.isDestroyCrop = false;
 			$(this).val('Détruire une plante');
+			$(this).css('background','rgb(15, 138, 204)');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
@@ -1140,6 +1160,7 @@
 			User.isDestroyBuilding = false;
 			User.isDestroyCrop = true;
 			$(this).val('Arreter de Détruire');
+			$(this).css('background','orange');
 			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',0,-30);
 		}
 
@@ -1150,6 +1171,7 @@
 		if(User.isDestroyBuilding){
 			User.isDestroyBuilding = false;
 			$(this).val('Détruire un batiments');
+			$(this).css('background','rgb(15, 138, 204)');
 			ppmap.changeCursor('images/cursor-on.png','images/cursor-off.png',0,0);
 		}
 		else{
@@ -1161,6 +1183,7 @@
 			User.isDestroyCrop = false;
 			User.isDestroyBuilding = true;
 			$(this).val('Arreter de Détruire');
+			$(this).css('background','orange');
 			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',0,-30);
 		}
 	});
