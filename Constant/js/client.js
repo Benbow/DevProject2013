@@ -723,7 +723,6 @@
 						break;
 					}
 			}
-			
 		}
 	});
 
@@ -877,11 +876,42 @@
 	});
 
 	$(".button_menu").click(function(){
-		var type = $(this).attr('id').substr(12,$(this).attr('id').length);
-		if(type == "plantes" || type == 'batiments')
+		var type = $(this).attr('id').substr(8,$(this).attr('id').length);
+		if(type == "plantes")
 		{
-			$('.menu_select_options').css('display','none');
-			$("#menu_select_"+type+"_type").toggle('fast');
+			$('#gestion_batiments').toggle(0);
+			$('#gestion_terrains').toggle(0);
+			$('#gestion_alliances').toggle(0);
+			$('#menu_market').toggle(0);
+			$('#menu_display_tile_infos').toggle(0);
+			$("#menu_gestion_"+type+"_type").toggle('fast');
+		}
+		if(type == 'batiments')
+		{
+			$('#gestion_plantes').toggle(0);
+			$('#gestion_terrains').toggle(0);
+			$('#gestion_alliances').toggle(0);
+			$('#menu_market').toggle(0);
+			$('#menu_display_tile_infos').toggle(0);
+			$("#menu_gestion_"+type+"_type").toggle('fast');
+		}
+		if(type == 'terrains')
+		{
+			$('#gestion_plantes').toggle(0);
+			$('#gestion_batiments').toggle(0);
+			$('#gestion_alliances').toggle(0);
+			$('#menu_market').toggle(0);
+			$('#menu_display_tile_infos').toggle(0);
+			$("#menu_gestion_"+type+"_type").toggle('fast');
+		}
+		if(type == 'alliances')
+		{
+			$('#gestion_plantes').toggle(0);
+			$('#gestion_terrains').toggle(0);
+			$('#gestion_batiments').toggle(0);
+			$('#menu_market').toggle(0);
+			$('#menu_display_tile_infos').toggle(0);
+			$("#menu_gestion_"+type+"_type").toggle('fast');
 		}
 	});
 
@@ -1091,7 +1121,6 @@
 			$(this).val('Arreter de Détruire');
 			ppmap.changeCursor('images/bulldozer.png','images/cursor-off.png',0,-30);
 		}
-
 	});
 
 	$("#menu_display_tile_infos").click(function(){

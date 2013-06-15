@@ -24,26 +24,7 @@
 						return false; 
 					} 
 				} 
-
-				$(document).ready(function() {
-	$("#content div").hide().eq(0).show(); // show first one
-	$("#tabs li").eq(0).addClass('current'); // set active one
-
-
-	$('#tabs a').click(function(e) {
-		e.preventDefault();
-		if( $(this).closest("li").hasClass('current') ){ //detection for current tab
-		 return;      
-		}else{             
-			$("#content div").hide(); //Hide all content
-			$("#tabs li").removeClass('current'); //Reset id's
-			$(this).parent().addClass('current'); // Activate this
-			$('#' + $(this).attr('name')).fadeIn(); // Show content for current tab
-		}
-	});
-});
-
-				</script>
+			</script>
 
 			<div id="div_register">
 					<form action="" id="registerform" method="post" name="pwForm">
@@ -332,16 +313,27 @@
 			<div id="div_menu">
 				<div id="menu_select_type">
 					<div>
+						<input id="gestion_plantes" class="button_menu" type="button" value="Gestion des Plantes" />
+					</div>
+					<div>
+						<input id="gestion_batiments" class="button_menu" type="button" value="Gestion des Batiments" />
+					</div>
+					<div>
+						<input id="gestion_terrains" class="button_menu" type="button" value="Gestion des Terrains" />
+					</div>
+					<div>
+						<input id="gestion_alliances" class="button_menu" type="button" value="Gestion des Alliances" />
+					</div>
+					<div>
+						<input id="menu_market" class="button_menu button_market" type="button" value="Marché" />
+					</div>
+					<div>
+						<input id="menu_display_tile_infos" class="button_menu" type="button" value="Afficher les infos de case" />
+					</div>
+				</div>
+				<div class="menu_gestion_plantes" id="menu_gestion_plantes_type" style="display:none;">
+					<div>
 						<input id="menu_select_plantes" class="button_menu" type="button" value="Ajouter des plantes" />
-					</div>
-					<div>
-						<input id="menu_select_batiments" class="button_menu" type="button" value="Ajouter des batiments" />
-					</div>
-					<div>
-						<input id="menu_select_conquerir" class="button_menu" type="button" value="Conquerir terrain" />
-					</div>
-					<div>
-						<input id="menu_select_attaquer" class="button_menu" type="button" value="Attaquer terrain" />
 					</div>
 					<div>
 						<input id="menu_arrosage_plantes" class="button_menu" type="button" value="Arroser une plante" />
@@ -355,16 +347,24 @@
 					<div>
 						<input id="menu_destroy_plantes" class="button_menu" type="button" value="Détruire une plante" />
 					</div>
+				</div>
+				<div class="menu_gestion_batiments" id="menu_gestion_batiments_type" style="display:none;">
+					<div>
+						<input id="menu_select_batiments" class="button_menu" type="button" value="Ajouter des batiments" />
+					</div>
 					<div>
 						<input id="menu_destroy_stockages" class="button_menu" type="button" value="Détruire un bâtiment" />
 					</div>
-
+				</div>
+				<div class="menu_gestion_terrains" id="menu_gestion_terrains_type" style="display:none;">
 					<div>
-						<input id="menu_market" class="button_menu button_market" type="button" value="Marché" />
+						<input id="menu_select_conquerir" class="button_menu" type="button" value="Conquerir terrain" />
 					</div>
 					<div>
-						<input id="menu_display_tile_infos" class="button_menu" type="button" value="Afficher les infos de case" />
+						<input id="menu_select_attaquer" class="button_menu" type="button" value="Attaquer terrain" />
 					</div>
+				</div>
+				<div class="menu_gestion_alliances" id="menu_gestion_alliances_type" style="display:none;">
 					<div>
 						<input id="menu_create_alliance" class="button_menu" type="button" value="Créer une alliance" />
 					</div>
