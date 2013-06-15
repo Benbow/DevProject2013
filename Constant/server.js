@@ -867,7 +867,7 @@ io.sockets.on('connection', function(socket){
 					invit = new Alliances_invit();
 					invit.Add_Alliance_invit(user.getId(), cb.id, data.alliance_id, function(back){
 						if(back)
-							io.sockets.socket((connected[cb.id])).emit('valid', 'New Invitation !');
+							io.sockets.socket((connected[cb.id])).emit('receiveInvitation', 'New Invitation !');
 							socket.emit('valid', 'Invitation send!');
 					});
 				}else{

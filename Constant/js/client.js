@@ -872,6 +872,10 @@
 		socket.emit('getInvitList', '');
 	});
 
+	socket.on('receiveInvitation', function(data){
+		alert('You receive an Invitation');
+	});
+
 	$(".button_menu").click(function(){
 		var type = $(this).attr('id').substr(12,$(this).attr('id').length);
 		if(type == "plantes" || type == 'batiments')
@@ -1136,6 +1140,10 @@
 		$("#menu_create_alliance_panel").fadeIn('slow');
 	});
 
+	$("#hide_create_alliance_button").click(function(){
+		$("#menu_create_alliance_panel").fadeOut('slow');
+	});
+
 	$("#create_alliance_button").click(function(){
 		var name = $("#input_alliance_name").val();
 		if(name.length > 0 && name.length <= 20){
@@ -1152,6 +1160,10 @@
 
 	$("#menu_invit_alliance").click(function(){
 		$("#menu_invit_alliance_panel").fadeIn('slow');
+	});
+
+	$("#hide_invit_alliance_button").click(function(){
+		$("#menu_invit_alliance_panel").fadeOut('slow');
 	});
 
 	$("#invit_alliance_button").click(function(){
@@ -1174,8 +1186,6 @@
 	$("#menu_get_invit_alliance").click(function(){
 		socket.emit('getInvitList', '');
 	});
-
-
 
 	$(".HideInvitList").click(function(){
 		$("#alliance_invit_list").fadeOut('fast');
