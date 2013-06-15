@@ -1130,7 +1130,6 @@
 		socket.emit('button_market', {
 			
 		});
-
 	});
 
 	$("#menu_create_alliance").click(function(){
