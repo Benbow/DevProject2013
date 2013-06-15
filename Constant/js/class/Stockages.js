@@ -102,6 +102,7 @@ var Stockages = (function() {
                                             if (err) throw err;
                                             if(typeof(r[0]) != 'undefined'){
                                                 callback({
+                                                    type : 'stock',
                                                     stockages : rows[0],
                                                     stockages_spec : row[0],
                                                     fruits : ro,
@@ -135,6 +136,7 @@ var Stockages = (function() {
                                         if (err) throw err;
                                         if(typeof(r[0]) != 'undefined'){
                                             callback({
+                                                type : 'stock',
                                                 stockages : rows[0],
                                                 stockages_spec : row[0],
                                                 fruits : ro,
@@ -154,7 +156,15 @@ var Stockages = (function() {
                     });
                 }
             }else{
-                callback(false);
+                query = 'SELECT * FROM Maisons WHERE tile_id='+tile_id+';';
+                connection.query(query,function(err, rows, fields) {
+                    if(typeof(rows[0]) != 'undefined'){
+                        callback({
+                            type : 'maison',
+                            maison : rows[0]
+                        });
+                    }
+                });
             }
         });
     };

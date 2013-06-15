@@ -851,6 +851,10 @@
 		$("#buildingProps").css('display', 'none');
 	});
 
+	socket.on('DisplayHouseAction', function(data){
+		$("#houseProps").css('display', 'block');
+	});
+
 
 	socket.on('newAlliance', function(data){
 		socket.SendValid('new Alliance '+data);
@@ -1509,6 +1513,10 @@
 		socket.emit('drop_all_dead_fruits', {
 			stockage_id : stockage_id
 		});
+	});
+
+	$("#hide_house_props").click(function(){
+		$("#houseProps").css('display', 'none');
 	});
 
 	checkTileIsNear = function(data){

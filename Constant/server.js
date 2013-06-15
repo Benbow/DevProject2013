@@ -808,12 +808,21 @@ io.sockets.on('connection', function(socket){
 		map.getIdTile(data.x,data.y,function(id){
 			stockages.GetInfos(user.getId(), id, function(cb){
 				if(cb){
-					socket.emit('DisplayBuildingProps', {
-						stockages : cb.stockages,
-						stockages_spec : cb.stockages_spec,
-						fruits : cb.fruits,
-						fruits_spec : cb.fruits_spec
-					});
+					if(cb.type == 'stock'){
+						socket.emit('DisplayBuildingProps', {
+							stockages : cb.stockages,
+							stockages_spec : cb.stockages_spec,
+							fruits : cb.fruits,
+							fruits_spec : cb.fruits_spec
+						});
+					}else if(cb.type == 'maison'){
+						socket.emit('DisplayHouseAction', {
+							maison : cb.maison
+						});
+					}else{
+						socket.emit('error', 'Empty Building !');
+						socket.emit('hideBuildingProps', 'ok');
+					}
 				}else{
 					socket.emit('error', 'Empty Building !');
 					socket.emit('hideBuildingProps', 'ok');
