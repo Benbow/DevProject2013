@@ -230,7 +230,7 @@
 
 		    	ppmap.addBuilding(value.x, value.y, 'images/'+Batiment.name + '.png', Batiment.sprite[Batiment.name].decX, Batiment.sprite[Batiment.name].decY);
 	    	}else{
-	    		ppmap.addBuilding(value.x, value.y, 'images/2.png', 0, 0);
+	    		ppmap.addBuilding(value.x, value.y, 'images/empty_tile.png', 0, 0);
 	    	}
 	    	
 		});
@@ -914,6 +914,16 @@
 			$("#menu_gestion_"+type+"_type").toggle('fast');
 		}
 	});
+
+	$("#menu_select_batiments").click(function(){
+		$("#menu_select_batiments_type").toggle('fast');
+	});
+
+	$("#menu_select_plantes").click(function(){
+		$("#menu_select_plantes_type").toggle('fast');
+	});
+
+	
 
 	socket.on('liste_graines', function(data){
 		   var html = '<ul style="display:block !important">';
