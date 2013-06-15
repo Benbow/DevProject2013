@@ -145,14 +145,14 @@ var Map = (function() {
 			for(var i = 0;i < rows.length;i++)
 			{
 				if(user_id == rows[i].owner){
-					string_map.map += ((rows[i].sprite_id == 1) ? 2 : rows[i].sprite_id) + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+					string_map.map += ((rows[i].sprite_id == 1) ? 2 : rows[i].sprite_id) + ((check < 50) ? "," : ((rows[i].x == 50) ? "" : ":"));
 					string_map.own_tile[own_check] = {
 						'x': rows[i].x,
 						'y': rows[i].y
 					};
 					own_check++;
 				}else if(user_id != rows[i].owner && rows[i].owner != null){
-					string_map.map += ((rows[i].sprite_id == 1) ? 3 : rows[i].sprite_id) + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+					string_map.map += ((rows[i].sprite_id == 1) ? 3 : rows[i].sprite_id) + ((check < 50) ? "," : ((rows[i].x == 50) ? "" : ":"));
 					string_map.enemi_tile[enemi_check] = {
 						'x': rows[i].x,
 						'y': rows[i].y,

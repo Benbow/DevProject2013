@@ -2994,11 +2994,7 @@ INSERT INTO `Tiles` (`id`, `x`, `y`, `isEmpty`, `sprite_id`, `humidite`, `fertil
 (2497, 50, 47, 0, 1, 2, 100, NULL, NULL, NULL),
 (2498, 50, 48, 0, 1, 14, 82, NULL, NULL, NULL),
 (2499, 50, 49, 0, 1, 13, 100, NULL, NULL, NULL),
-(2500, 50, 50, 0, 1, 8, 100, NULL, NULL, NULL),
-(2501, 51, 1, 0, 1, 26, 100, NULL, NULL, NULL),
-(2502, 51, 2, 0, 1, 33, 100, NULL, NULL, NULL),
-(2503, 51, 3, 0, 1, 32, 100, NULL, NULL, NULL),
-(2504, 51, 4, 0, 1, 15, 98, NULL, NULL, NULL);
+(2500, 50, 50, 0, 1, 8, 100, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 

@@ -5,6 +5,7 @@ var User = (function() {
     var _id;
     var _pseudo;
     var _DB;
+    var canConquet = true;
 
 
     // constructor
@@ -251,6 +252,10 @@ var User = (function() {
         });
     };
 
+    User.prototype.getCanConquet = function(){
+        return canConquet;
+    }
+
     User.prototype.connected = function(){
         var connection = _DB.connection();
 
@@ -288,6 +293,20 @@ var User = (function() {
         var id = this._id; 
         connection.query('UPDATE Tiles SET owner = '+ id +' WHERE id = '+tile_id+';', function(err,rows,fields){
             if(err) throw err;         
+        });
+    };
+
+    User.prototype.conquetGraceTime = function(){
+        var connection = _DB.connection();
+        var id = this._id;
+        canConquet = false;
+        connection.query('SELECT uspec.wait_conquetes_timer as timer FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';',function(err,rows,fields){
+            if(err) throw err;
+            console.log(canConquet);
+            setTimeout(function(){
+                canConquet = true;
+                console.log('new conquet :'+canConquet);
+            },rows[0].timer*1000);
         });
     };
 

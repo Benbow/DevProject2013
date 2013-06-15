@@ -407,32 +407,39 @@ io.sockets.on('connection', function(socket){
 	socket.on('userConquer',function(check){
 		if(check)
 		{
-			user.getTimerConquet(function(timer){
-				setTimeout(function(){
-					$.each(saveTiles,function(index, value){
-						user.conquet(value.id);
-						newOptions = {
-							'type': 'conquer',
-							'user_id': user.getId()
-						};
-						updateTile(value.x, value.y, newOptions);
-						socket.emit('valid', 'La conquete s\'est deroule avec succes !');
+			if(user.getCanConquet()) {
+				user.getTimerConquet(function(timer){
+					setTimeout(function(){
+						$.each(saveTiles,function(index, value){
+							user.conquet(value.id);
+							newOptions = {
+								'type': 'conquer',
+								'user_id': user.getId()
+							};
+							updateTile(value.x, value.y, newOptions);
+							socket.emit('valid', 'La conquete s\'est deroule avec succes !');
 
-					});
-					user.updateLevel(saveTiles.length, function(cb){
-						if(cb){
-							user.checkLevel(function(cb2){
-								user.GetUserProps(user.getId(), function(cb){
-									if(cb2){
-										socket.emit('user_props', cb);
-									}
+						});
+						user.conquetGraceTime();
+						user.updateLevel(saveTiles.length, function(cb){
+							if(cb){
+								user.checkLevel(function(cb2){
+									user.GetUserProps(user.getId(), function(cb){
+										if(cb2){
+											socket.emit('user_props', cb);
+										}
+									});
 								});
-							});
-						}
-					})
-					saveTiles = new Array();
-				},timer*1000);
-			});
+							}
+						})
+						saveTiles = new Array();
+					},timer*1000);
+				});
+			}
+			else {
+				socket.emit('error', 'Vous devez attendre avant de conquerir.');
+			}
+			
 		}
 	});
 
