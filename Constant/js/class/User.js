@@ -474,7 +474,9 @@ var User = (function() {
                                 next : rows[0].tile_next_level,
                                 max : rows[0].tile_max,
                                 alliance : ro[0].name,
-                                alliance_id : ro[0].id
+                                alliance_id : ro[0].id,
+                                lifeMax : rows[0].resistance,
+                                life : rows[0].life
                             }); 
                        }else{
                             callback({
@@ -487,7 +489,9 @@ var User = (function() {
                                 next : rows[0].tile_next_level,
                                 max : rows[0].tile_max,
                                 alliance : 'Undefined',
-                                alliance_id : null
+                                alliance_id : null,
+                                lifeMax : rows[0].resistance,
+                                life : rows[0].life
                             });
                        }    
                     });
@@ -502,7 +506,9 @@ var User = (function() {
                         next : rows[0].tile_next_level,
                         max : rows[0].tile_max,
                         alliance : 'None',
-                        alliance_id : null
+                        alliance_id : null,
+                        lifeMax : rows[0].resistance,
+                        life : rows[0].life
                     });
                 }
             });

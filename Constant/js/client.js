@@ -755,6 +755,10 @@
 		$("#user_max").attr('class', data.max);
 		$("#user_alliance").html('Alliance : '+data.alliance);
 		$("#user_alliance").attr('class', data.alliance_id);
+		$("#user_life").html('Life : '+data.life);
+		$("#user_life").attr('class', data.life);
+		$("#user_lifeMax").html(' / '+data.lifeMax);
+		$("#user_lifeMax").attr('class', data.lifeMax);
 	});
 
 	socket.on('validStorage', function(data){
@@ -855,6 +859,24 @@
 		$("#houseProps").css('display', 'block');
 	});
 
+
+	socket.on('money', function(data){
+		var text = "";
+		text += '<div>';
+		text += 'Argent : '+data;
+		text += '</div>';
+
+		$("#money").html(text);
+	});
+
+	socket.on('energie', function(data){
+		var text = "";
+		text += '<div>';
+		text += 'Energie : '+data;
+		text += '</div>';
+
+		$(".energie_sum").html(text);
+	});
 
 	socket.on('newAlliance', function(data){
 		socket.SendValid('new Alliance '+data);
