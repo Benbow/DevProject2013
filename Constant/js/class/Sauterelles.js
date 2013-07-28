@@ -16,6 +16,75 @@ var Sauterelles = (function() {
         
     };
 
+    Sauterelles.prototype.Add_Sauterelles = function(tile_id, duree, longueur, largeur, x, y, vectorX, vectorY, callback){
+        var sauterelles = new Array();
+        for( var i = 0; i < longueur; i++){
+            for(var j = 0; j < largeur; j++){
+                sauterelles.push({
+                    x : x+i,
+                    y : y+j
+                });
+            }
+        }
+        var connection = _DB.connection();
+        connection.query('INSERT INTO Sauterelles(origin_tile_id, duree, longueur, largeur, x, y, vectorX, vectorY, isActive) VALUES('+tile_id+', '+duree+', '+longueur+', '+largeur+', '+x+', '+y+', '+vectorX+', '+vectorY+', 1)', function(err, rows, fields){
+            if(err) throw err;
+            callback(sauterelles);
+        });
+    };
+
+    Sauterelles.prototype.isSauterelles = function(callback){
+        var connection = _DB.connection();
+        var intervalSauterelle = setInterval(function(){
+            connection.query('SELECT * FROM Sauterelles WHERE isActive = 1', function(err, rows, fields){
+                if(err) throw err;
+                if(rows[0] != null){
+                    if(rows[0].duree > 0){
+                        var xmax = rows[0].x + rows[0].longueur -1;
+                        var ymax = rows[0].y + rows[0].largeur -1;
+                        connection.query('DELETE p.* FROM Plantes as p LEFT JOIN Tiles as t ON p.tile_id = t.id WHERE t.x >= '+rows[0].x+' AND t.x <= '+xmax+' AND t.y >='+rows[0].y+' AND t.y <= '+ymax, function(err, row, fields){
+                            if(err) throw err;
+                            connection.query('UPDATE Sauterelles SET duree = duree-1, x = x+'+rows[0].vectorX+', y = y +'+rows[0].vectorY+' WHERE id='+rows[0].id, function(err, row, fields){
+                                if(err) throw err;
+                                connection.query('UPDATE Tiles SET isEmpty = 0, sprite_id = 1 WHERE x >= '+rows[0].x+' AND x <= '+xmax+' AND y >='+rows[0].y+' AND y <= '+ymax+' AND isEmpty != 2', function(err, row, fields){
+                                    if(err) throw err;
+                                    var sauterelles = new Array();
+                                    for( var i = 0; i < rows[0].longueur; i++){
+                                        for(var j = 0; j < rows[0].largeur; j++){
+                                            sauterelles.push({
+                                                x : rows[0].x+i,
+                                                y : rows[0].y+j,
+                                                newx : rows[0].x+i+rows[0].vectorX,
+                                                newy : rows[0].y+i+rows[0].vectorY,
+                                            });
+                                        }
+                                    }
+                                    callback(sauterelles);
+                                });
+                            });
+                        });
+                    }else{
+                        connection.query('DELETE FROM Sauterelles WHERE id='+rows[0].id, function(err, row, fields){
+                            if(err) throw err;
+                            var sauterelles = new Array();
+                            for( var i = 0; i < rows[0].longueur; i++){
+                                for(var j = 0; j < rows[0].largeur; j++){
+                                    sauterelles.push({
+                                        x : rows[0].x+i,
+                                        y : rows[0].y+j
+                                    });
+                                }
+                            }
+                            callback(sauterelles);
+                        });
+                    }
+                }else{
+                    callback(false);
+                }
+            })
+        },(2000));
+    };
+
     //Getters
     Sauterelles.prototype.getId = function() {
         return _id;

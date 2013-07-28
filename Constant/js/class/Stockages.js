@@ -194,6 +194,27 @@ var Stockages = (function() {
         });
     };
 
+    Stockages.prototype.cleanComplexBuilding =function(callback){
+        var connection = _DB.connection();
+        complex = new Array();
+        connection.query('SELECT * FROM Tiles ', function(err, rows, fields){
+            for(tile in rows){
+                if(tile.origin_tile_id != null){
+                    console.log('test');
+                    if(rows[tile.origin_tile_id-1].isEmpty == 0){
+                        connection.query('UPDATE Tiles SET isEmpty = 0, origin_tile_id = NULL WHERE id='+tile.id, function(err, row, fields){});
+                        connection.query('DELETE FROM Stockages WHERE tile_id='+tile.id, function(err, row, fields){});
+                        complex.push({
+                            x : tile.x,
+                            y : tile.y
+                        });
+                    }
+                }
+            }
+            callback(complex);
+        });
+    };
+
     Stockages.prototype.checkBatPrice = function(callback){
         var connection = _DB.connection();
         var query = 'SELECT * FROM Stockages_spec ;';

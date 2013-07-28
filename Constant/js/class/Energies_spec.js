@@ -1,4 +1,5 @@
 //Classe qui enregistre les Energies_spec 
+var DB = require('./DB');
 
 var Energies_spec = (function() {
     var _id;                //id unique du batiment INT
@@ -8,7 +9,17 @@ var Energies_spec = (function() {
     var _niveau_requis;     //niveau requis par le batiment INT
 
     function Energies_spec(){
-        
+        _DB = new DB();
+    };
+
+
+     Energies_spec.prototype.Get_Energies = function(callback){
+        var connection = _DB.connection();
+        var query = 'SELECT * FROM Energies_spec;'
+        connection.query(query,function(err, rows, fields) {
+            if (err) throw err;
+            callback(rows);            
+        });
     };
 
     //Getters

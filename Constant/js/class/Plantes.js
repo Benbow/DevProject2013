@@ -67,21 +67,35 @@ var Plantes = (function() {
 						if(statu > 5)
 						{
 							clearInterval(refresh);
+							callback({
+								type :"delete", 
+								status : statu,
+								id : graine_infos.id
+							});
 						}
 						else
 						{
-							((ferti - 30) < 0) ? ferti = 0 : (ferti -= 30);
-							((humi - 30) < 0) ? humi = 0 : (humi -= 30);
+							((ferti - 13) < 0) ? ferti = 0 : (ferti -= 13);
+							((humi - 13) < 0) ? humi = 0 : (humi -= 13);
 							var health = (humi + ferti) / 2;
 							var croissance = statu * 20;
-							connection.query('UPDATE Tiles SET fertilite = '+ ferti +', humidite = "'+ humi +'" WHERE id = ' + idTile, function(err,rows,fields){
-								if(err) throw err;
-							});
-							connection.query('UPDATE Plantes SET status = '+statu+', updated_at = "'+getTimeDb()+'", health = '+health+', croissance ='+croissance+' WHERE tile_id = ' + idTile, function(err,rows,fields){
-								if(err) throw err;
-							});
+							//if(health >= graine_infos.sante_min || statu == 5){
+								connection.query('UPDATE Tiles SET fertilite = '+ ferti +', humidite = "'+ humi +'" WHERE id = ' + idTile, function(err,rows,fields){
+									if(err) throw err;
+								});
 							
-							callback(statu, graine_infos.id);
+								connection.query('UPDATE Plantes SET status = '+statu+', updated_at = "'+getTimeDb()+'", health = '+health+', croissance ='+croissance+' WHERE tile_id = ' + idTile, function(err,rows,fields){
+									if(err) throw err;
+								});
+							/*}else{
+								statu--;
+							}*/
+							
+							callback({
+								type :"update", 
+								status : statu,
+								id : graine_infos.id
+							});
 						}   
 					}
 					else

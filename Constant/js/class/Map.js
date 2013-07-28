@@ -3,24 +3,13 @@ var User = require('./User');
 var $ = require('jquery');
 
 var Map = (function() {
-	// "private" variables 
-	var _longeur;
+	// "private" variables
 	var _DB;
 	var _table = "Tiles";
 
 	// constructor
 	function Map(){
 		_DB = new DB();
-	};
-
-	// add the methods to the prototype so that all of the 
-	// Map instances can access the private static
-	Map.prototype.getL = function() {
-		return _longeur;
-	};
-
-	Map.prototype.setL = function(L) {
-		_longeur = L;
 	};
 
 	Map.prototype.initialiseMap = function() { 
@@ -124,7 +113,8 @@ var Map = (function() {
 
 	Map.prototype.getMap = function(user,callback) { 
 		var connection = _DB.connection();
-		var user_id = user.getId();
+        var user_id = user.getId();
+        var user_alliance = user.getUserAlliance();
 		var user_pseudo = user.getPseudo();
 		var string_map = {
 			'map' : '',
@@ -133,16 +123,23 @@ var Map = (function() {
             'emptyStorage' : {},
             'crops' : {},
 			'user' : {},
+            'infos_user': {},
 			'all_user' : {},
 			'enemi_tile' : {},
-			'own_tile' : {},
+            'own_tile' : {},
+            'alliance_tile' : {},
             'allies' : {}
 		};
+        string_map.infos_user = {
+            'id' : user_id,
+            'pseudo' : user_pseudo
+        };
 		connection.query('SELECT * FROM Tiles ORDER BY `Tiles`.`y` ASC', function(err,rows,fields){
 			if(err) throw err;
 			var check = 0;
 			var own_check = 0;
-			var enemi_check = 0;
+            var enemi_check = 0;
+            var alliance_check = 0;
 			for(var i = 0;i < rows.length;i++)
 			{
 				if(user_id == rows[i].owner){
@@ -152,7 +149,14 @@ var Map = (function() {
 						'y': rows[i].y
 					};
 					own_check++;
-				}else if(user_id != rows[i].owner && rows[i].owner != null){
+				}else if ($.inArray(rows[i].owner,user_alliance) >= 0){
+                    string_map.map += ((rows[i].sprite_id == 1) ? 6 : rows[i].sprite_id) + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+                    string_map.alliance_tile[alliance_check] = {
+                        'x': rows[i].x,
+                        'y': rows[i].y
+                    };
+                    alliance_check++;
+                }else if(user_id != rows[i].owner && rows[i].owner != null){
 					string_map.map += ((rows[i].sprite_id == 1) ? 3 : rows[i].sprite_id) + ((check < 50) ? "," : ((rows[i].x == 50) ? "" : ":"));
 					string_map.enemi_tile[enemi_check] = {
 						'x': rows[i].x,
@@ -161,8 +165,8 @@ var Map = (function() {
 					};
 					enemi_check++;
 
-				}else
-					string_map.map += rows[i].sprite_id + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
+                }else
+                    string_map.map += rows[i].sprite_id + ((check < 49) ? "," : ((rows[i].x == 49) ? "" : ":"));
 
 				if(check == 49)
 				{
@@ -194,19 +198,6 @@ var Map = (function() {
                 };
             }
         });
-        
-        connection.query('SELECT alliance_id FROM Users WHERE id = '+user_id, function(err,rows,fields){
-            if(err) throw err;
-            if(rows[0].alliance_id != null && rows[0].alliance_id > 0)
-                connection.query('SELECT id FROM Users WHERE alliance_id = '+rows[0].alliance_id, function(err,rows,fields){
-                    for(var i = 0;i < rows.length;i++)
-                    {
-                        string_map.allies[user_id] = rows[i].id;
-                    }
-                });
-            else
-                string_map.allies[user_id] = user_id;
-        });
 
         this.getUserTile(user_id,function(data){
             string_map.user = data;
@@ -225,8 +216,23 @@ var Map = (function() {
                         'id': rows[i].id
                     };
             }
-
-            callback(string_map);
+        });
+        
+        connection.query('SELECT alliance_id FROM Users WHERE id = '+user_id, function(err,rows,fields){
+            if(err) throw err;
+            if(rows[0].alliance_id != null && rows[0].alliance_id > 0){
+                connection.query('SELECT id FROM Users WHERE alliance_id = '+rows[0].alliance_id, function(err,rows,fields){
+                    if(err) throw err;
+                    for(var k = 0;k < rows.length;k++)
+                    {
+                        string_map.allies[rows[k].id] = rows[k].id;
+                    }
+                    callback(string_map);
+                });
+            }else {
+                string_map.allies[user_id] = user_id;
+                callback(string_map);
+            }
         });
 
     };
@@ -298,7 +304,6 @@ var Map = (function() {
             callback(data);
         });
     };
-
     
 
 	Map.prototype.canConquer = function(tile_id, user_id, callback)

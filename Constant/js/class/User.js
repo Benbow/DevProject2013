@@ -4,8 +4,12 @@ var User = (function() {
     // "private" variables 
     var _id;
     var _pseudo;
+    var _alliance;
+    var _userAlliance = new Array();
     var _DB;
     var canConquet = true;
+    var lastAttackId = 0;
+    var AttackedBy = 0;
 
 
     // constructor
@@ -21,14 +25,19 @@ var User = (function() {
        
         var user = connection.query('SELECT * FROM Users WHERE mail = "' + mail + '";',function(err,rows,fields){
             if(err) throw err;
-
-            userInfo[0] = rows[0].pseudo;
-            userInfo[1] = rows[0].mail;
-            userInfo[2] = rows[0].password;
-            userInfo[3] = rows[0].id;
-            userInfo[4] = rows[0].status;
+            console.log(rows[0]);
+            if(typeof(rows[0]) != "undefined"){
+                userInfo[0] = rows[0].pseudo;
+                userInfo[1] = rows[0].mail;
+                userInfo[2] = rows[0].password;
+                userInfo[3] = rows[0].id;
+                userInfo[4] = rows[0].status;
+                userInfo[5] = rows[0].alliance_id;
                
-            callback(userInfo);             
+                callback(userInfo);
+            }else{
+                callback(false);
+            }
         });
     };
 
@@ -37,54 +46,56 @@ var User = (function() {
     User.prototype.combat = function(user_id,enemi, callback) {
         var connection = _DB.connection();
         this.getArmeInfos(user_id,function(infos_user_arme){
-            connection.query('SELECT spec.`puissance`, spec.`precision`, spec.`vitesse` FROM `Armes_spec` as spec LEFT JOIN Armes as arme ON spec.id = arme.armes_spec_id WHERE arme.user_id = '+ enemi,function(err,rows,fields){
+            connection.query('SELECT spec.`puissance`, spec.`precision`, spec.`vitesse` FROM `Armes_spec` as spec LEFT JOIN Armes as arme ON spec.id = arme.armes_spec_id WHERE arme.user_id = '+ enemi + ';',function(err,rows,fields){
                 if (err) throw err;
                 var infos_enemi_arme = rows[0];
-                console.log('enemi : '+user_id);
-                connection.query('SELECT spec.resistance as health, user.id as id FROM `Users_level_spec` as spec LEFT JOIN Users as user ON spec.id = user.niveau WHERE user.id = '+ user_id +' OR user.id = '+enemi,function(err,rows,fields){
+                connection.query('SELECT life, id  FROM Users WHERE id = '+ user_id +' OR id = '+enemi+ ';',function(err,rows,fields){
                     if (err) throw err;
-
                     if (user_id == rows[0].id) {
-                        infos_user_arme.health = rows[0].health;
-                        infos_enemi_arme.health = rows[1].health;
+                        infos_user_arme.life = rows[0].life;
+                        infos_enemi_arme.life = rows[1].life;
                     }
                     else {
-                        infos_user_arme.health = rows[1].health;
-                        infos_enemi_arme.health = rows[0].health;
+                        infos_user_arme.life = rows[1].life;
+                        infos_enemi_arme.life = rows[0].life;
                     }
-                    console.log(infos_user_arme);
-                    console.log(infos_enemi_arme);
-
+                    var end_figth = false;
                     var user_combat = setInterval(function(){
-                        if(infos_enemi_arme.health == 0 || infos_user_arme.health == 0){
+                        if(infos_enemi_arme.life <= 0 || infos_user_arme.life <= 0){
                             clearInterval(user_combat);
-                            if(infos_enemi_arme.health == 0)
-                                callback(true);
-                            else
-                                callback(false);
+                            if(!end_figth) {
+                                if(infos_enemi_arme.life <= 0)
+                                    callback({'figth' : true, 'life_user': infos_user_arme.life, 'life_enemi': 0});
+                                else
+                                    callback({'figth' : false, 'life_user': 0, 'life_enemi': infos_enemi_arme.life});
+                            }
+                            end_figth = true;
                         }
                         else {
                             var random = Math.floor((Math.random()*100)+1);
                             if(random < infos_user_arme.precision) {
-                                console.log('user touche');
-                                infos_enemi_arme.health -= infos_user_arme.puissance;
+                                console.log(user_id+' touche');
+                                infos_enemi_arme.life -= infos_user_arme.puissance;
                             }
                         }
                     },infos_user_arme.vitesse*1000);
 
                     var enemi_combat = setInterval(function(){
-                        if(infos_enemi_arme.health == 0 || infos_user_arme.health == 0){
+                        if(infos_enemi_arme.life <= 0 || infos_user_arme.life <= 0){
                             clearInterval(enemi_combat);
-                            if(infos_enemi_arme.health == 0)
-                                callback(true);
-                            else
-                                callback(false);
+                            if(!end_figth) {
+                                if(infos_enemi_arme.life <= 0)
+                                    callback({'figth' : true, 'life_user': infos_user_arme.life, 'life_enemi': 0});
+                                else
+                                    callback({'figth' : false, 'life_user': 0, 'life_enemi': infos_enemi_arme.life});
+                            }
+                            end_figth = true;
                         }
                         else {
                             var random = Math.floor((Math.random()*100)+1);
                             if(random < infos_enemi_arme.precision) {
-                                console.log('enemi touche');
-                                infos_user_arme.health -= infos_enemi_arme.puissance;  
+                                console.log(enemi+' touche');
+                                infos_user_arme.life -= infos_enemi_arme.puissance;  
                             }                          
                         }
                     },infos_enemi_arme.vitesse*1000);
@@ -94,14 +105,47 @@ var User = (function() {
         });
     };
 
-
-
-    User.prototype.getArmeInfos = function(callback) {
+    User.prototype.changeUserLife = function(user_id,life) {
         var connection = _DB.connection();
-        connection.query('SELECT spec.`puissance` as puissance, spec.`precision` as precision, spec.`vitesse` as vitesse FROM `Armes_spec` as spec LEFT JOIN Armes as arme ON spec.id = arme.armes_spec_id WHERE arme.user_id = '+ _id,function(err,rows,fields){
+
+        connection.query('UPDATE Users SET life = '+life+' WHERE id = ' + user_id, function(err,rows,fields){
+            if(err) throw err;
+        });
+    }
+
+    User.prototype.respawn = function(user_id,callback) {
+        var connection = _DB.connection();
+
+        connection.query('UPDATE Tiles SET user_id = NULL WHERE user_id = ' + user_id, function(err,rows,fields){
+            if(err) throw err;
+        });
+        connection.query('UPDATE Users SET resting = 1 WHERE id = ' + user_id, function(err,rows,fields){
+            if(err) throw err;
+        });
+        connection.query('SELECT tile.x, tile.y, tile.id FROM Tiles as tile LEFT JOIN Maisons as maison ON maison.tile_id = tile.id WHERE maison.user_id = '+user_id, function(err,rows,fields){
+            if (err) throw err;
+            var tile_id = rows[0].id;
+            connection.query('UPDATE Tiles SET user_id = ' + user_id + ' WHERE x = ' + rows[0].x + ' AND y = ' + rows[0].y, function(err,rows,fields){
+                if(err) throw err;
+                callback(tile_id);
+            });
+        });
+    };
+
+    User.prototype.getArmeInfos = function(id,callback) {
+        var connection = _DB.connection();
+        connection.query('SELECT spec.`puissance`, spec.`precision`, spec.`vitesse` FROM `Armes_spec` as spec LEFT JOIN Armes as arme ON spec.id = arme.armes_spec_id WHERE arme.user_id = '+ id+ ';',function(err,rows,fields){
             if (err) throw err;
             callback(rows[0]);
         });
+    };
+
+    User.prototype.setAttackedBy = function(enemi_id) {
+        this.attackedBy = enemi_id;
+    };
+
+    User.prototype.getAttackedBy = function() {
+        return this.attackedBy;
     };
 
     User.prototype.registerUser = function(mail, pseudo, password, callback) {
@@ -204,12 +248,12 @@ var User = (function() {
         });
     };
 
-     User.prototype.buy_energie = function(nb, id, prix, callback) {
+     User.prototype.buy_energie = function(nb, prix, id, callback) {
         var connection = _DB.connection();   
                 connection.query('SELECT argent FROM Users WHERE id = ' + id + ';',function(err,row,fields){
                 if(err) throw err;
-                if(row[0].argent >= prix){                                                         
-                   var query = 'UPDATE  Users SET argent = argent-'+prix+' WHERE id = ' + id;
+                if(row[0].argent >= prix*nb){                                                         
+                   var query = 'UPDATE  Users SET argent = argent-'+prix*nb+' WHERE id = ' + id;
                     connection.query(query, function(err,row,fields){
                     if(err) throw err;
                     callback(true);
@@ -223,12 +267,13 @@ var User = (function() {
        
     };
 
-    User.prototype.buy_fertilizant = function(nb, id, prix, callback) {
+
+    User.prototype.buy_fertilisant = function(nb, prix, id, callback) {
         var connection = _DB.connection();   
                 connection.query('SELECT argent FROM Users WHERE id = ' + id + ';',function(err,row,fields){
                 if(err) throw err;
-                if(row[0].argent >= prix){                                                         
-                   var query = 'UPDATE  Users SET argent = argent-'+prix+' , nb_fertilisants = nb_fertilisants + '+nb+ ' WHERE id = ' + id;
+                if(row[0].argent >= prix*nb){                                                         
+                   var query = 'UPDATE  Users SET argent = argent-'+prix*nb+' , nb_fertilisants = nb_fertilisants + '+nb+ ' WHERE id = ' + id;
                     connection.query(query, function(err,row,fields){
                     if(err) throw err;
                     callback(true);
@@ -271,6 +316,50 @@ var User = (function() {
         this._pseudo = pseudo;
     };
 
+    User.prototype.getAlliance = function(){
+        return this._alliance;
+    };
+
+    User.prototype.setAlliance = function(alliance){
+        var connection = _DB.connection();
+        if(alliance != null && alliance > 0) {
+            this._alliance = alliance;
+            connection.query('SELECT * FROM Users WHERE alliance_id = '+alliance, function(err,rows,fields){
+                if (err) throw err;
+                for(var i = 0; i < rows.length; i++){
+                    _userAlliance[rows[i].id] = rows[i].id;
+                }
+            });
+        }
+        else {
+            _userAlliance = new Array();
+        }
+        
+    };
+
+    User.prototype.getUserAlliance = function(){
+        return _userAlliance;
+    };
+
+    User.prototype.getUsersFromAlliance = function(){
+        return _userAlliance;
+    };
+
+    User.prototype.getUserAllianceFromUser = function(user_id,callback){
+        var connection = _DB.connection();
+        connection.query('SELECT alliance_id FROM Users WHERE id = '+user_id, function(err,rows,fields){
+            if(err) throw err;
+            var users = new Array();
+            connection.query('SELECT * FROM Users WHERE alliance_id = '+rows[0].alliance_id, function(err,row,fields){
+                if (err) throw err;
+                for(var i = 0; i < row.length; i++){
+                    users[row[i].id] = row[i].id;
+                }
+                callback(users);
+            });
+        });
+    };
+
     User.prototype.getId = function(){
         return this._id;
     };
@@ -293,6 +382,36 @@ var User = (function() {
     User.prototype.getCanConquet = function(){
         return canConquet;
     }
+
+    User.prototype.getCanAttack = function(enemi_id,callback){
+        var connection = _DB.connection();
+        
+        if(lastAttackId > 0) {
+            if(lastAttackId == enemi_id) {
+                callback(false);
+            }
+            connection.query('SELECT resting FROM Users WHERE id = '+enemi_id, function(err,rows,fields){
+                if(err) throw err;
+                if(rows[0].resting == 0) {
+                    callback(true);
+                }else {
+                    callback(false);
+                }
+            });
+        }
+        else {
+            callback(true);
+        }            
+    };
+
+    User.prototype.checkResting = function(user_id,callback) {
+        var connection = _DB.connection();
+
+        connection.query('SELECT resting FROM Users WHERE id = ' + user_id, function(err,rows,fields){
+            if(err) throw err;
+            callback(rows[0].resting);
+        });
+    };
 
     User.prototype.connected = function(){
         var connection = _DB.connection();
@@ -326,10 +445,24 @@ var User = (function() {
         });
     };
 
-    User.prototype.conquet = function(tile_id){
+    User.prototype.isConnected = function(enemi_id, callback){
         var connection = _DB.connection();
-        var id = this._id; 
-        connection.query('UPDATE Tiles SET owner = '+ id +' WHERE id = '+tile_id+';', function(err,rows,fields){
+        connection.query('SELECT isConnected FROM Users_Connected WHERE user_id = '+enemi_id, function(err,rows,fields){
+            if(err) throw err;
+            callback(rows[0].isConnected);
+        });
+    };
+
+    User.prototype.conquet = function(tile_id,user_id){
+        var connection = _DB.connection();
+        connection.query('UPDATE Tiles SET owner = '+ user_id +' WHERE id = '+tile_id+';', function(err,rows,fields){
+            if(err) throw err;         
+        });
+    };
+
+    User.prototype.attack = function(tile_id,user_id){
+        var connection = _DB.connection();
+        connection.query('UPDATE Tiles SET owner = '+ user_id +' WHERE id = '+tile_id+';', function(err,rows,fields){
             if(err) throw err;         
         });
     };
@@ -340,13 +473,52 @@ var User = (function() {
         canConquet = false;
         connection.query('SELECT uspec.wait_conquetes_timer as timer FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';',function(err,rows,fields){
             if(err) throw err;
-            console.log(canConquet);
             setTimeout(function(){
                 canConquet = true;
-                console.log('new conquet :'+canConquet);
             },rows[0].timer*1000);
         });
     };
+
+    User.prototype.attackGraceTime = function(enemi_id,id){
+        var connection = _DB.connection();
+        lastAttackId = enemi_id;
+        connection.query('SELECT uspec.victory_timer as timer FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+id+';',function(err,rows,fields){
+            if(err) throw err;
+            setTimeout(function(){
+                lastAttackId = 0;
+            },rows[0].timer*1000);
+        });
+    };
+
+    User.prototype.regenTime = function(user_id,callback) {
+        var connection = _DB.connection();
+        var health = 0;
+        var regen = 0;
+        var life = 0;
+        connection.query('SELECT uspec.win_regen as regen, uspec.resistance, u.life FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = '+user_id+';',function(err,rows,fields){
+            if(err) throw err;
+            health = rows[0].resistance;
+            regen = rows[0].regen;
+            life = rows[0].life;
+            var inter = setInterval(function(){
+                if(life == health) {
+                    clearInterval(inter);
+                    callback(life,true);
+                }
+                else {
+                    life = ((life + regen) >= health) ? health : (life + regen);
+                    callback(life,false);
+                }
+            },10000);
+        });
+    }
+
+    User.prototype.stopResting = function(user_id) {
+        var connection = _DB.connection();
+        connection.query('UPDATE Users SET resting = 0 WHERE id = '+user_id,function(err,rows,fields){
+            if(err) throw err;
+        });
+    }
 
     User.prototype.updateLevel = function(nb, callback){
         var connection = _DB.connection();
@@ -412,7 +584,6 @@ var User = (function() {
     User.prototype.enterAlliance = function(invit_id, alliance_id, callback){
         var connection = _DB.connection();
         var id = this._id;
-        console.log(alliance_id);
         var query = 'DELETE FROM Alliance_invit WHERE id='+invit_id+';';
         connection.query(query,function(err, rows, fields) {
             if (err) throw err;
@@ -472,6 +643,7 @@ var User = (function() {
 
     User.prototype.GetUserProps = function(user_id, callback){
         var connection = _DB.connection();
+        console.log('debug getuserprops avec user_id = ' + user_id);
         var query = "SELECT * FROM Users AS u LEFT JOIN Users_level_spec AS uspec ON u.niveau = uspec.id WHERE u.id = "+user_id+";";
         connection.query(query, function(err, rows, fields){
             if(err) throw err;
@@ -534,6 +706,53 @@ var User = (function() {
         });
     };
 
+    User.prototype.GetNewAllies = function(user_id, callback){
+        var connection = _DB.connection();
+        connection.query('SELECT * FROM Tiles WHERE owner = '+user_id, function(err, rows, fields){
+            callback(rows);
+        });
+    };
+
+    User.prototype.getMyNewAllies = function(user_id,alliance_id, callback){
+        var connection = _DB.connection();
+        connection.query('SELECT * FROM Tiles as t INNER JOIN Users as u ON t.owner = u.id WHERE u.alliance_id = '+alliance_id+' AND u.id != '+user_id, function(err, rows, fields){
+            callback(rows);
+        });
+    };
+
+    User.prototype.updateEnergie = function(user_id, callback){
+        var upd = setInterval(function(){
+            var connection = _DB.connection();
+            connection.query("SELECT * FROM (Stockages) WHERE user_id="+user_id+" AND stockages_spec_id != 3;", function(err, rows, fields){
+                if(err) throw err;
+                connection.query("SELECT * FROM (Stockages) WHERE user_id="+user_id+" AND stockages_spec_id = 3 AND stockage_state > 0;", function(err, row, fields){
+                    if(err) throw err;
+                    if(rows[0] || row[0]){
+                        var less = rows.length + (row.length*2);
+                        connection.query('SELECT * FROM Users WHERE id ='+user_id, function(err, ro, fields){
+                            if(err) throw err;
+                            if(ro[0].energies - less > 0){
+                                connection.query("UPDATE Users SET energies = energies-"+less+" WHERE id="+user_id+" AND Energies > 0;", function(err, row, fields){
+                                    if(err) throw err;
+                                    callback(true);
+                                });
+                            }else{
+                                connection.query("UPDATE Users SET energies = 0 WHERE id="+user_id+" AND Energies > 0;", function(err, row, fields){
+                                    if(err) throw err;
+                                    connection.query('UPDATE Fruits SET pourrissement_state = 0 WHERE user_id='+user_id, function(err, rows, fields){
+                                        callback(false);
+                                    });
+                                });
+                            }
+                        });
+                    }else{
+                        callback(true);
+                    }
+                })
+            });
+        },(30000));
+    };
+
     User.prototype.lvl = function()
     {
         var connection = _DB.connection();
@@ -582,3 +801,5 @@ var User = (function() {
 })();
 
 module.exports = User;
+    
+

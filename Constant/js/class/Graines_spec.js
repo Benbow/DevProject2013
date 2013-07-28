@@ -31,7 +31,7 @@ var Graines_spec = (function() {
         });
     };
     
- Graines_spec.prototype.Get_Graines = function(callback){
+    Graines_spec.prototype.Get_Graines = function(callback){
         var connection = _DB.connection();
         var query = 'SELECT * FROM Graines_spec;'
         connection.query(query,function(err, rows, fields) {
@@ -39,6 +39,35 @@ var Graines_spec = (function() {
             callback(rows);
             
         });
+    };
+
+
+    Graines_spec.prototype.marketPriceGraines = function(){
+        var connection = _DB.connection();         
+        var rand1 = Math.floor((Math.random()*10)+1);        
+        connection.query('UPDATE Graines_spec SET prix='+rand1+' Where id = 1;',function(err, rows, fields) {
+            if (err) throw err;          
+            });
+        var rand2 = Math.floor((Math.random()*30)+10);        
+        connection.query('UPDATE Graines_spec SET prix='+rand2+' Where id = 2;',function(err, rows, fields) {
+            if (err) throw err;          
+            });   
+        var rand3 = Math.floor((Math.random()*60)+30);        
+        connection.query('UPDATE Graines_spec SET prix='+rand3+' Where id = 3;',function(err, rows, fields) {
+            if (err) throw err;          
+            });   
+        var rand4 = Math.floor((Math.random()*100)+60);        
+        connection.query('UPDATE Graines_spec SET prix='+rand4+' Where id = 4;',function(err, rows, fields) {
+            if (err) throw err;          
+            });   
+        var rand5 = Math.floor((Math.random()*200)+100);        
+        connection.query('UPDATE Graines_spec SET prix='+rand5+' Where id = 5;',function(err, rows, fields) {
+            if (err) throw err;          
+            });
+        var rand6 = Math.floor((Math.random()*1000)+200);        
+        connection.query('UPDATE Graines_spec SET prix='+rand6+' Where id = 6;',function(err, rows, fields) {
+            if (err) throw err;          
+            });             
     };
 
     //Getters

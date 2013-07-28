@@ -227,6 +227,13 @@ var Tiles = (function() {
 
     };
 
+    Tiles.changeOwner = function(x,y,owner){
+        connection.query('UPDATE Tiles SET owner = '+owner+' WHERE x = '+x+' AND y = '+y, function(err,rows,fields){
+            if(err) throw err;
+        });
+
+    };
+
     Tiles.prototype.updateFertiliteAndHumidite = function(){
         var upd = setInterval(function(){
             var query = 'UPDATE Tiles SET fertilite = fertilite+1 WHERE isEmpty  = 0 AND fertilite < 100;';
@@ -251,7 +258,7 @@ var Tiles = (function() {
                 connection.query(query, function(err, row, fields){
                     if(err) throw err;
                     var argent = 300/difficulty;
-                    query = 'UPDATE Users SET argent = '+argent+', energies=50  WHERE id ='+user_id+';';
+                    query = 'UPDATE Users SET argent = '+argent+', energies=50, life = 50  WHERE id ='+user_id+';';
                     connection.query(query, function(err, row, fields){
                         if(err) throw err;
                         connection.query('INSERT INTO Armes (armes_spec_id, user_id) VALUES(1,' + user_id +');', function(err, row, fields){if(err) throw err;});
